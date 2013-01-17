@@ -1,12 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.1
+-- version 3.4.10.1deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 17, 2013 at 07:52 PM
--- Server version: 5.5.24-log
--- PHP Version: 5.4.3
+-- Generation Time: Jan 17, 2013 at 05:41 PM
+-- Server version: 5.5.28
+-- PHP Version: 5.3.10-1ubuntu3.4
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -17,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `s2hcake`
+-- Database: `s2h_third_version`
 --
 
 -- --------------------------------------------------------
@@ -25,7 +26,10 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `answers`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `answers`;
 CREATE TABLE IF NOT EXISTS `answers` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
@@ -44,7 +48,10 @@ CREATE TABLE IF NOT EXISTS `answers` (
 --
 -- Table structure for table `clients`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `clients`;
 CREATE TABLE IF NOT EXISTS `clients` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
@@ -64,7 +71,10 @@ CREATE TABLE IF NOT EXISTS `clients` (
 --
 -- Table structure for table `groupings`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `groupings`;
 CREATE TABLE IF NOT EXISTS `groupings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
@@ -82,7 +92,10 @@ CREATE TABLE IF NOT EXISTS `groupings` (
 --
 -- Table structure for table `options`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `options`;
 CREATE TABLE IF NOT EXISTS `options` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
@@ -98,7 +111,10 @@ CREATE TABLE IF NOT EXISTS `options` (
 --
 -- Table structure for table `organizations`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `organizations`;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -113,7 +129,10 @@ CREATE TABLE IF NOT EXISTS `organizations` (
 --
 -- Table structure for table `questions`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `questions`;
 CREATE TABLE IF NOT EXISTS `questions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
@@ -141,7 +160,10 @@ CREATE TABLE IF NOT EXISTS `questions` (
 --
 -- Table structure for table `surveys`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `surveys`;
 CREATE TABLE IF NOT EXISTS `surveys` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
@@ -157,7 +179,10 @@ CREATE TABLE IF NOT EXISTS `surveys` (
 --
 -- Table structure for table `survey_instances`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `survey_instances`;
 CREATE TABLE IF NOT EXISTS `survey_instances` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
@@ -178,7 +203,10 @@ CREATE TABLE IF NOT EXISTS `survey_instances` (
 --
 -- Table structure for table `types`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `types`;
 CREATE TABLE IF NOT EXISTS `types` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
@@ -192,7 +220,10 @@ CREATE TABLE IF NOT EXISTS `types` (
 --
 -- Table structure for table `users`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(127) NOT NULL,
@@ -213,7 +244,10 @@ CREATE TABLE IF NOT EXISTS `users` (
 --
 -- Table structure for table `validations`
 --
+-- Creation: Jan 17, 2013 at 10:39 PM
+--
 
+DROP TABLE IF EXISTS `validations`;
 CREATE TABLE IF NOT EXISTS `validations` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
@@ -273,6 +307,7 @@ ALTER TABLE `survey_instances`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`);
+SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

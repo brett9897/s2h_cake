@@ -3,10 +3,11 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 17, 2013 at 03:00 AM
+-- Generation Time: Jan 17, 2013 at 06:40 PM
 -- Server version: 5.5.28
 -- PHP Version: 5.3.10-1ubuntu3.4
 
+SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -19,6 +20,7 @@ SET time_zone = "+00:00";
 --
 -- Database: `s2h_third_version`
 --
+SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
