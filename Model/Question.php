@@ -152,19 +152,6 @@ class Question extends AppModel {
 			'finderQuery' => '',
 			'counterQuery' => ''
 		),
-		'ValidationUse' => array(
-			'className' => 'ValidationUse',
-			'foreignKey' => 'question_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)
 	);
 
 }

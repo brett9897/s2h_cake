@@ -1,6 +1,5 @@
 s2h_cake_
 ========
-I don't want to keep this.
 The CakePHP version of S2H
 
 After cloning don't forget to create the 'tmp' directory in the base directory and make it 777.  
