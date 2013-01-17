@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 17, 2013 at 06:51 PM
+-- Generation Time: Jan 17, 2013 at 07:52 PM
 -- Server version: 5.5.24-log
 -- PHP Version: 5.4.3
 
@@ -116,6 +116,7 @@ CREATE TABLE IF NOT EXISTS `organizations` (
 
 CREATE TABLE IF NOT EXISTS `questions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `survey_id` int(10) unsigned NOT NULL,
   `grouping_id` int(10) unsigned NOT NULL,
   `internal_name` varchar(50) NOT NULL,
   `label` varchar(255) NOT NULL,
@@ -131,7 +132,8 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `validation_4` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_id` (`type_id`),
-  KEY `grouping_id` (`grouping_id`)
+  KEY `grouping_id` (`grouping_id`),
+  KEY `survey_id` (`survey_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -193,6 +195,8 @@ CREATE TABLE IF NOT EXISTS `types` (
 
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(127) NOT NULL,
+  `password` varchar(127) NOT NULL,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `organization_id` int(10) unsigned NOT NULL,
@@ -252,6 +256,7 @@ ALTER TABLE `options`
 -- Constraints for table `questions`
 --
 ALTER TABLE `questions`
+  ADD CONSTRAINT `questions_ibfk_3` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`),
   ADD CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`grouping_id`) REFERENCES `groupings` (`id`),
   ADD CONSTRAINT `questions_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `types` (`id`);
 

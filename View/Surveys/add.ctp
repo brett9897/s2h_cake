@@ -5,6 +5,7 @@
 	<?php
 		echo $this->Form->input('organization_id');
 		echo $this->Form->input('label');
+		echo $this->Form->input('isDeleted');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

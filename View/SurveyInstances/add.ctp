@@ -7,6 +7,7 @@
 		echo $this->Form->input('client_id');
 		echo $this->Form->input('user_id');
 		echo $this->Form->input('vi_score');
+		echo $this->Form->input('isDeleted');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

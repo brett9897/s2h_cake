@@ -100,4 +100,98 @@ class GroupingsController extends AppController {
 		$this->Session->setFlash(__('Grouping was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+
+/**
+ * admin_index method
+ *
+ * @return void
+ */
+	public function admin_index() {
+		$this->Grouping->recursive = 0;
+		$this->set('groupings', $this->paginate());
+	}
+
+/**
+ * admin_view method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function admin_view($id = null) {
+		$this->Grouping->id = $id;
+		if (!$this->Grouping->exists()) {
+			throw new NotFoundException(__('Invalid grouping'));
+		}
+		$this->set('grouping', $this->Grouping->read(null, $id));
+	}
+
+/**
+ * admin_add method
+ *
+ * @return void
+ */
+	public function admin_add() {
+		if ($this->request->is('post')) {
+			$this->Grouping->create();
+			if ($this->Grouping->save($this->request->data)) {
+				$this->Session->setFlash(__('The grouping has been saved'));
+				$this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The grouping could not be saved. Please, try again.'));
+			}
+		}
+		$surveys = $this->Grouping->Survey->find('list');
+		$this->set(compact('surveys'));
+	}
+
+/**
+ * admin_edit method
+ *
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function admin_edit($id = null) {
+		$this->Grouping->id = $id;
+		if (!$this->Grouping->exists()) {
+			throw new NotFoundException(__('Invalid grouping'));
+		}
+		if ($this->request->is('post') || $this->request->is('put')) {
+			if ($this->Grouping->save($this->request->data)) {
+				$this->Session->setFlash(__('The grouping has been saved'));
+				$this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The grouping could not be saved. Please, try again.'));
+			}
+		} else {
+			$this->request->data = $this->Grouping->read(null, $id);
+		}
+		$surveys = $this->Grouping->Survey->find('list');
+		$this->set(compact('surveys'));
+	}
+
+/**
+ * admin_delete method
+ *
+ * @throws MethodNotAllowedException
+ * @throws NotFoundException
+ * @param string $id
+ * @return void
+ */
+	public function admin_delete($id = null) {
+		if (!$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		$this->Grouping->id = $id;
+		if (!$this->Grouping->exists()) {
+			throw new NotFoundException(__('Invalid grouping'));
+		}
+		if ($this->Grouping->delete()) {
+			$this->Session->setFlash(__('Grouping deleted'));
+			$this->redirect(array('action' => 'index'));
+		}
+		$this->Session->setFlash(__('Grouping was not deleted'));
+		$this->redirect(array('action' => 'index'));
+	}
 }
