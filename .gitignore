@@ -8,3 +8,4 @@ webroot/index.php
 .nboproject
 .nboproject/*
 !empty
+/nbproject/private/

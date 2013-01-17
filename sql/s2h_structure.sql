@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.10.1deb1
+-- version 3.5.1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 17, 2013 at 02:59 AM
--- Server version: 5.5.28
--- PHP Version: 5.3.10-1ubuntu3.4
+-- Generation Time: Jan 17, 2013 at 06:51 PM
+-- Server version: 5.5.24-log
+-- PHP Version: 5.4.3
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `s2h_third_version`
+-- Database: `s2hcake`
 --
 
 -- --------------------------------------------------------
@@ -26,12 +26,12 @@ SET time_zone = "+00:00";
 -- Table structure for table `answers`
 --
 
-DROP TABLE IF EXISTS `answers`;
 CREATE TABLE IF NOT EXISTS `answers` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
   `client_id` int(10) unsigned NOT NULL,
   `value` text NOT NULL,
+  `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `answers` (
 -- Table structure for table `clients`
 --
 
-DROP TABLE IF EXISTS `clients`;
 CREATE TABLE IF NOT EXISTS `clients` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
@@ -53,6 +52,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `last_name` varchar(50) NOT NULL,
   `ssn` varchar(9) NOT NULL,
   `dob` date NOT NULL,
+  `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -65,7 +65,6 @@ CREATE TABLE IF NOT EXISTS `clients` (
 -- Table structure for table `groupings`
 --
 
-DROP TABLE IF EXISTS `groupings`;
 CREATE TABLE IF NOT EXISTS `groupings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
@@ -84,7 +83,6 @@ CREATE TABLE IF NOT EXISTS `groupings` (
 -- Table structure for table `options`
 --
 
-DROP TABLE IF EXISTS `options`;
 CREATE TABLE IF NOT EXISTS `options` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
@@ -101,10 +99,10 @@ CREATE TABLE IF NOT EXISTS `options` (
 -- Table structure for table `organizations`
 --
 
-DROP TABLE IF EXISTS `organizations`;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
+  `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -116,7 +114,6 @@ CREATE TABLE IF NOT EXISTS `organizations` (
 -- Table structure for table `questions`
 --
 
-DROP TABLE IF EXISTS `questions`;
 CREATE TABLE IF NOT EXISTS `questions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `grouping_id` int(10) unsigned NOT NULL,
@@ -128,6 +125,10 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `is_required` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `validation_1` varchar(100) DEFAULT NULL,
+  `validation_2` varchar(100) DEFAULT NULL,
+  `validation_3` varchar(100) DEFAULT NULL,
+  `validation_4` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `type_id` (`type_id`),
   KEY `grouping_id` (`grouping_id`)
@@ -139,11 +140,11 @@ CREATE TABLE IF NOT EXISTS `questions` (
 -- Table structure for table `surveys`
 --
 
-DROP TABLE IF EXISTS `surveys`;
 CREATE TABLE IF NOT EXISTS `surveys` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
   `label` varchar(255) NOT NULL,
+  `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
@@ -155,13 +156,13 @@ CREATE TABLE IF NOT EXISTS `surveys` (
 -- Table structure for table `survey_instances`
 --
 
-DROP TABLE IF EXISTS `survey_instances`;
 CREATE TABLE IF NOT EXISTS `survey_instances` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
   `client_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `vi_score` int(10) unsigned NOT NULL,
+  `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -176,7 +177,6 @@ CREATE TABLE IF NOT EXISTS `survey_instances` (
 -- Table structure for table `types`
 --
 
-DROP TABLE IF EXISTS `types`;
 CREATE TABLE IF NOT EXISTS `types` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
@@ -191,13 +191,13 @@ CREATE TABLE IF NOT EXISTS `types` (
 -- Table structure for table `users`
 --
 
-DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `first_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `organization_id` int(10) unsigned NOT NULL,
-  `type` enum('volunteer','admin','superAdmin') NOT NULL DEFAULT 'volunteer',
+  `type` enum('volunteer','user','admin','superAdmin') NOT NULL DEFAULT 'volunteer',
+  `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
@@ -210,7 +210,6 @@ CREATE TABLE IF NOT EXISTS `users` (
 -- Table structure for table `validations`
 --
 
-DROP TABLE IF EXISTS `validations`;
 CREATE TABLE IF NOT EXISTS `validations` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
@@ -218,24 +217,6 @@ CREATE TABLE IF NOT EXISTS `validations` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `validation_uses`
---
-
-DROP TABLE IF EXISTS `validation_uses`;
-CREATE TABLE IF NOT EXISTS `validation_uses` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `question_id` int(10) unsigned NOT NULL,
-  `validations_id` smallint(5) unsigned NOT NULL,
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `question_id` (`question_id`),
-  KEY `validations_id` (`validations_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
@@ -287,13 +268,6 @@ ALTER TABLE `survey_instances`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`);
-
---
--- Constraints for table `validation_uses`
---
-ALTER TABLE `validation_uses`
-  ADD CONSTRAINT `validation_uses_ibfk_2` FOREIGN KEY (`validations_id`) REFERENCES `validations` (`id`),
-  ADD CONSTRAINT `validation_uses_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
