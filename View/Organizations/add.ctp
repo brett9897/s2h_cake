@@ -4,6 +4,7 @@
 		<legend><?php echo __('Add Organization'); ?></legend>
 	<?php
 		echo $this->Form->input('name');
+		echo $this->Form->input('isDeleted');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

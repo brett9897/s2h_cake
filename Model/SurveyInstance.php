@@ -14,6 +14,7 @@ class SurveyInstance extends AppModel {
  *
  * @var string
  */
+	public $displayField = 'id';
 
 /**
  * Validation rules
@@ -22,8 +23,8 @@ class SurveyInstance extends AppModel {
  */
 	public $validate = array(
 		'survey_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -32,8 +33,8 @@ class SurveyInstance extends AppModel {
 			),
 		),
 		'client_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -42,8 +43,8 @@ class SurveyInstance extends AppModel {
 			),
 		),
 		'user_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -52,8 +53,8 @@ class SurveyInstance extends AppModel {
 			),
 		),
 		'vi_score' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,

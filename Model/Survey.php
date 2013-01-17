@@ -5,6 +5,7 @@ App::uses('AppModel', 'Model');
  *
  * @property Organization $Organization
  * @property Grouping $Grouping
+ * @property Question $Question
  * @property SurveyInstance $SurveyInstance
  */
 class Survey extends AppModel {
@@ -23,8 +24,8 @@ class Survey extends AppModel {
  */
 	public $validate = array(
 		'organization_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -69,6 +70,19 @@ class Survey extends AppModel {
 	public $hasMany = array(
 		'Grouping' => array(
 			'className' => 'Grouping',
+			'foreignKey' => 'survey_id',
+			'dependent' => false,
+			'conditions' => '',
+			'fields' => '',
+			'order' => '',
+			'limit' => '',
+			'offset' => '',
+			'exclusive' => '',
+			'finderQuery' => '',
+			'counterQuery' => ''
+		),
+		'Question' => array(
+			'className' => 'Question',
 			'foreignKey' => 'survey_id',
 			'dependent' => false,
 			'conditions' => '',

@@ -13,7 +13,7 @@ class User extends AppModel {
  *
  * @var string
  */
-	public $displayField = 'first_name';
+	public $displayField = 'username';
 
 /**
  * Validation rules
@@ -21,6 +21,26 @@ class User extends AppModel {
  * @var array
  */
 	public $validate = array(
+		'username' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
+		'password' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
 		'first_name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
@@ -44,16 +64,6 @@ class User extends AppModel {
 		'organization_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-		),
-		'type' => array(
-			'notempty' => array(
-				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,

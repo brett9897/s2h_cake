@@ -40,20 +40,4 @@ class Validation extends AppModel {
 			),
 		),
 	);
-
-	public $hasMany = array(
-		'ValidationUse' => array(
-			'className' => 'ValidationUse',
-			'foreignKey' => 'validations_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		)
-	);
 }

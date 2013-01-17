@@ -9,6 +9,7 @@
 		echo $this->Form->input('last_name');
 		echo $this->Form->input('ssn');
 		echo $this->Form->input('dob');
+		echo $this->Form->input('isDeleted');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>

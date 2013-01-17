@@ -3,11 +3,11 @@ App::uses('AppModel', 'Model');
 /**
  * Question Model
  *
+ * @property Survey $Survey
  * @property Grouping $Grouping
  * @property Type $Type
  * @property Answer $Answer
  * @property Option $Option
- * @property ValidationUs $ValidationUs
  */
 class Question extends AppModel {
 
@@ -24,9 +24,19 @@ class Question extends AppModel {
  * @var array
  */
 	public $validate = array(
+		'survey_id' => array(
+			'notempty' => array(
+				'rule' => array('notempty'),
+				//'message' => 'Your custom message here',
+				//'allowEmpty' => false,
+				//'required' => false,
+				//'last' => false, // Stop validation after this rule
+				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+		),
 		'grouping_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -55,8 +65,8 @@ class Question extends AppModel {
 			),
 		),
 		'type_id' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -65,8 +75,8 @@ class Question extends AppModel {
 			),
 		),
 		'ordering' => array(
-			'numeric' => array(
-				'rule' => array('numeric'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -75,8 +85,8 @@ class Question extends AppModel {
 			),
 		),
 		'is_used' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -85,8 +95,8 @@ class Question extends AppModel {
 			),
 		),
 		'is_required' => array(
-			'boolean' => array(
-				'rule' => array('boolean'),
+			'notempty' => array(
+				'rule' => array('notempty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
@@ -104,6 +114,13 @@ class Question extends AppModel {
  * @var array
  */
 	public $belongsTo = array(
+		'Survey' => array(
+			'className' => 'Survey',
+			'foreignKey' => 'survey_id',
+			'conditions' => '',
+			'fields' => '',
+			'order' => ''
+		),
 		'Grouping' => array(
 			'className' => 'Grouping',
 			'foreignKey' => 'grouping_id',
@@ -141,19 +158,6 @@ class Question extends AppModel {
 		),
 		'Option' => array(
 			'className' => 'Option',
-			'foreignKey' => 'question_id',
-			'dependent' => false,
-			'conditions' => '',
-			'fields' => '',
-			'order' => '',
-			'limit' => '',
-			'offset' => '',
-			'exclusive' => '',
-			'finderQuery' => '',
-			'counterQuery' => ''
-		),
-		'ValidationUse' => array(
-			'className' => 'ValidationUse',
 			'foreignKey' => 'question_id',
 			'dependent' => false,
 			'conditions' => '',
