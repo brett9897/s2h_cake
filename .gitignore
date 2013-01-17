@@ -5,7 +5,7 @@ app/tmp/*
 app/[Cc]onfig/core.php
 app/[Cc]onfig/database.php
 webroot/index.php
-.nboproject
-.nboproject/*
+nbproject
+nbproject/*
 !empty
 /nbproject/private/
