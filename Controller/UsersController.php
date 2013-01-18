@@ -8,20 +8,14 @@ App::uses('AppController', 'Controller');
  * @property User $User
  */
 class UsersController extends AppController {
-
+    
     /**
      * Lee: Standard login method 
      */
     public function login() {
         if ($this->request->is('post')) {
             if ($this->Auth->login()) {
-                $user = $this->Auth->user();
-                if ($user['isDeleted']) { //Prevent deleted users from logging in
-                    $this->Auth->logout();
-                    $this->Session->setFlash('Your account is no longer active');
-                } else {
-                    $this->redirect($this->Auth->redirect());
-                }
+                $this->redirect($this->Auth->redirect());
             } else {
                 $this->Session->setFlash('Your username/password combination was incorrect');
             }
