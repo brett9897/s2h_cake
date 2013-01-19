@@ -20,5 +20,20 @@ cake/lib directory in the CakePHP download.
 5. Go to the Config directory and copy database.php.default to database.php.  Then edit database.php to fill in your database connection information.
 6. Copy core.php.default to core.php.  Then edit core.php, uncommenting the line that reads
 `Configure::write('Routing.prefixes', array('admin'));`
-
 7. The database schema is in the sql folder.  Make sure to create a database and import those tables.
+8. When you first load the website you will be asked to log in.  Since no users are in the DB right now, make
+   sure you have debugging information on.  Then just attempt to login with whatever password you want.  The query
+   information will be at the bottom of the page so you can get the hashed password from there and enter it in the
+   database yourself.
+
+Important Files
+---------------
+
+* The main layout template is the /View/Layouts/default.ctp
+* CSS and JS code belongs in /webroot/css and /webroot/js respectively.
+   * Try to avoid inline CSS and JS as much as possible.
+   
+
+Final Thoughts
+--------------
+I think that just about covers it.  Hopefully I didn't miss anything.
