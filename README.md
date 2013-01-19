@@ -24,7 +24,7 @@ cake/lib directory in the CakePHP download.
 8. When you first load the website you will be asked to log in.  Since no users are in the DB right now, make
    sure you have debugging information on.  Then just attempt to login with whatever password you want.  The query
    information will be at the bottom of the page so you can get the hashed password from there and enter it in the
-   database yourself.
+   database yourself. Oh and you will need to create an organization before you create a user.
 
 Important Files
 ---------------
