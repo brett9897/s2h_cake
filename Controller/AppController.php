@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Application level Controller
  *
@@ -19,7 +20,6 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 App::uses('Controller', 'Controller');
 
 /**
@@ -32,4 +32,30 @@ App::uses('Controller', 'Controller');
  * @link http://book.cakephp.org/2.0/en/controllers.html#the-app-controller
  */
 class AppController extends Controller {
+
+    /**
+     * Lee: User authorization code
+     * Sets the path to where the user goes after logging in/out, and 
+     * sets an authorization failed message.
+     */
+    public $components = array(
+        'Session',
+        'Auth' => array(
+            'loginRedirect' => array('controller' => 'welcome', 'action' => 'index'),
+            'logoutRedirect' => array('controller' => 'welcome', 'action' => 'index'),
+            'authError' => "You can't access that page",
+            'authorize' => array('Controller')
+        ),
+        'Security'
+    );
+    
+    /**
+     * Lee: this function checks to see if a user is authorized
+     * 
+     * @param type $user The user to be authorized
+     */
+    public function isAuthorized($user) {
+        return true;
+    }
+
 }
