@@ -6,7 +6,7 @@ Directions
 ----------
 
 1. Download CakePHP from http://cakephp.org and extract it into wherever you want.
-2. While still in the directory where your localhost serves websites clone this repository
+2. While in the directory where your localhost serves websites clone this repository
 `git clone https://github.com/brett9897/s2h_cake.git`
 3. After cloning don't forget to create the following folders in the main s2h_cake directory and make sure they have 777 privileges on linux.
 	1. tmp
