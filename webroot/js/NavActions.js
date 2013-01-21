@@ -16,13 +16,8 @@ jQuery(document).ready(function(){
 
     });
     
-    jQuery("#radio3").click(function () {
-        
-        location.href = global.base_url + "/clients";
-        
-    });
     
-    jQuery("#radio4").click(function () {
+    jQuery("#radio3").click(function () {
         
         location.href = global.base_url + "/organizations";
         
