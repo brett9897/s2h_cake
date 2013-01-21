@@ -309,7 +309,7 @@ label {
 	font-size: 110%;
 	margin-bottom:3px;
 }
-input, textarea {
+/*input,*/ textarea {
 	clear: both;
 	font-size: 140%;
 	font-family: "frutiger linotype", "lucida grande", "verdana", sans-serif;
@@ -348,7 +348,7 @@ input[type=radio] {
 	margin: 0 0 6px 20px;
 	line-height: 26px;
 }
-input[type=submit] {
+/*input[type=submit] {
 	display: inline;
 	font-size: 110%;
 	width: auto;
@@ -504,7 +504,7 @@ p.error em {
 }
 
 /* Buttons and button links */
-input[type=submit],
+/*input[type=submit],*/
 .actions ul li a,
 .actions a {
 	font-weight:normal;
@@ -536,7 +536,7 @@ input[type=submit],
 	border-color: #acacac;
 	text-decoration: none;
 }
-input[type=submit]:active,
+/*input[type=submit]:active,*/
 .actions ul li a:active,
 .actions a:active {
 	background: #eee;

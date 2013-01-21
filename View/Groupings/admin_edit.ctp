@@ -21,6 +21,9 @@
 		<li><?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> </li>
 		<li><?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> </li>
 		<li><?php echo $this->Html->link(__('List Questions'), array('controller' => 'questions', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Question'), array('controller' => 'questions', 'action' => 'add')); ?> </li>
+		<li>
+			<?php echo $this->Html->link(__('New Question'), 
+					array('controller' => 'questions', 'action' => 'add', $this->Form->value('Grouping.id'))); ?> 
+		</li>
 	</ul>
 </div>

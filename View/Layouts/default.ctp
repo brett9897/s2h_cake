@@ -31,7 +31,12 @@
 
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
+		echo $this->Html->css('overcast/jquery-ui-1.10.0.custom.min');
 		echo $this->fetch('script');
+
+		echo $this->Html->script('jquery-1.9.0.min.js');
+		echo $this->Html->script('jquery-ui-1.10.0.custom.min.js');
+		echo $this->Html->script('button.js');
 	?>
 </head>
 <body>
