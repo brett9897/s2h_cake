@@ -10,19 +10,20 @@ jQuery(document).ready(function(){
         window.location.href = global.base_url + "/users/";
     });
     
-    jQuery("#radio2").click(function () {
+    jQuery("#radioSurvey").click(function () {
 
-        location.href = global.base_url + "/surveys";
+        location.href = global.base_url + "/survey_instances/add";
 
     });
+    
+    jQuery("#radioSurveyAdmin").click(function () {
+
+        location.href = global.base_url + "/admin/surveys";
+
+    });
+    
     
     jQuery("#radio3").click(function () {
-        
-        location.href = global.base_url + "/clients";
-        
-    });
-    
-    jQuery("#radio4").click(function () {
         
         location.href = global.base_url + "/organizations";
         

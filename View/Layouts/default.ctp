@@ -90,10 +90,12 @@
     
                 <h1>&nbsp;</h1>
                 <ul id="top_links" class="do_not_show">
-                    <li><input type="radio" id="radio2" name="radio" /><label for="radio2">Surveys</label></li>
-                    <li><input type="radio" id="radio3" name="radio" /><label for="radio3">Clients</label></li>
-                    <li><input type="radio" id="radio4" name="radio" /><label for="radio4">Organizations</label></li>
-
+                    <?php if ($isAtLeastAdmin): ?>
+                        <li><input type="radio" id="radioSurveyAdmin" name="radioSurveyAdmin" /><label for="radioSurveyAdmin">Surveys</label></li>
+                    <?php else: ?>
+                        <li><input type="radio" id="radioSurvey" name="radioSurvey" /><label for="radioSurvey">Surveys</label></li>
+                    <?php endif; ?>
+                    <li><input type="radio" id="radio3" name="radio" /><label for="radio3">Reports</label></li>
                 </ul>
 
             </div>
