@@ -37,7 +37,7 @@ class SurveysController extends AppController {
  *
  * @return void
  */
-	public function add() {
+/*	public function add() {
 		if ($this->request->is('post')) {
 			$this->Survey->create();
 			if ($this->Survey->save($this->request->data)) {
@@ -50,7 +50,7 @@ class SurveysController extends AppController {
 		$organizations = $this->Survey->Organization->find('list');
 		$this->set(compact('organizations'));
 	}
-
+*/
 /**
  * edit method
  *
@@ -58,7 +58,7 @@ class SurveysController extends AppController {
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
+/*	public function edit($id = null) {
 		$this->Survey->id = $id;
 		if (!$this->Survey->exists()) {
 			throw new NotFoundException(__('Invalid survey'));
@@ -76,7 +76,7 @@ class SurveysController extends AppController {
 		$organizations = $this->Survey->Organization->find('list');
 		$this->set(compact('organizations'));
 	}
-
+*/
 /**
  * delete method
  *
@@ -85,7 +85,7 @@ class SurveysController extends AppController {
  * @param string $id
  * @return void
  */
-	public function delete($id = null) {
+/*	public function delete($id = null) {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
@@ -100,7 +100,7 @@ class SurveysController extends AppController {
 		$this->Session->setFlash(__('Survey was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
-
+*/
 /**
  * admin_index method
  *

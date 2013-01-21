@@ -2,10 +2,8 @@
 	<h2><?php echo __('Surveys'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>
-			<th><?php echo $this->Paginator->sort('id'); ?></th>
 			<th><?php echo $this->Paginator->sort('organization_id'); ?></th>
 			<th><?php echo $this->Paginator->sort('label'); ?></th>
-			<th><?php echo $this->Paginator->sort('isDeleted'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
@@ -13,12 +11,10 @@
 	<?php
 	foreach ($surveys as $survey): ?>
 	<tr>
-		<td><?php echo h($survey['Survey']['id']); ?>&nbsp;</td>
 		<td>
 			<?php echo $this->Html->link($survey['Organization']['name'], array('controller' => 'organizations', 'action' => 'view', $survey['Organization']['id'])); ?>
 		</td>
 		<td><?php echo h($survey['Survey']['label']); ?>&nbsp;</td>
-		<td><?php echo h($survey['Survey']['isDeleted']); ?>&nbsp;</td>
 		<td><?php echo h($survey['Survey']['created']); ?>&nbsp;</td>
 		<td><?php echo h($survey['Survey']['modified']); ?>&nbsp;</td>
 		<td class="actions">
@@ -44,15 +40,10 @@
 	?>
 	</div>
 </div>
-<div class="actions">
+<div class="actions no">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
+		<li><?php echo $this->Html->link(__('List Surveys'), array('action' => 'index')); ?></li>
 		<li><?php echo $this->Html->link(__('New Survey'), array('action' => 'add')); ?></li>
-		<li><?php echo $this->Html->link(__('List Organizations'), array('controller' => 'organizations', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Organization'), array('controller' => 'organizations', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Groupings'), array('controller' => 'groupings', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Survey Instances'), array('controller' => 'survey_instances', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Survey Instance'), array('controller' => 'survey_instances', 'action' => 'add')); ?> </li>
 	</ul>
 </div>
