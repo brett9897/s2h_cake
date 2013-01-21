@@ -37,7 +37,7 @@ class QuestionsController extends AppController {
  *
  * @return void
  */
-	public function add() {
+/*	public function add() {
 		if ($this->request->is('post')) {
 			$this->Question->create();
 			if ($this->Question->save($this->request->data)) {
@@ -52,7 +52,7 @@ class QuestionsController extends AppController {
 		$types = $this->Question->Type->find('list');
 		$this->set(compact('surveys', 'groupings', 'types'));
 	}
-
+*/
 /**
  * edit method
  *
@@ -60,7 +60,7 @@ class QuestionsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function edit($id = null) {
+/*	public function edit($id = null) {
 		$this->Question->id = $id;
 		if (!$this->Question->exists()) {
 			throw new NotFoundException(__('Invalid question'));
@@ -80,7 +80,7 @@ class QuestionsController extends AppController {
 		$types = $this->Question->Type->find('list');
 		$this->set(compact('surveys', 'groupings', 'types'));
 	}
-
+*/
 /**
  * delete method
  *
@@ -89,7 +89,7 @@ class QuestionsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function delete($id = null) {
+/*	public function delete($id = null) {
 		if (!$this->request->is('post')) {
 			throw new MethodNotAllowedException();
 		}
@@ -104,7 +104,7 @@ class QuestionsController extends AppController {
 		$this->Session->setFlash(__('Question was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
-
+*/
 /**
  * admin_index method
  *
