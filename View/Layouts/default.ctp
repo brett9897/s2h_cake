@@ -25,10 +25,6 @@
 		<?php echo __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout; ?>
 	</title>
-	<?php
-		echo $this->Html->meta('icon');
-
-
 
         <?php echo $this->Html->script('jquery-1.9.0.min.js'); ?>
         <?php echo $this->Html->script('jquery-ui-1.10.0.custom.min.js'); ?>
@@ -93,7 +89,11 @@
     
                 <h1>&nbsp;</h1>
                 <ul id="top_links" class="do_not_show">
-                    <li><input type="radio" id="radio2" name="radio" /><label for="radio2">Surveys</label></li>
+                    <?php if ($isAtLeastAdmin): ?>
+                        <li><input type="radio" id="radioSurveyAdmin" name="radioSurveyAdmin" /><label for="radioSurveyAdmin">Surveys</label></li>
+                    <?php else: ?>
+                        <li><input type="radio" id="radioSurvey" name="radioSurvey" /><label for="radioSurvey">Surveys</label></li>
+                    <?php endif; ?>
                     <li><input type="radio" id="radio3" name="radio" /><label for="radio3">Reports</label></li>
                 </ul>
 
