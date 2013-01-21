@@ -1,0 +1,302 @@
+dl
+{
+	width: 90%;
+}
+
+ul#top_links{
+	list-style-type: none;
+}
+#top_links > li{
+	position:relative;
+	top: 13%;
+	left:-19px;
+	float:left;
+	margin: 0;
+	padding: 0;
+	border-style: solid solid none solid;
+	border-color: #AAAAAA;
+}
+
+.do_not_show {
+	display: none;
+}
+
+#header{
+
+}
+
+.white-background.black-text
+{
+	background: white;
+	color: black;
+	font-size: 12px;
+}
+
+.white-background.black-text a {
+    color: black;
+}
+
+.white-background.black-text label
+{
+	width: 6em;
+}
+
+#ui-accordion-accordion-panel-0 fieldset
+{
+	border: 1px solid black;
+	width: 20%;
+}
+
+legend.sex
+{
+	font-size: 14px;
+	color: black;
+}
+
+fieldset label
+{
+	margin-top: 4.5px;
+	margin-left: 3px;
+}
+
+.asteriks
+{
+	color: red;
+}
+
+.white-background.black-text.change-width label
+{
+	width: 8em;
+}
+
+#ui-accordion-accordion-panel-2 div.textarea label
+{
+	width: 50%;
+}
+
+form#UserLoginForm
+{
+	float: left;
+	clear: none;
+	width: 50%;
+}
+
+.clear
+{
+	clear: both;
+}
+
+div.actionsNoButton
+{
+	margin-top: 5px;
+	float: left;
+}
+
+div.actionsNoButton.users, div.actionsNoButton.clients
+{
+	width: 15%;
+}
+
+div.actionsNoButton.clients.smaller
+{
+	width: 10%;
+}
+
+div.actionsNoButton a
+{
+	font-size: 12px;
+	margin-bottom: 2px;
+	display: block;
+}
+
+.actionsNoButton .active_link
+{
+	color: #800606;
+	cursor: default;
+}
+
+div.index, div.form, div.view
+{
+	float: left;
+	width: 67%;
+}
+
+div.users.index
+{
+	width: 60%;
+}
+div.clients.view
+{
+	width: 60%;
+}
+
+div.clients.form table tbody, div.users.index table tbody
+{
+	width: 95%;
+}
+
+div.clients.view table tbody dl
+{
+	width: 100%;
+}
+
+div.clients.view .ui-accordion-content dt
+{
+	width: 11em;
+}
+
+div.clients.view .ui-accordion-content dd
+{
+	padding-left: 2em;
+}
+
+form
+{
+	width:100%;
+}
+
+div.form.no-border, div.index.no-border
+{
+	border: 0px;
+}
+
+.related
+{
+	margin-top: 10px;
+}
+
+div.feedbacks.index, div.customize.index, div.welcome.index
+{
+	float: left;
+	width: 70%;
+}
+
+#image_upload a
+{
+	text-decoration: none;
+}
+
+.clientChecklists dl > dt
+{
+	width: 35%
+}
+
+.clientChecklists dl > dd
+{
+	margin-left: 13em;
+}
+
+#clientsResults thead, #clientsResults tbody, #usersResults thead, #usersResults tbody
+{
+	display: table-row-group;
+	cursor: pointer;
+}
+
+#clientsResults, #usersResults
+{
+	display: table;
+}
+
+#clientsResults tr td, #usersResults tr td
+{
+	border-bottom: 1px none;
+}
+
+#usersResults tr.deleted.odd, #usersResults tr.deleted.odd td.sorting_1
+{
+	background-color: black;
+	color: white;
+}
+
+#usersResults tr.deleted.even, #usersResults tr.deleted.even td.sorting_1
+{
+	background-color: #222222;
+	color: white;
+}
+
+#clientsResults_filter, #usersResults_filter
+{
+	width: 40%;
+}
+.dataTables_wrapper .ui-toolbar
+{
+	background: #333 url(images/ui-bg_dots-small_20_333333_2x2.png) 50% 50% repeat;
+	border: 1px solid #73787E;	
+}
+
+#tipArea
+{
+	width:18%;
+	float:right; 
+	display:inline-block;
+	margin-top: 3%;
+	text-align: center;
+}
+
+.tipsBox
+{
+	background:#B4CFEC; 
+	border-radius: 5px;
+	padding: 5px 5px 5px 5px;
+}
+
+form .submit input[type=submit].disabled, form .submit input[type=submit].disabled:hover
+{
+	color: silver;
+	background-color: gainsboro;
+}
+
+.dialog-duplicate.ui-widget-header
+{
+	background: #0B3E6F;
+}
+
+span.bold
+{
+	font-weight: bold;
+}
+
+span.italics
+{
+	font-style: italic;
+}
+
+span.underline
+{
+	text-decoration: underline;
+}
+
+#tip_header
+{
+	text-decoration: underline;
+	font-weight: bold;
+	font-size: 14px;
+}
+
+#sex input[type=radio]
+{
+	float: none;
+	margin-left: 10px;
+}
+
+#sex label
+{
+	margin-left: 5px;
+}
+
+span.sex
+{
+	font-weight: bold;
+}
+
+/*For the resource map */
+#radios input, #radios input[type="checkbox"]
+{
+	display: block;
+	margin: 0;
+}
+
+#radios
+{
+	width: 20%\9;
+}

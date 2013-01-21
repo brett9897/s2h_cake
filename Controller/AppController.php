@@ -57,5 +57,13 @@ class AppController extends Controller {
     public function isAuthorized($user) {
         return true;
     }
-
+    
+    public function beforeFilter() {
+        $this->set('logged_in', $this->Auth->loggedIn());
+        $this->set('current_user', $this->Auth->user());
+        $authUser = $this->Auth->user();
+        $isAtLeastAdmin = false;
+        if ($authUser['type'] == 'admin' || $authUser['type'] == 'superAdmin') $isAtLeastAdmin = true;
+        $this->set('isAtLeastAdmin', $isAtLeastAdmin);
+    }
 }
