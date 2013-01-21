@@ -145,9 +145,10 @@ class QuestionsController extends AppController {
 				$this->Session->setFlash(__('The question could not be saved. Please, try again.'));
 			}
 		}
-		$groupings = $this->Question->Grouping->getByOrderNumber('DESC');
+		$groupings = $this->Question->Grouping->getByOrderNumber('ASC');
 		$types = $this->Question->Type->find('list');
 		$this->set(compact('groupings', 'types'));
+		$this->set('selected_grouping_id', $grouping_id);
 	}
 
 /**

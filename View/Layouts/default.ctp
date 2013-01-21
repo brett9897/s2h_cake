@@ -25,10 +25,6 @@
 		<?php echo __('CakePHP: the rapid development php framework:'); ?>
 		<?php echo $title_for_layout; ?>
 	</title>
-	<?php
-		echo $this->Html->meta('icon');
-
-
 
         <?php echo $this->Html->script('jquery-1.9.0.min.js'); ?>
         <?php echo $this->Html->script('jquery-ui-1.10.0.custom.min.js'); ?>
@@ -44,6 +40,7 @@
         echo $this->Html->css('styles');
         echo $this->fetch('script');
         echo $this->Html->script("toggle.js");
+        echo $this->Html->script("button.js");
         ?>
 
         

@@ -65,5 +65,6 @@ class AppController extends Controller {
         $isAtLeastAdmin = false;
         if ($authUser['type'] == 'admin' || $authUser['type'] == 'superAdmin') $isAtLeastAdmin = true;
         $this->set('isAtLeastAdmin', $isAtLeastAdmin);
+        $this->set('tip_render', null);
     }
 }

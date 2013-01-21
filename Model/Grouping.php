@@ -20,7 +20,10 @@ class Grouping extends AppModel {
  * Model function
  *
  */
-
+public function getByOrderNumber($sort = "DESC")
+{
+	return $this->find('list', array('order' => array('Grouping.ordering' => $sort)));
+}
 
 /**
  * Validation rules
