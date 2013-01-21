@@ -135,7 +135,7 @@ class QuestionsController extends AppController {
  *
  * @return void
  */
-	public function admin_add() {
+	public function admin_add($grouping_id = null) {
 		if ($this->request->is('post')) {
 			$this->Question->create();
 			if ($this->Question->save($this->request->data)) {
@@ -145,10 +145,9 @@ class QuestionsController extends AppController {
 				$this->Session->setFlash(__('The question could not be saved. Please, try again.'));
 			}
 		}
-		$surveys = $this->Question->Survey->find('list');
-		$groupings = $this->Question->Grouping->find('list');
+		$groupings = $this->Question->Grouping->getByOrderNumber('DESC');
 		$types = $this->Question->Type->find('list');
-		$this->set(compact('surveys', 'groupings', 'types'));
+		$this->set(compact('groupings', 'types'));
 	}
 
 /**

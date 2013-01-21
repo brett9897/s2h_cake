@@ -15,6 +15,13 @@ class Grouping extends AppModel {
  */
 	public $displayField = 'label';
 
+
+/**
+ * Model function
+ *
+ */
+
+
 /**
  * Validation rules
  *

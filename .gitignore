@@ -9,3 +9,4 @@ nbproject
 nbproject/*
 !empty
 /nbproject/private/
+*.orig

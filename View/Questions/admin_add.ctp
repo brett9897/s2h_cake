@@ -3,10 +3,9 @@
 	<fieldset>
 		<legend><?php echo __('Admin Add Question'); ?></legend>
 	<?php
-		echo $this->Form->input('survey_id');
 		echo $this->Form->input('grouping_id');
 		echo $this->Form->input('internal_name');
-		echo $this->Form->input('label');
+		echo $this->Form->input('label', array('label' => 'Question'));
 		echo $this->Form->input('type_id');
 		echo $this->Form->input('ordering');
 		echo $this->Form->input('is_used');
