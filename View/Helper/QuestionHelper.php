@@ -29,7 +29,7 @@ class QuestionHelper extends AppHelper {
             
             //dropdown menu box
             case "select":
-                $output = "<select>";
+                $output = $questionLabel . "<select>";
                 foreach($question['Option'] as $option) {
                     $optionTag = "<option>". $option['label'] . "</option>";
                     $output .= $optionTag;

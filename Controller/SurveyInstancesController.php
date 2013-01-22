@@ -45,12 +45,13 @@ class SurveyInstancesController extends AppController {
     public function add() {
         if ($this->request->is('post')) {
             $this->SurveyInstance->create();
-            if ($this->SurveyInstance->save($this->request->data)) {
-                $this->Session->setFlash(__('The survey instance has been saved'));
-                $this->redirect(array('action' => 'index'));
-            } else {
+         //   if ($this->SurveyInstance->save($this->request->data)) {
+           //     $this->Session->setFlash(__('The survey instance has been saved'));
+             //   $this->redirect(array('action' => 'index'));
+           // } else {
                 $this->Session->setFlash(__('The survey instance could not be saved. Please, try again.'));
-            }
+                var_dump($this->request->data);
+           // }
         }
 
         $this->Survey->recursive = 3;
