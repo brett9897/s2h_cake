@@ -90,6 +90,7 @@ div.actionsNoButton
 {
 	margin-top: 5px;
 	float: left;
+	width: 10%;
 }
 
 div.actionsNoButton.users, div.actionsNoButton.clients

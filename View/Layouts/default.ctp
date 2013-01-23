@@ -55,14 +55,14 @@
                 <?php 
                 	if ($logged_in)
                 	{	
-                		echo $this->Html->image('mission_logo.png', array(
+                		echo $this->Html->image('cake.icon.png', array(
                 			'alt' => 'logo',
                 			'url' => array('controller' => 'welcome', 'action' => 'index')
                 		));
                 	}
                 	else
                 	{
-                		echo $this->Html->image('mission_logo.png', array('alt' => 'logo'));
+                		echo $this->Html->image('cake.icon.png', array('alt' => 'logo'));
                 	}
                 ?>
 
@@ -81,7 +81,7 @@
                                 jQuery('#top_links').removeClass('do_not_show');
                             });
                         </script>
-                        <?php echo $this->Html->link('Sign Out', array('controller' => 'users', 'action' => 'logout')); ?>
+                        <?php echo $this->Html->link('Sign Out', array('controller' => 'users', 'action' => 'logout', 'admin' => false)); ?>
                     <?php endif; ?>
                 </div>
 

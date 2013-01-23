@@ -28,6 +28,15 @@ class UsersController extends AppController {
     }
 
     /**
+     * Brett - Workaround for when an admin's session timesout.
+     */
+    public function admin_login()
+    {
+        $this->login();
+        $this->render('login');
+    }
+
+    /**
      * index method
      *
      * @return void

@@ -7,6 +7,7 @@ App::uses('AppController', 'Controller');
  */
 class QuestionsController extends AppController {
 
+	public $uses = array( 'Question', 'Grouping', 'Type', 'Validation' );
 /**
  * index method
  *
@@ -147,8 +148,17 @@ class QuestionsController extends AppController {
 		}
 		$groupings = $this->Question->Grouping->getByOrderNumber('ASC');
 		$types = $this->Question->Type->find('list');
+		$validations = $this->Validation->find('all');
+
+		$validation_options = array();
+		foreach( $validations as $validation )
+		{
+			$validation_options[$validation['Validation']['regex']] = $validation['Validation']['label'];
+		}
+
 		$this->set(compact('groupings', 'types'));
 		$this->set('selected_grouping_id', $grouping_id);
+		$this->set('validation_options', $validation_options);
 	}
 
 /**
@@ -176,7 +186,8 @@ class QuestionsController extends AppController {
 		$surveys = $this->Question->Survey->find('list');
 		$groupings = $this->Question->Grouping->find('list');
 		$types = $this->Question->Type->find('list');
-		$this->set(compact('surveys', 'groupings', 'types'));
+		$validations = $this->Validation->find('list');
+		$this->set(compact('surveys', 'groupings', 'types', 'validations'));
 	}
 
 /**
