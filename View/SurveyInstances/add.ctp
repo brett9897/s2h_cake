@@ -11,8 +11,15 @@
     <!-- personal information from the client table -->
     <h3>Personal Information</h3>
     <?php
+    echo $this->Form->input('survey_id', array(
+        'label' => 'Your Active Survey',
+        'options' => array(
+            $activeSurvey['Survey']['id'] => $activeSurvey['Survey']['id']
+        )
+    ));
     echo $this->Form->input('first_name');
     echo $this->Form->input('last_name');
+    echo $this->Form->input('organization_id');
     echo $this->Form->input('ssn');
     echo $this->Form->input('dob');
     ?>
@@ -21,23 +28,13 @@
     <?php
     foreach ($groupings as $grouping):
         
-        if ($grouping['label'] != 'Personal Information'): echo "<h3>" . $grouping['label'] . "</h3><br />"; endif;
+        //printing out grouping label
+        if ($grouping['label'] != 'Personal Information'): 
+            echo "<h3>" . $grouping['label'] . "</h3><br />"; 
+        endif;
+        
         foreach ($grouping['Question'] as $question):
-
-            $options = array();
-            
-            if (!empty($question['Option'])):
-                $i = 0;
-                foreach ($question['Option'] as $individualOption):
-                    $options[$i] = $individualOption['label'];
-                    $i++;
-                endforeach;
-            endif;
-
-            echo $this->Form->input($question['label'], array(
-                'type' => $question['Type']['label'],
-                'options' => $options
-            ));
+            echo $this->Question->giveMeInputString($question);
         endforeach;
         echo "<br />";
     endforeach;

@@ -9,7 +9,7 @@ App::uses('AppController', 'Controller');
  */
 class SurveyInstancesController extends AppController {
 
-    public $uses = array('Grouping', 'Survey', 'SurveyInstance', 'Client', 'Question', 'Type');
+    public $uses = array('Grouping', 'Survey', 'SurveyInstance', 'Client', 'Question', 'Type', 'Organization', 'Answer', 'Option');
     public $helpers = array('Question');
 
     /**
@@ -43,17 +43,7 @@ class SurveyInstancesController extends AppController {
      * @return void
      */
     public function add() {
-        if ($this->request->is('post')) {
-            $this->SurveyInstance->create();
-         //   if ($this->SurveyInstance->save($this->request->data)) {
-           //     $this->Session->setFlash(__('The survey instance has been saved'));
-             //   $this->redirect(array('action' => 'index'));
-           // } else {
-                $this->Session->setFlash(__('The survey instance could not be saved. Please, try again.'));
-                var_dump($this->request->data);
-           // }
-        }
-
+        /*         * *************************** RETRIEVING DATA *********************** */
         $this->Survey->recursive = 3;
         $activeSurvey = $this->SurveyInstance->Survey->find('first', array(
             'conditions' => array(
@@ -63,7 +53,61 @@ class SurveyInstancesController extends AppController {
 
         $groupings = $activeSurvey['Grouping'];
         $personalInformationGrouping = $groupings[0];
-        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
+
+        //used to fill out the organization drop down box
+        $organizations = $this->Organization->find('list');
+        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
+
+        /*         * **************************** POST ********************************* */
+        if ($this->request->is('post')) {
+
+            //first, we need to save data into the client table
+            $this->Client->create();
+            if ($this->Client->save($this->request->data)) {
+
+                //then we need to create the survey instance
+                $this->SurveyInstance->create();
+                $user_id = $this->Auth->user();
+                $user_id = $user_id['id'];
+                $data = array('SurveyInstance' => array(
+                        'survey_id' => $activeSurvey['Survey']['id'],
+                        'client_id' => $this->Client->id,
+                        'user_id' => $user_id,
+                        'vi_score' => 0,
+                        'is_Deleted' => 0
+                        ));
+                $this->SurveyInstance->save($data['SurveyInstance']);
+
+                //then we need to save all the answers
+                $data['Answer'] = array();
+                foreach ($groupings as $grouping) {
+                    $i = 0;
+                    foreach ($grouping['Question'] as $question) {
+                        $values = $this->request->data['Client'][$question['label']];
+                        if (gettype($values) != 'array')
+                            $values = array($values);
+                        foreach ($values as $value) {
+                            $this->Answer->create();
+                            $data['Answer'][$i] = array(
+                                'question_id' => $question['id'],
+                                'client_id' => $this->Client->id,
+                                'value' => $value,
+                                'isDeleted' => 0,
+                            );
+                            $this->Answer->save($data['Answer'][$i]);
+                        }
+                    };
+                }
+            }
+
+
+            $this->Session->setFlash(__('This Survey has been saved!'));
+            //   $this->redirect(array('action' => 'index'));
+        } else {
+            $this->Session->setFlash(__('The survey instance could not be saved. Please, try again.'));
+        }
+        var_dump($this->request->data);
+        // }
     }
 
     /**
