@@ -1,29 +1,41 @@
-<div class="surveyInstances form">
-<?php echo $this->Form->create('SurveyInstance'); ?>
-	<fieldset>
-		<legend><?php echo __('Edit Survey Instance'); ?></legend>
-	<?php
-		echo $this->Form->input('id');
-		echo $this->Form->input('survey_id');
-		echo $this->Form->input('client_id');
-		echo $this->Form->input('user_id');
-		echo $this->Form->input('vi_score');
-		echo $this->Form->input('isDeleted');
-	?>
-	</fieldset>
-<?php echo $this->Form->end(__('Submit')); ?>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
+<?php include("surveyInstanceDiv.ctp"); ?>
 
-		<li><?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('SurveyInstance.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('SurveyInstance.id'))); ?></li>
-		<li><?php echo $this->Html->link(__('List Survey Instances'), array('action' => 'index')); ?></li>
-		<li><?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Clients'), array('controller' => 'clients', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Client'), array('controller' => 'clients', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
-	</ul>
+<div class="surveyInstances form">
+    <h2>Edit Survey</h2>
+    <?php echo $this->Form->create('Client'); ?>
+
+    <!-- personal information from the client table -->
+    <h3>Personal Information</h3>
+    <?php
+    echo $this->Form->input('survey_id', array(
+        'label' => 'Your Active Survey',
+        'options' => array(
+            $activeSurvey['Survey']['id'] => $activeSurvey['Survey']['id']
+        )
+    ));
+    echo $this->Form->input('first_name');
+    echo $this->Form->input('last_name');
+    echo $this->Form->input('organization_id');
+    echo $this->Form->input('ssn');
+    echo $this->Form->input('dob');
+    ?>
+
+    <!-- iterating through all the groupings -->
+    <?php
+    foreach ($groupings as $grouping):
+
+        //printing out grouping label
+        if ($grouping['label'] != 'Personal Information'):
+            echo "<h3>" . $grouping['label'] . "</h3><br />";
+        endif;
+
+        foreach ($grouping['Question'] as $question):
+            echo $this->Question->giveMeInputString($question);
+        endforeach;
+        echo "<br />";
+    endforeach;
+    ?>
+
+    <?php echo $this->Form->end(__('Submit')); ?>
 </div>
+

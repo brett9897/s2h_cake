@@ -1,8 +1,4 @@
-<div class="actionsNoButton">
-
-    <?php echo $this->Html->link(__('My Surveys'), array('action' => 'index')); ?><br />
-
-</div>
+<?php include("surveyInstanceDiv.ctp"); ?>
 
 <div class="surveyInstances form">
     <h2>New Survey</h2>
@@ -27,12 +23,12 @@
     <!-- iterating through all the groupings -->
     <?php
     foreach ($groupings as $grouping):
-        
+
         //printing out grouping label
-        if ($grouping['label'] != 'Personal Information'): 
-            echo "<h3>" . $grouping['label'] . "</h3><br />"; 
+        if ($grouping['label'] != 'Personal Information'):
+            echo "<h3>" . $grouping['label'] . "</h3><br />";
         endif;
-        
+
         foreach ($grouping['Question'] as $question):
             echo $this->Question->giveMeInputString($question);
         endforeach;
