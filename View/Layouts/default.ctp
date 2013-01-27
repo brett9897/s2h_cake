@@ -137,9 +137,9 @@
                 <?php endif; ?>
             </div>
         </div>
-        
+    
+        <?php echo $this->element('sql_dump'); ?>
         <!-- Lee commented out because I don't know what this does
-        <?php //echo $this->element('sql_dump'); ?>
         <div class="do_not_show">
             <?php //echo $this->Html->link('Resources', array('controller' => 'resources', 'action' => 'index'), array('id' => 'resources')); ?>
             <?php //echo $this->Html->link('Organizations', array('controller' => 'organizations', 'action' => 'index'), array('id' => 'organizations')); ?>

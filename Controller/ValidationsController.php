@@ -7,6 +7,7 @@ App::uses('AppController', 'Controller');
  */
 class ValidationsController extends AppController {
 
+	public $uses = array('InternalValidation');
 /**
  * index method
  *

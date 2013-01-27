@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
  */
 class QuestionsController extends AppController {
 
-	public $uses = array( 'Question', 'Grouping', 'Type', 'Validation' );
+	public $uses = array( 'Question', 'Grouping', 'Type', 'InternalValidation', 'Option' );
 /**
  * index method
  *
@@ -33,6 +33,15 @@ class QuestionsController extends AppController {
 		$this->set('question', $this->Question->read(null, $id));
 	}
 
+	public function beforeFilter()
+	{
+		parent::beforeFilter();
+
+		$this->Security->unlockedFields = array('validation_1', 'validation_2', 'validation_3', 'validation_4',
+			'options');
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = false;
+	}
 /**
  * add method
  *
@@ -139,7 +148,30 @@ class QuestionsController extends AppController {
 	public function admin_add($grouping_id = null) {
 		if ($this->request->is('post')) {
 			$this->Question->create();
+			var_dump($this->request->data);
+
+			//pull out options for later use
+			$options = explode(',', $this->request->data['Option']['options']);
+			unset( $this->request->data['Option'] );
+
+			//get the survey id
+			$grouping = $this->Question->Grouping->read(null, $grouping_id);
+			$this->request->data['Question']['survey_id'] = $grouping['Grouping']['survey_id'];
+
 			if ($this->Question->save($this->request->data)) {
+				
+				//now try to save options
+				$save_array = array();
+				$save_array['Option'] = array();
+				$save_array['Option']['question_id'] = $this->Question->id;
+
+				foreach( $options as $option )
+				{
+					$this->Option->create();
+					$save_array['Option']['label'] = $option;
+					$this->Option->save($save_array);
+				}
+
 				$this->Session->setFlash(__('The question has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -148,12 +180,12 @@ class QuestionsController extends AppController {
 		}
 		$groupings = $this->Question->Grouping->getByOrderNumber('ASC');
 		$types = $this->Question->Type->find('list');
-		$validations = $this->Validation->find('all');
+		$validations = $this->InternalValidation->find('all');
 
 		$validation_options = array();
 		foreach( $validations as $validation )
 		{
-			$validation_options[$validation['Validation']['regex']] = $validation['Validation']['label'];
+			$validation_options[$validation['InternalValidation']['regex']] = $validation['InternalValidation']['label'];
 		}
 
 		$this->set(compact('groupings', 'types'));
@@ -186,7 +218,7 @@ class QuestionsController extends AppController {
 		$surveys = $this->Question->Survey->find('list');
 		$groupings = $this->Question->Grouping->find('list');
 		$types = $this->Question->Type->find('list');
-		$validations = $this->Validation->find('list');
+		$validations = $this->InternalValidation->find('list');
 		$this->set(compact('surveys', 'groupings', 'types', 'validations'));
 	}
 

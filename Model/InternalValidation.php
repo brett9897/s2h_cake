@@ -4,8 +4,10 @@ App::uses('AppModel', 'Model');
  * Validation Model
  *
  */
-class Validation extends AppModel {
+class InternalValidation extends AppModel {
 
+
+	public $useTable = 'validations';
 /**
  * Display field
  *

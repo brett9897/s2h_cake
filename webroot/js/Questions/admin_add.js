@@ -1,25 +1,24 @@
 $(document).ready(function (){
 	$('#QuestionTypeId').change(function () {
+		performChange();	
+	});
+
+	function performChange()
+	{
 		var type = $('#QuestionTypeId > option:selected').text();
 		if( type == "select" || type == "radio" )
 		{
-			$('#QuestionTypeId').parent().after(
-				'<div id="added_options" class="input text required">' +
-					'<label for="options">Options</label>' +
-					'<input type="text" size="40" name="data[Question][options]/>' +
-					'<span class="help">Comma separate all of the options you want.</span>' +
-				'</div>'
-			);
+			$('#added_options').removeClass('do_not_show');
 		}
 		else
 		{
-			if( $('#added_options').length > 0 )
-			{
-				$('#added_options').remove();
-			}
+			$('#added_options').addClass('do_not_show');
+			$('#added_options > input').val('');
 		}
-	});
+	}
 
+	//onload make sure everything is good.
+	performChange();
 
 	/* Click method for adding a validation */
 	var count = 1;
@@ -81,9 +80,18 @@ $(document).ready(function (){
 			var current = $(this).parent().parent().next();
 			while( current.length > 0 )
 			{
-				alert(current.find('input[type=hidden]').attr('name'));
+				var input = current.find('input[type=hidden]');
+				var remove_image = input.next().find('.remove_image');
+				var num = parseInt(remove_image.text()) - 1;
+
+				remove_image.text(num);
+				input.attr('name', 'data[Question][validation_' + num + ']');
+
 				current = current.next();
-			}	
+			}
+
+			$(this).parent().parent().remove();
+			count--;	
 		}
 		else
 		{
