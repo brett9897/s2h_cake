@@ -1,3 +1,10 @@
+<style>
+    dd {
+        padding-left: 15px;
+    }
+
+</style>
+
 <?php include("surveyInstanceDiv.ctp"); ?>
 
 <div class="surveyInstances view">
@@ -32,8 +39,10 @@
             <dt><?php echo __($question['label']); ?></dt>
             <dd>
                 <?php foreach ($question['Answer'] as $answer): ?>
-                    <?php echo h($answer['value']); ?>
-                    <br />
+                    <?php if ($answer['survey_instance_id'] == $id): ?>
+                        <?php echo h($answer['value']); ?>
+                        <br />
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </dd>
         <?php endforeach; ?>

@@ -92,10 +92,12 @@
                 <ul id="top_links" class="do_not_show">
                     <?php if ($isAtLeastAdmin): ?>
                         <li><input type="radio" id="radioSurveyAdmin" name="radioSurveyAdmin" /><label for="radioSurveyAdmin">Surveys</label></li>
+                        <li><input type="radio" id="radioReportsAdmin" name="radioReportsAdmin" /><label for="radioReportsAdmin">Reports</label></li>
                     <?php else: ?>
                         <li><input type="radio" id="radioSurvey" name="radioSurvey" /><label for="radioSurvey">Surveys</label></li>
+                        <li><input type="radio" id="radioReports" name="radioReports" /><label for="radioReports">Reports</label></li>
                     <?php endif; ?>
-                    <li><input type="radio" id="radio3" name="radio" /><label for="radio3">Reports</label></li>
+                    
                 </ul>
 
             </div>

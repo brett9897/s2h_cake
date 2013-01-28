@@ -5,7 +5,7 @@ class QuestionHelper extends AppHelper {
     public $helpers = array('Html', 'Form');
 
     public function giveMeInputString($question) {
-        $questionLabel = $question['label'];
+        $internalName = $question['internal_name'];
         $type = $question['Type']['label'];
         $output;
 
@@ -13,12 +13,26 @@ class QuestionHelper extends AppHelper {
 
             //text fields or text areas
             case "text":
-
-            //falling through
             case "textarea":
-                $output = $this->Form->input($questionLabel, array(
-                    'type' => $type
+                $output = $this->Form->input($internalName, array(
+                    'type' => $type,
+                    'label' => ''
                         ));
+                break;
+            
+            //text fields with refused option
+            case "textWithRefused":
+            case "textAreaWithRefused":
+                $output = $this->Form->input($internalName, array(
+                    'type' => $type,
+                    'label' => ''
+                        ));
+                $output .= "<br />";
+                $output .= $this->Form->input($internalName.' - REFUSED', array(
+                    'type' => 'checkbox',
+                    'label' => 'Refused',
+                        ));
+
                 break;
 
             //multi-select checkboxes
@@ -32,8 +46,9 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($questionLabel, array(
+                $output = $this->Form->input($internalName, array(
                     'multiple' => 'checkbox',
+                    'label' => '',
                     'type' => 'select',
                     'options' => $options
                         ));
@@ -41,8 +56,6 @@ class QuestionHelper extends AppHelper {
 
             //dropdown menu box or radio buttons
             case "select":
-                
-            //falling through
             case "radio":
                 $options = array();
                 if (!empty($question['Option'])) {
@@ -53,9 +66,34 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($questionLabel, array(
+                $output = $this->Form->input($internalName, array(
                     'type' => $type,
-                    'options' => $options
+                    'options' => $options,
+                    'label' => '',
+                    'legend' => false
+                        ));
+                break;
+                
+            //combo box with other text field
+            case "selectWithOther":
+                $options = array();
+                if (!empty($question['Option'])) {
+                    $i = 0;
+                    foreach ($question['Option'] as $individualOption) {
+                        $options[$individualOption['label']] = $individualOption['label'];
+                        $i++;
+                    }
+                }
+                
+                $output = $this->Form->input($internalName, array(
+                    'type' => 'select',
+                    'options' => $options,
+                    'label' => ''
+                        ));
+                $output .= "<br />";
+                $output .= $this->Form->input($internalName . " - OTHER", array(
+                    'type' => 'text',
+                    'label' => 'Other'
                         ));
                 break;
         }

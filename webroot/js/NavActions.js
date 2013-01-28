@@ -12,7 +12,7 @@ jQuery(document).ready(function(){
     
     jQuery("#radioSurvey").click(function () {
 
-        location.href = global.base_url + "/survey_instances/add";
+        location.href = global.base_url + "/survey_instances/index";
 
     });
     
@@ -23,9 +23,15 @@ jQuery(document).ready(function(){
     });
     
     
-    jQuery("#radio3").click(function () {
+    jQuery("#radioReports").click(function () {
         
-        location.href = global.base_url + "/organizations";
+        location.href = global.base_url + "/clients/index";
+        
+    });
+    
+    jQuery("#radioReportsAdmin").click(function () {
+        
+        location.href = global.base_url + "/admin/clients/index";
         
     });
     	    

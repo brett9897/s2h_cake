@@ -49,10 +49,10 @@ class SurveyInstancesController extends AppController {
         }
         $this->SurveyInstance->recursive = 4;
         $this->set('surveyInstance', $this->SurveyInstance->find('first', array(
-                'conditions' => array(
-                    'Survey.isActive' => 1,
-                    'SurveyInstance.id' => $id
-                ))));
+                    'conditions' => array(
+                        'SurveyInstance.id' => $id,
+                        ))));
+        $this->set('id', $id);
     }
 
     /**
@@ -61,10 +61,10 @@ class SurveyInstancesController extends AppController {
      * @return void
      */
     public function add() {
-        var_dump($this->request->data);
         /*         * *************************** RETRIEVING DATA *********************** */
+        var_dump($this->Session->read('requestData'));
         $this->Survey->recursive = 3;
-        $activeSurvey = $this->SurveyInstance->Survey->find('first', array(
+        $activeSurvey = $this->Survey->find('first', array(
             'conditions' => array(
                 'isActive' => 1
             )
@@ -79,6 +79,8 @@ class SurveyInstancesController extends AppController {
 
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
+
+            $this->Session->write('requestData', $this->request->data);
 
             //first, we need to save data into the client table
             $this->Client->create();
@@ -102,30 +104,68 @@ class SurveyInstancesController extends AppController {
                 foreach ($groupings as $grouping) {
                     $i = 0;
                     foreach ($grouping['Question'] as $question) {
-                        $values = $this->request->data['Client'][$question['label']];
+                        $values = $this->request->data['Client'][$question['internal_name']];
                         if (gettype($values) != 'array')
                             $values = array($values);
+
                         foreach ($values as $value) {
                             $this->Answer->create();
                             $data['Answer'][$i] = array(
                                 'question_id' => $question['id'],
                                 'client_id' => $this->Client->id,
+                                'survey_instance_id' => $this->SurveyInstance->id,
                                 'value' => $value,
                                 'isDeleted' => 0,
                             );
                             $this->Answer->save($data['Answer'][$i]);
                         }
-                    };
+
+                        /* Broken -- I'm sorry
+                          //Lee - this is inefficient, but I'm pressed for time
+                          foreach ($this->request->data['Client'] as $key => $value) {
+                          if ($this->endsWith($key, ' - REFUSED') && $value == 1) {
+                          $answerMinusRefused = str_replace($key, ' - REFUSED');
+                          $assocQuestion = $this->Question->find('first', array(
+                          'internal_name' => $answerMinusRefused
+                          ));
+                          $newData = array('Answer' => array(
+                          0 => array(
+                          'question_id' => $assocQuestion['Question']['id'],
+                          'client_id' => $this->Client->id,
+                          'survey_instance_id' => $this->SurveyInstance->id,
+                          'value' => 'REFUSED',
+                          'isDeleted' => 0,
+                          )));
+                          $this->Answer->save($newData['Answer'][0]);
+                          }
+
+                          if ($this->endsWith($key, ' - OTHER') && !empty($value)) {
+                          $answerMinusOther = str_replace($key, ' - Other');
+                          $assocQuestion = $this->Question->find('first', array(
+                          'internal_name' => $answerMinusOther
+                          ));
+                          $newData = array('Answer' => array(
+                          0 => array(
+                          'question_id' => $assocQuestion['Question']['id'],
+                          'client_id' => $this->Client->id,
+                          'survey_instance_id' => $this->SurveyInstance->id,
+                          'value' => $value,
+                          'isDeleted' => 0,
+                          )));
+                          $this->Answer->save($newData['Answer'][0]);
+                          }
+                         * */
+                    }
                 }
+
+
+
+                $this->Session->setFlash(__('This Survey has been saved!'));
+                $this->redirect(array('action' => 'index'));
+            } else {
+                $this->Session->setFlash(__('The survey instance could not be saved. Please, try again.'));
             }
-
-
-            $this->Session->setFlash(__('This Survey has been saved!'));
-            //   $this->redirect(array('action' => 'index'));
-        } else {
-            $this->Session->setFlash(__('The survey instance could not be saved. Please, try again.'));
         }
-        // }
     }
 
     /**
@@ -173,7 +213,7 @@ class SurveyInstancesController extends AppController {
                         'question_id' => $question['id']
                     )
                         ));
-                $dataArray['Client'][$question['label']] = $answer['Answer']['value'];
+                $dataArray['Client'][$question['internal_name']] = $answer['Answer']['value'];
             }
         }
         $this->data = $dataArray;
@@ -348,6 +388,16 @@ class SurveyInstancesController extends AppController {
         }
         $this->Session->setFlash(__('Survey instance was not deleted'));
         $this->redirect(array('action' => 'index'));
+    }
+
+    //Lee -- cannot beileve PHP doesn't have this built in
+    function endsWith($haystack, $needle) {
+        $length = strlen($needle);
+        if ($length == 0) {
+            return true;
+        }
+
+        return (substr($haystack, -$length) === $needle);
     }
 
 }
