@@ -22,7 +22,7 @@
 <head>
 	<?php echo $this->Html->charset(); ?>
 	<title>
-		<?php echo __('CakePHP: the rapid development php framework:'); ?>
+		<?php echo __('S2H 2.0'); ?>
 		<?php echo $title_for_layout; ?>
 	</title>
 
@@ -52,20 +52,18 @@
         <div id="container">
 
             <div id="header">
+                <h1>
                 <?php 
                 	if ($logged_in)
                 	{	
-                		echo $this->Html->image('cake.icon.png', array(
-                			'alt' => 'logo',
-                			'url' => array('controller' => 'welcome', 'action' => 'index')
-                		));
+                		echo $this->Html->link('S2H 2.0', array('controller' => 'welcome', 'action' => 'index'));
                 	}
                 	else
                 	{
-                		echo $this->Html->image('cake.icon.png', array('alt' => 'logo'));
+                		echo $this->Html->link('S2H 2.0', array('controller' => 'welcome', 'action' => 'index'));
                 	}
                 ?>
-
+                </h1>
                 <?php
                 /*  * **************************************** 
                  *  Lee: this snippet below fixes the "login"/"logout"
