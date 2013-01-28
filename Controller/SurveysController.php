@@ -7,6 +7,23 @@ App::uses('AppController', 'Controller');
  */
 class SurveysController extends AppController {
 
+	public function isAuthorized($user = null)
+	{
+		//non admin pages can be accessed by anyone
+		if( empty($this->request->params['admin']) )
+		{
+			return true;
+		}
+
+		//only admins can access admin actions
+		if( isset($this->request->params['admin']) )
+		{
+			return (bool)($user['type'] === 'admin' || $user['type'] === 'superAdmin');
+		}
+
+		//default deny
+		return false;
+	}
 /**
  * index method
  *

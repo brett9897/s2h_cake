@@ -1,3 +1,7 @@
+<div class="actionsNoButton">
+	<?php echo $this->Html->link(__('List Surveys'), array('action' => 'index')); ?><br/>
+	<?php echo $this->Html->link(__('New Survey'), array('action' => 'add')); ?><br/>
+</div>
 <div class="surveys form">
 <?php echo $this->Form->create('Survey'); ?>
 	<fieldset>
@@ -8,11 +12,4 @@
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('List Surveys'), array('action' => 'index')); ?></li>
-		<li><?php echo $this->Html->link(__('New Survey'), array('action' => 'add')); ?></li>
-	</ul>
 </div>

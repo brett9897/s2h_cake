@@ -8,6 +8,37 @@ App::uses('AppController', 'Controller');
 class QuestionsController extends AppController {
 
 	public $uses = array( 'Question', 'Grouping', 'Type', 'InternalValidation', 'Option' );
+	public $helpers = array('Binary');
+
+
+	public function isAuthorized($user = null)
+	{
+		//non admin pages can be accessed by anyone
+		if( empty($this->request->params['admin']) )
+		{
+			return true;
+		}
+
+		//only admins can access admin actions
+		if( isset($this->request->params['admin']) )
+		{
+			return (bool)($user['type'] === 'admin' || $user['type'] === 'superAdmin');
+		}
+
+		//default deny
+		return false;
+	}
+
+	public function beforeFilter()
+	{
+		parent::beforeFilter();
+
+		$this->Security->unlockedFields = array('validation_1', 'validation_2', 'validation_3', 'validation_4',
+			'options');
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = false;
+	}
+
 /**
  * index method
  *
@@ -33,24 +64,18 @@ class QuestionsController extends AppController {
 		$this->set('question', $this->Question->read(null, $id));
 	}
 
-	public function beforeFilter()
-	{
-		parent::beforeFilter();
-
-		$this->Security->unlockedFields = array('validation_1', 'validation_2', 'validation_3', 'validation_4',
-			'options');
-		$this->Security->validatePost = false;
-		$this->Security->csrfCheck = false;
-	}
-
 /**
  * admin_index method
  *
  * @return void
  */
-	public function admin_index() {
+	public function admin_index($id = null) {
 		$this->Question->recursive = 0;
-		$this->set('questions', $this->paginate());
+		if( $id != null )
+		{
+			$this->paginate = array( 'conditions' => array( 'Question.grouping_id' => $id));
+		}
+		$this->set('questions', $this->paginate('Question'));
 	}
 
 /**
@@ -65,7 +90,25 @@ class QuestionsController extends AppController {
 		if (!$this->Question->exists()) {
 			throw new NotFoundException(__('Invalid question'));
 		}
-		$this->set('question', $this->Question->read(null, $id));
+
+		$data = $this->Question->read(null, $id);
+
+		for( $i=1; $i < 5; $i++ )
+		{
+			if( $data['Question']['validation_' . $i] != null )
+			{
+				$response = $this->InternalValidation->find('all', array( 
+					'fields' => array('label'), 
+					'conditions' => array('regex' => $data['Question']['validation_' . $i])
+					)
+				); 
+
+				$data['Question']['validation_' . $i] = $response[0]['InternalValidation']['label'];
+				
+			}
+		}
+
+		$this->set('question', $data);
 	}
 
 /**
@@ -75,6 +118,12 @@ class QuestionsController extends AppController {
  */
 	public function admin_add($grouping_id = null) {
 		if ($this->request->is('post')) {
+
+			if( $grouping_id == null )
+			{
+				$grouping_id = $this->request->data['Question']['grouping_id'];
+			}
+
 			$this->Question->create();
 
 			//pull out options for later use
@@ -168,30 +217,27 @@ class QuestionsController extends AppController {
 
 			$options = substr($options, 0, -1);
 			$this->request->data['Option']['options'] = $options;
-
-			$currentValidations = array();
-			for( $i=1; $i < 5; $i++ )
-			{
-				if( $this->request->data['Question']['validation_' . $i] != null )
-				{
-					$response = $this->InternalValidation->find('all', 
-						array( 
-							'condtions' => array(
-								'regex' => $this->request->data['Question']['validation_' . $i]
-							)
-						)
-					);
-
-					$currentValidations[] = array( 
-						'label' => $response['InternalValidation']['label'],
-						'regex' => $response['InternalValidation']['regex']
-					);
-				}
-			}
-
-			$this->set('currentValidations', $currentValidations);
 		}
 		
+		$currentValidations = array();
+		for( $i=1; $i < 5; $i++ )
+		{
+			if( $this->request->data['Question']['validation_' . $i] != null )
+			{
+				$response = $this->InternalValidation->find('all', array( 
+					'fields' => array('regex', 'label'), 
+					'conditions' => array('regex' => $this->request->data['Question']['validation_' . $i])
+					)
+				); 
+
+				$currentValidations[] = array( 
+					'label' => $response[0]['InternalValidation']['label'],
+					'regex' => $response[0]['InternalValidation']['regex']
+				);
+			}
+		}
+
+		$this->set('currentValidations', $currentValidations);
 
 		$groupings = $this->Question->Grouping->getByOrderNumber('ASC');
 		$types = $this->Question->Type->find('list');

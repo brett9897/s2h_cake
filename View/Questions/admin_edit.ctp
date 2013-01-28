@@ -37,14 +37,16 @@
 			<span id="plus_image">plus sign</span><span id="words">Click to add validations</span>
 		</div>
 		<div id="validation_text">
+		<?php $count = 1; ?>
 		<?php if( isset($currentValidations) ): ?>
 			<?php foreach( $currentValidations as $validation ): ?>
 				<div class="validation_entry"> 
 					<input type="hidden" id="validation_<?php echo $count;?>" 
 						name="data[Question][validation_<?php echo $count;?>]" 
-						value="' + $("#validation_id").val() + '" />' +
-						'<p><span class="text">' + $("#validation_id > option:selected").text() + '</span><span class="remove_image">' + count + '</span></p>' +
+						value="<?php echo $validation['regex'];?>" />
+					<p><span class="text"><?php echo $validation['label'];?></span><span class="remove_image"><?php echo $count;?></span></p>
 				</div>
+				<?php $count++; ?>
 			<?php endforeach; ?>
 		<?php endif;?>
 		</div>
