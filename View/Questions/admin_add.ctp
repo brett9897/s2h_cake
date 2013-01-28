@@ -13,6 +13,22 @@
 		echo $this->Form->input('internal_name');
 		echo $this->Form->input('label', array('label' => 'Question'));
 		echo $this->Form->input('type_id');
+	?>
+		<?php if( isset( $this->data['Option']['options'] ) && $this->data['Option']['options'] != '' ): ?>
+			<div id="added_options" class="input text required">
+				<label for="options">Options</label>
+				<input type="text" size="40" name="data[Option][options]" 
+					value="<?php echo $this->data['Option']['options']; ?>"/>
+				<span class="help">Comma separate all of the options you want.</span>
+			</div>	
+		<?php else: ?>
+			<div id="added_options" class="input text required do_not_show">
+				<label for="options">Options</label>
+				<input type="text" size="40" name="data[Option][options]"/>
+				<span class="help">Comma separate all of the options you want.</span>
+			</div>
+		<?php endif; ?>
+	<?php
 		echo $this->Form->input('ordering');
 		echo $this->Form->input('is_used');
 		echo $this->Form->input('is_required');
@@ -20,7 +36,9 @@
 		<div id="validations">
 			<span id="plus_image">plus sign</span><span id="words">Click to add validations</span>
 		</div>
-		<div id="validation_text"></div>
+
+		<div id="validation_text">
+		</div>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
 </div>
