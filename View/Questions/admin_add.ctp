@@ -36,7 +36,9 @@
 		<div id="validations">
 			<span id="plus_image">plus sign</span><span id="words">Click to add validations</span>
 		</div>
-		<div id="validation_text"></div>
+
+		<div id="validation_text">
+		</div>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
 </div>

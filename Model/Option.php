@@ -14,6 +14,14 @@ class Option extends AppModel {
  */
 	public $displayField = 'label';
 
+
+	public function deleteAllOptionsForQuestion($id)
+	{
+		$conditions = array('Option.question_id' => $id );
+		$this->deleteAll($conditions, false);
+	}
+
+
 /**
  * Validation rules
  *

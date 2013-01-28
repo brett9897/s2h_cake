@@ -1,3 +1,16 @@
+<div class="actionsNoButton">
+	<?php echo $this->Html->link(__('New Question'), array('action' => 'add')); ?> <br/>
+	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> <br/>
+	<?php echo $this->Html->link(__('List Groupings'), array('controller' => 'groupings', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add')); ?> <br/>
+	<?php echo $this->Html->link(__('List Types'), array('controller' => 'types', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New Type'), array('controller' => 'types', 'action' => 'add')); ?> <br/>
+	<?php echo $this->Html->link(__('List Answers'), array('controller' => 'answers', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New Answer'), array('controller' => 'answers', 'action' => 'add')); ?> <br/>
+	<?php echo $this->Html->link(__('List Options'), array('controller' => 'options', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New Option'), array('controller' => 'options', 'action' => 'add')); ?> <br/>
+</div>
 <div class="questions index">
 	<h2><?php echo __('Questions'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
@@ -65,20 +78,4 @@
 		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
 	?>
 	</div>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('New Question'), array('action' => 'add')); ?></li>
-		<li><?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Groupings'), array('controller' => 'groupings', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Types'), array('controller' => 'types', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Type'), array('controller' => 'types', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Answers'), array('controller' => 'answers', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Answer'), array('controller' => 'answers', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Options'), array('controller' => 'options', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Option'), array('controller' => 'options', 'action' => 'add')); ?> </li>
-	</ul>
 </div>
