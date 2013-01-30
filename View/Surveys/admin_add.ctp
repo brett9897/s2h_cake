@@ -7,7 +7,10 @@
 	<fieldset>
 		<legend><?php echo __('Admin Add Survey'); ?></legend>
 	<?php
-		echo $this->Form->input('organization_id');
+		if( isset( $organizations ) )
+		{
+			echo $this->Form->input('organization_id');
+		}
 		echo $this->Form->input('label');
 	?>
 	</fieldset>

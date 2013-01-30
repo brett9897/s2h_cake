@@ -6,7 +6,7 @@ $(document).ready(function (){
 	function performChange()
 	{
 		var type = $('#QuestionTypeId > option:selected').text();
-		if( type == "select" || type == "radio" || type == "checkbox")
+		if( type == "select" || type == "radio" || type == "checkbox" || type == "selectWithOther")
 		{
 			$('#added_options').removeClass('do_not_show');
 		}

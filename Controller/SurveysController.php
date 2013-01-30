@@ -50,75 +50,6 @@ class SurveysController extends AppController {
 	}
 
 /**
- * add method
- *
- * @return void
- */
-/*	public function add() {
-		if ($this->request->is('post')) {
-			$this->Survey->create();
-			if ($this->Survey->save($this->request->data)) {
-				$this->Session->setFlash(__('The survey has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The survey could not be saved. Please, try again.'));
-			}
-		}
-		$organizations = $this->Survey->Organization->find('list');
-		$this->set(compact('organizations'));
-	}
-*/
-/**
- * edit method
- *
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-/*	public function edit($id = null) {
-		$this->Survey->id = $id;
-		if (!$this->Survey->exists()) {
-			throw new NotFoundException(__('Invalid survey'));
-		}
-		if ($this->request->is('post') || $this->request->is('put')) {
-			if ($this->Survey->save($this->request->data)) {
-				$this->Session->setFlash(__('The survey has been saved'));
-				$this->redirect(array('action' => 'index'));
-			} else {
-				$this->Session->setFlash(__('The survey could not be saved. Please, try again.'));
-			}
-		} else {
-			$this->request->data = $this->Survey->read(null, $id);
-		}
-		$organizations = $this->Survey->Organization->find('list');
-		$this->set(compact('organizations'));
-	}
-*/
-/**
- * delete method
- *
- * @throws MethodNotAllowedException
- * @throws NotFoundException
- * @param string $id
- * @return void
- */
-/*	public function delete($id = null) {
-		if (!$this->request->is('post')) {
-			throw new MethodNotAllowedException();
-		}
-		$this->Survey->id = $id;
-		if (!$this->Survey->exists()) {
-			throw new NotFoundException(__('Invalid survey'));
-		}
-		if ($this->Survey->delete()) {
-			$this->Session->setFlash(__('Survey deleted'));
-			$this->redirect(array('action' => 'index'));
-		}
-		$this->Session->setFlash(__('Survey was not deleted'));
-		$this->redirect(array('action' => 'index'));
-	}
-*/
-/**
  * admin_index method
  *
  * @return void
@@ -149,8 +80,14 @@ class SurveysController extends AppController {
  * @return void
  */
 	public function admin_add() {
+		$user = $this->Auth->user();
+
 		if ($this->request->is('post')) {
 			$this->Survey->create();
+			if( !isset($this->request->data['Survey']['organization_id']) )
+			{
+				$this->request->data['Survey']['organization_id'] = $user['organization_id'];
+			}
 			if ($this->Survey->save($this->request->data)) {
 				$this->Session->setFlash(__('The survey has been saved'));
 				$this->redirect(array('action' => 'index'));
@@ -159,7 +96,11 @@ class SurveysController extends AppController {
 			}
 		}
 		$organizations = $this->Survey->Organization->find('list');
-		$this->set(compact('organizations'));
+		
+		if( $user['type'] === "superAdmin" )
+		{
+			$this->set(compact('organizations'));
+		}
 	}
 
 /**
@@ -171,11 +112,33 @@ class SurveysController extends AppController {
  */
 	public function admin_edit($id = null) {
 		$this->Survey->id = $id;
+		$user = $this->Auth->user();
 		if (!$this->Survey->exists()) {
 			throw new NotFoundException(__('Invalid survey'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
+			if( ! isset($this->request->data['Survey']['organization_id']) )
+			{
+				$this->request->data['Survey']['organization_id'] = $user['organization_id'];
+			}
+			var_dump($this->request->data);
 			if ($this->Survey->save($this->request->data)) {
+				if( $this->request->data['Survey']['isActive'] == true )
+				{
+					$data = $this->Survey->find('all', array( 'conditions' => array('AND' => 
+						array( 
+							'Survey.id !=' => $id,
+							'Survey.organization_id' => $this->request->data['Survey']['organization_id'],
+							'Survey.isActive' => true
+							)
+						)));
+
+					if( $data != null )
+					{
+						$data[0]['Survey']['isActive'] = false;
+						$this->Survey->save($data[0]);
+					}
+				}
 				$this->Session->setFlash(__('The survey has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -184,8 +147,14 @@ class SurveysController extends AppController {
 		} else {
 			$this->request->data = $this->Survey->read(null, $id);
 		}
-		$organizations = $this->Survey->Organization->find('list');
-		$this->set(compact('organizations'));
+		
+		if( $user['type'] === "superAdmin" )
+		{
+			$organizations = $this->Survey->Organization->find('list');
+			$this->set(compact('organizations'));
+		}
+
+		$this->set('groupings', $this->Survey->Grouping->find('all', array( 'conditions' => array( 'Survey.id' => $id))));
 	}
 
 /**
