@@ -10,10 +10,17 @@
 		<legend><?php echo __('Admin Edit Survey'); ?></legend>
 	<?php
 		echo $this->Form->input('id');
-		echo $this->Form->input('organization_id');
+		if( isset( $organizations ) )
+		{
+			echo $this->Form->input('organization_id');
+		}
 		echo $this->Form->input('label');
+		echo $this->Form->input('isActive');
 		echo $this->Form->input('isDeleted');
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
+<?php foreach( $groupings as $grouping): ?>
+	<div><? var_dump($grouping['Grouping']); ?></div>
+<?php endforeach; ?>
 </div>
