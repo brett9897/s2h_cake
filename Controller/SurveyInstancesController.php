@@ -62,7 +62,6 @@ class SurveyInstancesController extends AppController {
      */
     public function add() {
         /*         * *************************** RETRIEVING DATA *********************** */
-        var_dump($this->Session->read('requestData'));
         $this->Survey->recursive = 3;
         $activeSurvey = $this->Survey->find('first', array(
             'conditions' => array(
@@ -119,47 +118,36 @@ class SurveyInstancesController extends AppController {
                             );
                             $this->Answer->save($data['Answer'][$i]);
                         }
-
-                        /* Broken -- I'm sorry
-                          //Lee - this is inefficient, but I'm pressed for time
-                          foreach ($this->request->data['Client'] as $key => $value) {
-                          if ($this->endsWith($key, ' - REFUSED') && $value == 1) {
-                          $answerMinusRefused = str_replace($key, ' - REFUSED');
-                          $assocQuestion = $this->Question->find('first', array(
-                          'internal_name' => $answerMinusRefused
-                          ));
-                          $newData = array('Answer' => array(
-                          0 => array(
-                          'question_id' => $assocQuestion['Question']['id'],
-                          'client_id' => $this->Client->id,
-                          'survey_instance_id' => $this->SurveyInstance->id,
-                          'value' => 'REFUSED',
-                          'isDeleted' => 0,
-                          )));
-                          $this->Answer->save($newData['Answer'][0]);
-                          }
-
-                          if ($this->endsWith($key, ' - OTHER') && !empty($value)) {
-                          $answerMinusOther = str_replace($key, ' - Other');
-                          $assocQuestion = $this->Question->find('first', array(
-                          'internal_name' => $answerMinusOther
-                          ));
-                          $newData = array('Answer' => array(
-                          0 => array(
-                          'question_id' => $assocQuestion['Question']['id'],
-                          'client_id' => $this->Client->id,
-                          'survey_instance_id' => $this->SurveyInstance->id,
-                          'value' => $value,
-                          'isDeleted' => 0,
-                          )));
-                          $this->Answer->save($newData['Answer'][0]);
-                          }
-                         * */
                     }
                 }
 
+                //endsWith-other logic
+                foreach ($this->request->data['Client'] as $key => $value) {
 
+                    if ($this->endsWith($key, ' - REFUSED') && $value == 1) {
+                        $fixedKey = str_replace(' - REFUSED', '', $key);
+                        $assocAnswer = $this->Answer->find('first', array(
+                            'conditions' => array(
+                                'Question.internal_name' => $fixedKey
+                            )
+                                ));
+                        $this->Answer->id = $assocAnswer['Answer']['id'];
+                        $this->Answer->saveField('value', 'REFUSED');
+                    }
 
+                    if ($this->endsWith($key, ' - OTHER') && !empty($value)) {
+                        $fixedKey = str_replace(' - OTHER', '', $key);
+                        $assocAnswer = $this->Answer->find('first', array(
+                            'conditions' => array(
+                                'Question.internal_name' => $fixedKey
+                            )
+                                ));
+                        $this->Answer->id = $assocAnswer['Answer']['id'];
+                        $this->Answer->saveField('value', $value);
+                    }
+                }
+
+                $this->Session->write('count', $count);
                 $this->Session->setFlash(__('This Survey has been saved!'));
                 $this->redirect(array('action' => 'index'));
             } else {
