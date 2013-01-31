@@ -1,3 +1,6 @@
+<?php echo $this->Html->script('ajaxupload-min.js', FALSE); ?>
+<?php echo $this->Html->css('classicTheme/style'); ?>
+
 <style type="text/css">
     table tr td {
         border-bottom: none;
@@ -104,7 +107,20 @@
         endforeach;
         ?>
     </table>
-
+    <br />
+    <h2>Upload Photo</h2>
+        <div class="white-background black-text">
+            <div id="image_upload" style="width:500px">
+                <script type="text/javascript">
+                    $('#image_upload').ajaxupload({
+                        url: global.base_url + '/webroot/upload.php?id=client-5',
+                        editFilename: true
+                    });
+                </script>
+            </div>
+        </div>
+    
     <?php echo $this->Form->end(__('Submit')); ?>
+
 </div>
 

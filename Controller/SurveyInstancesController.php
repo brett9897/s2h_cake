@@ -89,7 +89,6 @@ class SurveyInstancesController extends AppController {
         if ($this->request->is('post')) {
 
             //first, we need to save data into the client table
-
             $this->Client->create();
             if ($this->Client->save($this->request->data)) {
 
@@ -162,6 +161,7 @@ class SurveyInstancesController extends AppController {
             }
         }
     }
+    
 
     /**
      * edit method
