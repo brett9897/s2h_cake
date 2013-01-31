@@ -113,7 +113,8 @@
             <div id="image_upload" style="width:500px">
                 <script type="text/javascript">
                     $('#image_upload').ajaxupload({
-                        url: global.base_url + '/webroot/upload.php?id=client-5',
+                        url: global.base_url + '/webroot/upload.php',
+                        remotePath: global.base_url + '\\webroot\\uploaded_images',
                         editFilename: true
                     });
                 </script>

@@ -1,48 +1,18 @@
 <?php
-
 /**
  * PHP Real Ajax Uploader
  * Copyright @Alban Xhaferllari
  * albanx@gmail.com
  * www.albanx.com
  */
-
-$myFile = "logFile.txt";
-$fh = fopen($myFile, 'w') or die("can't open file");
-/*
-$stringData = "Bobby Bopper\n";
-fwrite($fh, $stringData);
-$stringData = "Tracy Tanner\n";
-fwrite($fh, $stringData);
-*/
-
-
 error_reporting(E_ALL ^ E_NOTICE);//remove notice for json invalidation
 
 $uploadPath	= $_REQUEST['ax-file-path'];
 $fileName	= $_REQUEST['ax-file-name'];
-
-//$compFilNam	= $fileName;
-$pieces = explode(".", $fileName);
-
-
-$id 		= $_GET['id'];
-
-$fileName = $id . '.' . $pieces[1];
-
-$stringData = $id;
-fwrite($fh, $stringData);
-$stringData = $fileName;
-fwrite($fh, $stringData);
-
-//$fileName['fileName'] = $id;
-//$fileName	= $_GET['id'];
-
 $currByte	= $_REQUEST['ax-start-byte'];
 $maxFileSize= $_REQUEST['ax-maxFileSize'];
 $html5fsize	= $_REQUEST['ax-fileSize'];
 $isLast		= $_REQUEST['isLast'];
-
 
 //if set generates thumbs only on images type files
 $thumbHeight	= $_REQUEST['ax-thumbHeight'];
@@ -63,7 +33,6 @@ if(!file_exists($thumbPath) && !empty($thumbPath))
 {
 	mkdir($thumbPath, 0777, true);
 }
-
 
 
 //with gd library
@@ -151,7 +120,7 @@ function createThumbIM($filepath, $thumbPath, $postfix, $maxwidth, $maxheight, $
 }
 
 
-function checkFilename($fileName, $size, $newName = '')
+function checkFilename($fileName, $size)
 {
 	global $allowExt, $uploadPath, $maxFileSize;
 	
@@ -202,9 +171,7 @@ function checkFilename($fileName, $size, $newName = '')
 		return false;
 	}
     
-	$fullPath = $uploadPath.$fileName.$id;
-
-	/*
+	$fullPath = $uploadPath.$fileName;
     $c=0;
 	while(file_exists($fullPath))
 	{
@@ -212,20 +179,7 @@ function checkFilename($fileName, $size, $newName = '')
 		$fileName	= $fileBase."($c).".$fileExt;
 		$fullPath 	= $uploadPath.$fileName;
 	}
-
-	*/
-
-
-	if(file_exists($fullPath))
-	  {
-	  	unlink($fullPath);
-	  }
-
 	return $fullPath;
-	
-
-
-
 }
 
 if(isset($_FILES['ax-files'])) 
@@ -250,7 +204,6 @@ if(isset($_FILES['ax-files']))
         else
         {
         	echo json_encode(array('name'=>basename($_FILES['ax-files']['name'][$key]), 'size'=>$_FILES['ax-files']['size'][$key], 'status'=>'error', 'info'=>$error));	
-        	//echo json_encode(array('name'=>basename($id), 'size'=>$_FILES['ax-files']['size'][$key], 'status'=>'error', 'info'=>$error));	
         }
     }
 }
@@ -275,8 +228,5 @@ elseif(isset($_REQUEST['ax-file-name']))
 	    	createThumbGD($fullPath, $thumbPath, $thumbPostfix, $thumbWidth, $thumbHeight, $thumbFormat);
 	    }
 	    echo json_encode(array('name'=>basename($fullPath), 'size'=>$currByte, 'status'=>'uploaded', 'info'=>'File/chunk uploaded'));
-
 	}
 }
-
-fclose($fh);
