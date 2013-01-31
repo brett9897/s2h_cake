@@ -16,7 +16,7 @@ class QuestionHelper extends AppHelper {
             case "textarea":
                 $output = $this->Form->input($internalName, array(
                     'type' => $type,
-                    'label' => ''
+                    'label' => '',
                         ));
                 break;
             

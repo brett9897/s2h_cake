@@ -71,6 +71,15 @@ class SurveyInstancesController extends AppController {
 
         $groupings = $activeSurvey['Grouping'];
         $personalInformationGrouping = $groupings[0];
+        
+        //survey instance validations (client data should validate automatically)
+        foreach ($groupings as $grouping) {
+            foreach ($grouping['Question'] as $question) {
+                $validations = array($question['validation_1'], $question['validation_2'],
+                    $question['validation_3'], $question['validation_4']);
+                $this->Client->addValidator($question['internal_name'], $validations);
+            }
+        }
 
         //used to fill out the organization drop down box
         $organizations = $this->Organization->find('list');
@@ -79,9 +88,8 @@ class SurveyInstancesController extends AppController {
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
 
-            $this->Session->write('requestData', $this->request->data);
-
             //first, we need to save data into the client table
+
             $this->Client->create();
             if ($this->Client->save($this->request->data)) {
 
@@ -147,7 +155,6 @@ class SurveyInstancesController extends AppController {
                     }
                 }
 
-                $this->Session->write('count', $count);
                 $this->Session->setFlash(__('This Survey has been saved!'));
                 $this->redirect(array('action' => 'index'));
             } else {

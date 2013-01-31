@@ -27,7 +27,7 @@ class Client extends AppModel {
         'first_name' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-            //'message' => 'Your custom message here',
+                'message' => 'Please enter a first name',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -37,7 +37,7 @@ class Client extends AppModel {
         'last_name' => array(
             'notempty' => array(
                 'rule' => array('notempty'),
-            //'message' => 'Your custom message here',
+                'message' => 'Please enter a last name',
             //'allowEmpty' => false,
             //'required' => false,
             //'last' => false, // Stop validation after this rule
@@ -106,5 +106,16 @@ class Client extends AppModel {
             'counterQuery' => ''
         )
     );
+
+    public function addValidator($key, $validations) {
+        foreach ($validations as $validation) {
+            if (empty($validation)) continue;
+            $this->validator()->add($key, array(
+                'validation1' => array(
+                    'rule' => "$validation",
+                    'message' => 'Invalid Input'
+                    )));
+        }
+    }
 
 }
