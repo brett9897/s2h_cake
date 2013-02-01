@@ -20,9 +20,14 @@ class Grouping extends AppModel {
  * Model function
  *
  */
-public function getByOrderNumber($sort = "DESC")
+public function getByOrderNumber($survey_id, $sort = "DESC")
 {
-	return $this->find('list', array('order' => array('Grouping.ordering' => $sort)));
+	return $this->find('all', array( 'conditions' => array('Grouping.survey_id' => $survey_id), 'order' => array('Grouping.ordering' => $sort)));
+}
+
+public function getListByOrderNumber($survey_id, $sort = "DESC")
+{
+	return $this->find('list', array( 'conditions' => array('Grouping.survey_id' => $survey_id), 'order' => array('Grouping.ordering' => $sort)));
 }
 
 /**

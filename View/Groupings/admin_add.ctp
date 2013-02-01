@@ -1,3 +1,10 @@
+<div class="actionsNoButton">
+	<?php echo $this->Html->link(__('List Groupings'), array('action' => 'index')); ?><br/>
+	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> <br/>
+	<?php echo $this->Html->link(__('List Questions'), array('controller' => 'questions', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New Question'), array('controller' => 'questions', 'action' => 'add')); ?> <br/>
+</div>
 <div class="groupings form">
 <?php echo $this->Form->create('Grouping'); ?>
 	<fieldset>
@@ -10,15 +17,4 @@
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
-</div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-
-		<li><?php echo $this->Html->link(__('List Groupings'), array('action' => 'index')); ?></li>
-		<li><?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Questions'), array('controller' => 'questions', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Question'), array('controller' => 'questions', 'action' => 'add')); ?> </li>
-	</ul>
 </div>

@@ -154,7 +154,7 @@ class SurveysController extends AppController {
 			$this->set(compact('organizations'));
 		}
 
-		$this->set('groupings', $this->Survey->Grouping->find('all', array( 'conditions' => array( 'Survey.id' => $id))));
+		$this->set('groupings', $this->Survey->Grouping->getByOrderNumber($id, 'ASC'));
 	}
 
 /**
