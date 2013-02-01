@@ -86,3 +86,8 @@ function update_order(element)
         }
     }); 
 }
+
+function add_question( grouping_id )
+{
+    location.href = global.base_url + '/admin/questions/add/' + grouping_id;
+}

@@ -34,5 +34,9 @@ jQuery(document).ready(function(){
         location.href = global.base_url + "/admin/clients/index";
         
     });
+
+    jQuery('#radioUsersAdmin').click(function() {
+        location.href = global.base_url + "/admin/users/index";
+    });
     	    
 });

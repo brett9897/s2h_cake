@@ -4,3 +4,4 @@
 <br/>
 <br/>
 <input type="button" value="Update Order" onClick="update_order(this)" />
+<input type="button" value="Add Question" onClick="add_question(<?php echo $grouping['Grouping']['id'];?>)" />

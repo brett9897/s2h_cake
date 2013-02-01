@@ -76,7 +76,12 @@ class Grouping extends AppModel {
      *
      */
     public function getByOrderNumber($survey_id, $sort = "DESC") {
-        return $this->find('all', array('conditions' => array('Grouping.survey_id' => $survey_id), 'order' => array('Grouping.ordering' => $sort)));
+        $params = array();
+        $params['conditions'] = array('Grouping.survey_id' => $survey_id);
+        $params['order'] = array('ordering' => $sort);
+        $params['recursive'] = 2;
+
+        return $this->find('all', $params);
     }
 
     public function getListByOrderNumber($survey_id, $sort = "DESC") {

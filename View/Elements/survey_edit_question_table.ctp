@@ -11,8 +11,20 @@
 	<tr id="question_<?php echo $question['id'];?>" class="question">
 		<td><?php echo $this->Form->input('ordering', array( 'type' => 'text', 'label' => '', 'size' => 2, 'class' => 'ordering', 'value' => $question['ordering']));?></td>
 		<td><?php echo $question['label'];?></td>
-		<td><?php echo $question['type'];?></td>
-		<td></td>
+		<td><?php echo $question['Type']['label'];?></td>
+		<?php
+			$options = '';
+			foreach($question['Option'] as $option)
+			{
+				$options .= $option['label'] . ', ';
+			}
+
+			if( $options != '' )
+			{
+				$options = substr($options, 0, -2);
+			}
+		?>
+		<td><?php echo $options;?></td>
 		<td><?php echo $this->Binary->convertToTF($question['is_used']);?></td>
 		<td><?php echo $this->Html->link('edit', 
 				array('controller' => 'questions', 'action' => 'edit', $question['id']));?></td>

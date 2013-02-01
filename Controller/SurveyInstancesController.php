@@ -21,10 +21,10 @@ class SurveyInstancesController extends AppController {
         $this->SurveyInstance->recursive = 0;
         $user = $this->Auth->user();
         $user_id = $user['id'];
-        $activeSurvey = $this->SurveyInstance->find('first', array(
+        $activeSurvey = $this->Survey->find('first', array(
             'conditions' => array(
                 'Survey.isActive' => 1,
-                'SurveyInstance.user_id' => $user_id
+                'Survey.organization_id' => $user['organization_id']
             )
                 ));
         $this->paginate = array(
@@ -81,6 +81,12 @@ class SurveyInstancesController extends AppController {
             foreach ($grouping['Question'] as $question) {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
+
+                if( $question['is_required'] == true )
+                {
+                    $validations[] = 'notEmpty';
+                }
+                
                 $this->Client->addValidator($question['internal_name'], $validations);
             }
         }

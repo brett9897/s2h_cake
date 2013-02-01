@@ -117,14 +117,10 @@ class QuestionsController extends AppController {
  *
  * @return void
  */
-	public function admin_add($grouping_id = null) {
+	public function admin_add($grouping_id) {
+		$grouping = $this->Question->Grouping->read(null, $grouping_id);
+
 		if ($this->request->is('post')) {
-
-			if( $grouping_id == null )
-			{
-				$grouping_id = $this->request->data['Question']['grouping_id'];
-			}
-
 			$this->Question->create();
 
 			//pull out options for later use
@@ -132,7 +128,6 @@ class QuestionsController extends AppController {
 			unset( $this->request->data['Option'] );
 
 			//get the survey id
-			$grouping = $this->Question->Grouping->read(null, $grouping_id);
 			$this->request->data['Question']['survey_id'] = $grouping['Grouping']['survey_id'];
 
 			if ($this->Question->save($this->request->data)) {
@@ -150,12 +145,13 @@ class QuestionsController extends AppController {
 				}
 
 				$this->Session->setFlash(__('The question has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('controller' => 'surveys', 'action' => 'edit', $grouping['Grouping']['survey_id']));
 			} else {
 				$this->Session->setFlash(__('The question could not be saved. Please, try again.'));
 			}
 		}
-		$groupings = $this->Question->Grouping->getByOrderNumber('ASC');
+
+		$groupings = $this->Question->Grouping->getListByOrderNumber($grouping['Grouping']['survey_id'], 'ASC');
 		$types = $this->Question->Type->find('list');
 		$validations = $this->InternalValidation->find('all');
 
@@ -203,7 +199,8 @@ class QuestionsController extends AppController {
 				}
 
 				$this->Session->setFlash(__('The question has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$data = $this->Question->read(null, $this->request->data['Question']['id']);
+				$this->redirect(array('controller' => 'surveys', 'action' => 'edit', $data['Question']['survey_id']));
 			} else {
 				$this->Session->setFlash(__('The question could not be saved. Please, try again.'));
 			}
@@ -240,7 +237,7 @@ class QuestionsController extends AppController {
 
 		$this->set('currentValidations', $currentValidations);
 
-		$groupings = $this->Question->Grouping->getByOrderNumber('ASC');
+		$groupings = $this->Question->Grouping->getListByOrderNumber($this->request->data['Question']['survey_id'], 'ASC');
 		$types = $this->Question->Type->find('list');
 		$validations = $this->InternalValidation->find('all', array( ));
 
@@ -301,10 +298,15 @@ class QuestionsController extends AppController {
 		//need to massage this a bit to work with the helper
 		$response = $this->Question->getByOrderNumber($grouping_id);
 		$questions = array();
+		$i = 0;
 		foreach( $response as $question)
 		{
-			$questions[] = $question['Question'];
+			$questions[$i] = $question['Question'];
+			$questions[$i]['Option'] = $question['Option'];
+			$questions[$i]['Type'] = $question['Type'];
+			$i++;
 		}
+
 		$this->set('questions', $questions);
 	}
 }
