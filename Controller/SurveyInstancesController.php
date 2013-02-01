@@ -71,8 +71,12 @@ class SurveyInstancesController extends AppController {
 
         $groupings = $activeSurvey['Grouping'];
         $personalInformationGrouping = $groupings[0];
-        
-        //survey instance validations (client data should validate automatically)
+
+        //used to fill out the organization drop down box
+        $organizations = $this->Organization->find('list');
+        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
+
+        /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
                 $validations = array($question['validation_1'], $question['validation_2'],
@@ -80,10 +84,6 @@ class SurveyInstancesController extends AppController {
                 $this->Client->addValidator($question['internal_name'], $validations);
             }
         }
-
-        //used to fill out the organization drop down box
-        $organizations = $this->Organization->find('list');
-        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
 
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
@@ -161,7 +161,6 @@ class SurveyInstancesController extends AppController {
             }
         }
     }
-    
 
     /**
      * edit method
@@ -172,7 +171,6 @@ class SurveyInstancesController extends AppController {
      */
     public function edit($id = null) {
         /*         * *************************** RETRIEVING DATA *********************** */
-        var_dump($this->request->data);
         $this->Survey->recursive = 3;
         $activeSurvey = $this->SurveyInstance->Survey->find('first', array(
             'conditions' => array(
@@ -188,13 +186,13 @@ class SurveyInstancesController extends AppController {
         $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
 
         /*         * ********************** AUTOPOPULATING DATA ************************ */
-        $surveyInstance = $this->SurveyInstance->read(null, $id);
-        $client_id = $surveyInstance['SurveyInstance']['client_id'];
-        $this->set('client_id', $client_id);
-        $client = $this->Client->read(null, $client_id);
+        $surveyInstance = $activeSurvey['SurveyInstance'][0];
+        $clientID = $surveyInstance['client_id'];
+        $client = $this->Client->read(null, $surveyInstance['client_id']);
+
         $dataArray = array(
             'Client' => array(
-                'id' => $this->Client->id,
+                'id' => $clientID,
                 'first_name' => $client['Client']['first_name'],
                 'last_name' => $client['Client']['last_name'],
                 'organization_id' => $client['Client']['organization_id'],
@@ -213,50 +211,43 @@ class SurveyInstancesController extends AppController {
         }
         $this->data = $dataArray;
 
+        /*         * ********************************** VALIDATIONS ******************************** */
+        foreach ($groupings as $grouping) {
+            foreach ($grouping['Question'] as $question) {
+                $validations = array($question['validation_1'], $question['validation_2'],
+                    $question['validation_3'], $question['validation_4']);
+                $this->Client->addValidator($question['internal_name'], $validations);
+            }
+        }
+
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
 
             //first, we need to save data into the client table
-            $this->request->data['Client']['id'] = $client_id;
+            $this->request->data['Client']['id'] = $clientID;
             if ($this->Client->save($this->request->data)) {
 
-                //then we need to create the survey instance
-                $this->SurveyInstance->id = $id;
-                $user_id = $this->Auth->user();
-                $user_id = $user_id['id'];
-                $data = array('SurveyInstance' => array(
-                        'id' => $id,
-                        'survey_id' => $activeSurvey['Survey']['id'],
-                        'client_id' => $this->Client->id,
-                        'user_id' => $user_id,
-                        'vi_score' => 0,
-                        'is_Deleted' => 0
-                        ));
-                $this->SurveyInstance->save($data['SurveyInstance']);
-                /**
-                  //then we need to save all the answers
-                  $data['Answer'] = array();
-                  foreach ($groupings as $grouping) {
-                  $i = 0;
-                  foreach ($grouping['Question'] as $question) {
-                  $values = $this->request->data['Client'][$question['label']];
-                  if (gettype($values) != 'array')
-                  $values = array($values);
-                  foreach ($values as $value) {
-                  $data['Answer'][$i] = array(
-                  'question_id' => $question['id'],
-                  'client_id' => $this->Client->id,
-                  'value' => $value,
-                  'isDeleted' => 0,
-                  );
+                //then we need to update all the answers
+                foreach ($groupings as $grouping) {
+                    foreach ($grouping['Question'] as $question) {
+                        $values = $this->request->data['Client'][$question['internal_name']];
+                        if (gettype($values) != 'array')
+                            $values = array($values);
 
-                  $this->Answer->save($data['Answer'][$i]);
-                  }
-                  };
-                  }
-                 * */
+                        foreach ($values as $value) {
+                            $assocAnswer = $this->Answer->find('first', array(
+                                'conditions' => array(
+                                    'Question.internal_name' => $question['internal_name']
+                                )
+                                    ));
+                            $this->Answer->id = $assocAnswer['Answer']['id'];
+                            $this->Answer->saveField('value', $value);
+                        }
+                    }
+                }
+
                 $this->Session->setFlash(__('This Survey has been saved!'));
-                //   $this->redirect(array('action' => 'index'));
+                $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash(__('The survey instance could not be saved. Please, try again.'));
             }
