@@ -1,7 +1,7 @@
 <?php $this->Html->script('Surveys/admin_edit.js', false); ?>
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Surveys'), array('action' => 'index')); ?><br/>
-	<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Survey.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('Survey.id'))); ?><br/>
+	<!--<?php //echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Survey.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('Survey.id'))); ?><br/>-->
 	<?php echo $this->Html->link(__('List Groupings'), array('controller' => 'groupings', 'action' => 'index', $this->Form->value('Survey.id'))); ?><br/>
 	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add')); ?> <br/>
 </div>

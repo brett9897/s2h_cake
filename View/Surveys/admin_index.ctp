@@ -22,9 +22,7 @@
 		<td><?php echo h($survey['Survey']['created']); ?>&nbsp;</td>
 		<td><?php echo h($survey['Survey']['modified']); ?>&nbsp;</td>
 		<td class="actions">
-			<?php echo $this->Html->link(__('View'), array('action' => 'view', $survey['Survey']['id'])); ?>
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $survey['Survey']['id'])); ?>
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $survey['Survey']['id']), null, __('Are you sure you want to delete # %s?', $survey['Survey']['id'])); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>
