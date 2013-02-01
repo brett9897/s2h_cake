@@ -1,3 +1,4 @@
+
 <style type="text/css">
     table tr td {
         border-bottom: none;
@@ -104,7 +105,9 @@
         endforeach;
         ?>
     </table>
-
+    <br />
+    
     <?php echo $this->Form->end(__('Submit')); ?>
+
 </div>
 

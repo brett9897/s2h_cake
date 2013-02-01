@@ -40,7 +40,17 @@ class User extends AppModel {
 				//'last' => false, // Stop validation after this rule
 				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
+                    'matchPasswords' => array(
+                        'rule' => 'matchPasswords',
+                        'message' => 'Your passwords do not match',
+                    ),
 		),
+                'password_confirmation' => array(
+                    'notempty' => array(
+                        'rule' => array('notempty'),
+                        'message' => 'Please confirm your password',
+                    ),
+                ),
 		'first_name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
@@ -111,4 +121,30 @@ class User extends AppModel {
 		)
 	);
 
+        
+     /**
+     * Lee: Custom match passwords validation method
+     *
+     * @param type $data
+     * @return boolean
+     */
+    public function matchPasswords($data) {
+        if ($data['password'] == $this->data['User']['password_confirmation']) {
+            return true;
+        }
+        $this->invalidate('password_confirmation', 'Your passwords do not match');
+        return false;
+    }
+
+    /**
+     * Lee: callback function for encrypting passwords
+     */
+    public function beforeSave($options = array()) {
+        if (isset($this->data['User']['pwd'])) {
+            $this->data['User']['password'] = AuthComponent::password($this->data['User']['pwd']);
+            unset($this->data['User']['pwd']); //no longer needed
+        }
+        return true;
+    }
+        
 }

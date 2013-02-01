@@ -1,55 +1,19 @@
-<div class="clients index">
-	<h2><?php echo __('Clients'); ?></h2>
-	<table cellpadding="0" cellspacing="0">
-	<tr>
-			<th><?php echo $this->Paginator->sort('id'); ?></th>
-			<th><?php echo $this->Paginator->sort('organization_id'); ?></th>
-			<th><?php echo $this->Paginator->sort('first_name'); ?></th>
-			<th><?php echo $this->Paginator->sort('last_name'); ?></th>
-			<th><?php echo $this->Paginator->sort('ssn'); ?></th>
-			<th><?php echo $this->Paginator->sort('dob'); ?></th>
-			<th><?php echo $this->Paginator->sort('isDeleted'); ?></th>
-			<th><?php echo $this->Paginator->sort('created'); ?></th>
-			<th><?php echo $this->Paginator->sort('modified'); ?></th>
-			<th class="actions"><?php echo __('Actions'); ?></th>
-	</tr>
-	<?php
-	foreach ($clients as $client): ?>
-	<tr>
-		<td><?php echo h($client['Client']['id']); ?>&nbsp;</td>
-		<td>
-			<?php echo $this->Html->link($client['Organization']['name'], array('controller' => 'organizations', 'action' => 'view', $client['Organization']['id'])); ?>
-		</td>
-		<td><?php echo h($client['Client']['first_name']); ?>&nbsp;</td>
-		<td><?php echo h($client['Client']['last_name']); ?>&nbsp;</td>
-		<td><?php echo h($client['Client']['ssn']); ?>&nbsp;</td>
-		<td><?php echo h($client['Client']['dob']); ?>&nbsp;</td>
-		<td><?php echo h($client['Client']['isDeleted']); ?>&nbsp;</td>
-		<td><?php echo h($client['Client']['created']); ?>&nbsp;</td>
-		<td><?php echo h($client['Client']['modified']); ?>&nbsp;</td>
-		<td class="actions">
-			<?php echo $this->Html->link(__('View'), array('action' => 'view', $client['Client']['id'])); ?>
-			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $client['Client']['id'])); ?>
-			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $client['Client']['id']), null, __('Are you sure you want to delete # %s?', $client['Client']['id'])); ?>
-		</td>
-	</tr>
-<?php endforeach; ?>
-	</table>
-	<p>
-	<?php
-	echo $this->Paginator->counter(array(
-	'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
-	));
-	?>	</p>
+<?php
+    //load in all javascript/jquery files that would go in the <head>...</head> of the html.
+    //the .js file must be in the /app/webroot/ directory
+    //echo $this->Html->script('jquery-1.9.0.min');
+    //echo $this->Html->script('clients_index');          
+    //$this->Html->script('jquery-1.9.0.min', FALSE);         //<---this is 'magically' included by some script brett wavied his fingers at...
+    
+    //$this->Html->script('jquery-1.8.3.min', FALSE);                
+    //$this->Html->script('jquery-ui-1.9.2.custom.min', FALSE);                
+    
+    $this->Html->script('jquery.dataTables', FALSE);     //putting false param tells cakephp to put this in the header of the html
+    //$this->Html->script('shCore.js', FALSE);                
+    $this->Html->script('clients_index', FALSE);            
+    
+?>
 
-	<div class="paging">
-	<?php
-		echo $this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));
-		echo $this->Paginator->numbers(array('separator' => ''));
-		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
-	?>
-	</div>
-</div>
 <div class="actions">
 	<h3><?php echo __('Actions'); ?></h3>
 	<ul>
@@ -62,3 +26,25 @@
 		<li><?php echo $this->Html->link(__('New Survey Instance'), array('controller' => 'survey_instances', 'action' => 'add')); ?> </li>
 	</ul>
 </div>
+
+<div class="clients index">
+
+                
+                <div id="dt_example">
+			<div id="container">
+				
+				<div id="dynamic">
+					<table cellpadding="0" cellspacing="0" border="0" class="display" id="clientsResults">
+                                            <thead>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                                <th>DOB</th>
+                                            </thead>
+                                        </table>
+                                </div>
+                        </div>
+                </div>
+    
+    
+    
+
