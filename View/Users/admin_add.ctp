@@ -7,7 +7,7 @@
 		echo $this->Form->input('password');
 		echo $this->Form->input('first_name');
 		echo $this->Form->input('last_name');
-		echo $this->Form->input('organization_id');
+		echo $this->Form->input('organization_id', array('disabled'));
 		echo $this->Form->input('type');
 		echo $this->Form->input('isDeleted');
 	?>

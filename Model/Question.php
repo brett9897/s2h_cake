@@ -18,6 +18,19 @@ class Question extends AppModel {
  */
 	public $displayField = 'label';
 
+
+	/**
+	 * Model function
+	 *
+	 */
+	public function getByOrderNumber($grouping_id, $sort = "ASC")
+	{
+		return $this->find('all', array( 'conditions' => array(
+			'Question.grouping_id' => $grouping_id), 
+			'order' => array('Question.ordering' => $sort)
+		));
+	}
+
 /**
  * Validation rules
  *

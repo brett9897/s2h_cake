@@ -62,9 +62,27 @@ $(document).ready( function() {
 
 function update_order(element)
 {
-	console.log($(element).parent().find('tr.question'));
+	var questions = $(element).parent().find('tr.question').map(function(index){
+        var id = $(this).attr('id');
+		return {
+            'Question': {
+                'id': parseInt(id.substring(id.indexOf('_') + 1)),
+                'ordering': parseInt($(this).find('input.ordering').val())
+            }
+        };
+	}).get();
 
-	$(element).parent().find('tr.question').each(function(index){
-		console.log($(this).attr('id') + ": " + $(this).find('input.ordering').val());
-	})
+    var grouping_id = $(element).parent().find('input#id').val();
+    $.ajax({
+        url: global.base_url + "/admin/questions/update_ordering/" + grouping_id,
+        contentType: 'application/json',
+        dataType: 'html',
+        type: 'POST',
+        data: JSON.stringify({'questions': questions}),
+        success: function(data, status, xhr)
+        {
+            $(element).parent().find('table').remove();
+            $(element).parent().prepend(data);
+        }
+    }); 
 }

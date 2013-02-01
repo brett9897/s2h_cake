@@ -1,0 +1,1 @@
+<?php echo $this->element('survey_edit_question_table', array('questions' => $questions)); ?>

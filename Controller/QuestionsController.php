@@ -9,6 +9,7 @@ class QuestionsController extends AppController {
 
 	public $uses = array( 'Question', 'Grouping', 'Type', 'InternalValidation', 'Option' );
 	public $helpers = array('Binary');
+	public $components = array('RequestHandler');
 
 
 	public function isAuthorized($user = null)
@@ -276,5 +277,34 @@ class QuestionsController extends AppController {
 		}
 		$this->Session->setFlash(__('Question was not deleted'));
 		$this->redirect(array('action' => 'index'));
+	}
+
+	public function admin_update_ordering($grouping_id)
+	{
+		if( $this->RequestHandler->isAjax() )
+		{
+			foreach($this->request->data['questions'] as $question)
+			{
+				$this->Question->id = $question['Question']['id'];
+				$this->Question->saveField('ordering', $question['Question']['ordering']);
+			}
+
+			$response = array( 'status' => 'OK', 'message' => 'Saved successfully', 'timestamp' => date('m-d-Y H:i:s') );
+		}
+		else
+		{
+			$response = array( 'status' => 'ERROR', 'message' => 'Must be an ajax call', 'timestamp' => date('m-d-Y H:i:s') );
+		}
+
+		$this->set('response', $response);
+
+		//need to massage this a bit to work with the helper
+		$response = $this->Question->getByOrderNumber($grouping_id);
+		$questions = array();
+		foreach( $response as $question)
+		{
+			$questions[] = $question['Question'];
+		}
+		$this->set('questions', $questions);
 	}
 }
