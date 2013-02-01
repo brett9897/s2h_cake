@@ -155,6 +155,7 @@ class SurveysController extends AppController {
 		}
 
 		var_dump($this->Survey->Grouping->getByOrderNumber($id, 'ASC'));
+		
 		$this->set('groupings', $this->Survey->Grouping->getByOrderNumber($id, 'ASC'));
 	}
 
