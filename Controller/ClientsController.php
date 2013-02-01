@@ -7,6 +7,8 @@ App::uses('AppController', 'Controller');
  */
 class ClientsController extends AppController {
 
+    public $components = array('Session', 'RequestHandler');            //takes care of sessions and requests that need a .json file extension but is not really .json
+    
 /**
  * index method
  *
@@ -194,4 +196,112 @@ class ClientsController extends AppController {
 		$this->Session->setFlash(__('Client was not deleted'));
 		$this->redirect(array('action' => 'index'));
 	}
+        
+        
+        /**  this is the action for the dataTables.
+         * 
+         */
+        
+        
+        public function dataTables() {
+            //$aColumns = array('Client.first_name', 'Client.last_name', 'Client.DOB');
+            
+            //if( ! isset($this->Session->read('aColumns'))){
+            if( $this->Session->read('aColumns') != null){
+                //$aColumns = array('dob', 'first_name', 'last_name');
+                $aColumns = array('first_name', 'last_name', 'dob');
+//echo 'IF--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
+            } 
+            else {
+                //$aColumns = array('first_name', 'last_name', 'dob');
+                $aColumns = array('first_name', 'last_name');
+//echo 'ELSE--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
+            }
+///echo 'MUST--!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
+            //$aColumns = array('first_name', 'last_name', 'dob');
+            $params = array();
+
+            
+            //Paging
+            if (isset($this->params['url']['iDisplayStart']) && $this->params['url']['iDisplayLength'] != '-1') {
+                $params['limit'] = $this->params['url']['iDisplayLength'];
+                $params['offset'] = $this->params['url']['iDisplayStart'];
+            }
+
+            //Sorting
+            if (isset($this->params['url']['iSortCol_0'])) {
+                $order = array();
+                for ($i = 0; $i < intval($this->params['url']['iSortingCols']); $i++) {
+                    if ($this->params['url']['bSortable_' . intval($this->params['url']['iSortCol_' . $i])] == "true") {
+                        $order[] = $aColumns[intval($this->params['url']['iSortCol_' . $i])] . ' ' . $this->params['url']['sSortDir_' . $i];
+                    }
+                }
+
+                $params['order'] = $order;
+            }
+
+            //Filtering---the actual search bar
+            if (isset($this->params['url']['sSearch']) && $this->params['url']['sSearch'] != "") {
+                $comma = strpos($this->params['url']['sSearch'], ',');
+                $space = strpos($this->params['url']['sSearch'], ' ');
+
+                if ($comma === false && $space === false) {
+                    $conditions = array('OR' => array());
+                    for ($i = 0; $i < count($aColumns); $i++) {
+                        if (isset($this->params['url']['bSearchable_' . $i]) && $this->params['url']['bSearchable_' . $i] == "true") {
+                            $conditions['OR'][$aColumns[$i] . ' LIKE '] = $this->params['url']['sSearch'] . '%';
+                        }
+                    }
+                } else {
+                    if ($comma !== false) {
+                        $firstName = trim(substr($this->params['url']['sSearch'], $comma + 1));
+                        $lastName = trim(substr($this->params['url']['sSearch'], 0, $comma));
+                    } else {
+                        $firstName = trim(substr($this->params['url']['sSearch'], 0, $space));
+                        $lastName = trim(substr($this->params['url']['sSearch'], $space + 1));
+                    }
+
+                    $conditions = array(
+                        $aColumns[0] . ' LIKE ' => $firstName . '%',
+                        $aColumns[1] . ' LIKE ' => $lastName . '%'
+                    );
+                }
+
+                $params['conditions'] = $conditions;
+            }
+//echo '$params[\'conditions\'] = ' . $params['conditions'];
+            $raw_data = $this->Client->find('all', $params);
+
+            $total = $this->Client->find('count');
+
+            if (isset($params['conditions'])) {
+                $filteredTotal = $this->Client->find('count', array('conditions' => $params['conditions']));
+            } else {
+                $filteredTotal = $total;
+            }
+
+            $output = array(
+                'sEcho' => intval($this->params['url']['sEcho']),
+                'iTotalRecords' => $total,
+                'iTotalDisplayRecords' => $filteredTotal,
+                'aaData' => array()
+            );
+
+            foreach ($raw_data as $result) {
+                $row = array(
+                    $result['Client']['first_name'],
+                    $result['Client']['last_name'],
+                    date('m/d/Y', strtotime(h($result['Client']['dob']))),
+                    'DT_RowId' => 'client_' . $result['Client']['id'],
+                    'DT_RowClass' => 'highlight-dataTables'
+                );
+                $output['aaData'][] = $row;
+            }
+            $this->set('output', $output);
+        }
+        
 }
+
+
+
+

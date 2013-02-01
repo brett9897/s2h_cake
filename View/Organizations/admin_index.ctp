@@ -1,3 +1,13 @@
+<div class="actionsNoButton">
+        <?php echo $this->Html->link(__('New Organization'), array('action' => 'add')); ?> <br/>
+        <?php echo $this->Html->link(__('List Clients'), array('controller' => 'clients', 'action' => 'index')); ?> <br/>
+        <?php echo $this->Html->link(__('New Client'), array('controller' => 'clients', 'action' => 'add')); ?> <br/>
+        <?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> <br/>
+        <?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> <br/>
+        <?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> <br/>
+	<?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> <br/>
+</div>
+
 <div class="organizations index">
 	<h2><?php echo __('Organizations'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
@@ -40,15 +50,4 @@
 	?>
 	</div>
 </div>
-<div class="actions">
-	<h3><?php echo __('Actions'); ?></h3>
-	<ul>
-		<li><?php echo $this->Html->link(__('New Organization'), array('action' => 'add')); ?></li>
-		<li><?php echo $this->Html->link(__('List Clients'), array('controller' => 'clients', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Client'), array('controller' => 'clients', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?> </li>
-		<li><?php echo $this->Html->link(__('List Users'), array('controller' => 'users', 'action' => 'index')); ?> </li>
-		<li><?php echo $this->Html->link(__('New User'), array('controller' => 'users', 'action' => 'add')); ?> </li>
-	</ul>
-</div>
+
