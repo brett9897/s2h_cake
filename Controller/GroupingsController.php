@@ -7,6 +7,8 @@ App::uses('AppController', 'Controller');
  */
 class GroupingsController extends AppController {
 
+	public $components = array('RequestHandler', 'Security');
+
 	public function isAuthorized($user = null)
 	{
 		//non admin pages can be accessed by anyone
@@ -24,6 +26,19 @@ class GroupingsController extends AppController {
 		//default deny
 		return false;
 	}
+
+	public function beforeFilter()
+	{
+		parent::beforeFilter();
+		
+		//turn off security just for this request
+		if( $this->request->action === 'admin_update' )
+		{
+			$this->Security->validatePost = false;
+			$this->Security->csrfCheck = false;
+		}
+	}
+
 /**
  * index method
  *
@@ -145,5 +160,32 @@ class GroupingsController extends AppController {
 		}
 		$this->Session->setFlash(__('Grouping was not deleted'));
 		$this->redirect(array('action' => 'index'));
+	}
+
+/**
+ * update method
+ *
+ * @throws MethodNotAllowedException
+ * @param void
+ * @return success or failure
+ */
+	public function admin_update()
+	{
+		if( $this->RequestHandler->isAjax() )
+		{
+			foreach($this->request->data['groupings'] as $grouping)
+			{
+				$this->Grouping->id = $grouping['Grouping']['id'];
+				$this->Grouping->saveField('ordering', $grouping['Grouping']['ordering']);
+			}
+
+			$response = array( 'status' => 'OK', 'message' => 'Saved successfully', 'timestamp' => date('m-d-Y H:i:s') );
+		}
+		else
+		{
+			$response = array( 'status' => 'ERROR', 'message' => 'Must be an ajax call', 'timestamp' => date('m-d-Y H:i:s') );
+		}
+
+		$this->set('response', $response);
 	}
 }

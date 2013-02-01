@@ -18,14 +18,6 @@ class Grouping extends AppModel {
     public $displayField = 'label';
 
     /**
-     * Model function
-     *
-     */
-    public function getByOrderNumber($sort = "DESC") {
-        return $this->find('list', array('order' => array('Grouping.ordering' => $sort)));
-    }
-
-    /**
      * Validation rules
      *
      * @var array
@@ -78,6 +70,18 @@ class Grouping extends AppModel {
             ),
         ),
     );
+
+    /**
+     * Model function
+     *
+     */
+    public function getByOrderNumber($survey_id, $sort = "DESC") {
+        return $this->find('all', array('conditions' => array('Grouping.survey_id' => $survey_id), 'order' => array('Grouping.ordering' => $sort)));
+    }
+
+    public function getListByOrderNumber($survey_id, $sort = "DESC") {
+        return $this->find('list', array('conditions' => array('Grouping.survey_id' => $survey_id), 'order' => array('Grouping.ordering' => $sort)));
+    }
 
     //The Associations below have been created with all possible keys, those that are not needed can be removed
 
