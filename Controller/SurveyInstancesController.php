@@ -9,7 +9,7 @@ App::uses('AppController', 'Controller');
  */
 class SurveyInstancesController extends AppController {
 
-    public $uses = array('Grouping', 'Survey', 'SurveyInstance', 'Client', 'Question', 'Type', 'Organization', 'Answer', 'Option');
+    public $uses = array('Grouping', 'Survey', 'SurveyInstance', 'Client', 'Question', 'Type', 'Organization', 'Answer', 'Option', 'ViCriterium');
     public $helpers = array('Question');
 
     /**
@@ -82,10 +82,11 @@ class SurveyInstancesController extends AppController {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
 
-                if( $question['is_required'] == true )
+                //broken right now
+                /*if( $question['is_required'] == true )
                 {
-                    $validations[] = 'notEmpty';
-                }
+                    $validations[] = 'array("notEmpty")';
+                }*/
                 
                 $this->Client->addValidator($question['internal_name'], $validations);
             }
@@ -111,6 +112,9 @@ class SurveyInstancesController extends AppController {
                         ));
                 $this->SurveyInstance->save($data['SurveyInstance']);
 
+                //used to calculate vi_score as we go along
+                $vi_score = 0;
+
                 //then we need to save all the answers
                 $data['Answer'] = array();
                 foreach ($groupings as $grouping) {
@@ -120,7 +124,67 @@ class SurveyInstancesController extends AppController {
                         if (gettype($values) != 'array')
                             $values = array($values);
 
+                        //figure out if there is a vi_criterion for this question
+                        $criterion = $this->ViCriterium->find('first', array('conditions' => array( 'ViCriterium.question_id' => intval($question['id']))));
+                        $found = false;
+
                         foreach ($values as $value) {
+                            if( count($criterion) > 0 )
+                            {
+                                if( strpos( $criterion['ViCriterium']['values'], ',') === false )
+                                {
+                                    $criterion_values = array( $criterion['ViCriterium']['values'] );
+                                }
+                                else
+                                {
+                                    $criterion_values = explode( ',', $criterion['ViCriterium']['values']);   
+                                }
+
+                                if( !$found )
+                                {
+                                    foreach( $criterion_values as $c_value )
+                                    {
+                                        switch( $criterion['ViCriterium']['relational_operator'] )
+                                        {
+                                            case '<':
+                                                if( $value < $c_value )
+                                                {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                    $found = true;
+                                                }
+                                                break;
+                                            case '>':
+                                                if( $value > $c_value )
+                                                {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                    $found = true;
+                                                }
+                                                break;
+                                            case '=':
+                                                if( $value == $c_value )
+                                                {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                    $found = true;
+                                                }
+                                                break;
+                                            case '<=':
+                                                if( $value <= $c_value )
+                                                {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                    $found = true;
+                                                }
+                                                break;
+                                            case '>=':
+                                                if( $value >= $c_value )
+                                                {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                    $found = true;
+                                                }
+                                                break;
+                                        }
+                                    }
+                                }
+                            }
                             $this->Answer->create();
                             $data['Answer'][$i] = array(
                                 'question_id' => $question['id'],
@@ -159,6 +223,12 @@ class SurveyInstancesController extends AppController {
                         $this->Answer->saveField('value', $value);
                     }
                 }
+
+                //update vi score
+                $id = $this->SurveyInstance->id;
+                $survey = $this->SurveyInstance->read(null, $id);
+                $survey['SurveyInstance']['vi_score'] = $vi_score;
+                $this->SurveyInstance->save($survey);
 
                 $this->Session->setFlash(__('This Survey has been saved!'));
                 $this->redirect(array('action' => 'index'));

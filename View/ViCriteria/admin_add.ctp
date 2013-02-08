@@ -28,9 +28,6 @@
 				<div id="value_options">
 				</div>
 			</div>
-		<?php
-			echo $this->Form->input('weight');
-		?>
 		</div>
 		<div id="groupings" class="doNotShow">
 			<div id="groupings_select">
@@ -41,10 +38,10 @@
 				<div id="grouping_options">
 				</div>
 			</div>
+		</div>
 		<?php
 			echo $this->Form->input('weight');
 		?>
-		</div>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
 

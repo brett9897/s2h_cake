@@ -81,6 +81,8 @@ class ViCriteriaController extends AppController {
  */
 	public function admin_add($survey_id) {
 		if ($this->request->is('post')) {
+			$this->request->data['ViCriterium']['weight'] = floatval($this->request->data['ViCriterium']['weight']);
+			var_dump($this->request->data);
 			if( isset($this->request->data['ViCriterium']['values_array']) )
 			{
 				$values = '';
@@ -94,6 +96,12 @@ class ViCriteriaController extends AppController {
 				$this->request->data['ViCriterium']['values'] = $values;
 				unset($this->request->data['ViCriterium']['values_array']);
 			}
+			if( $this->request->data['ViCriterium']['type'] === 'grouping' )
+			{
+				$this->request->data['ViCriterium']['question_id'] = null;
+			}
+
+			$this->request->data['ViCriterium']['survey_id'] = $survey_id;
 
 			$this->ViCriterium->create();
 			if ($this->ViCriterium->save($this->request->data)) {
