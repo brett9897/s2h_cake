@@ -1,0 +1,64 @@
+/* This is a css file for specific things that is only in the vi_criteria adding page */
+
+#plus_image
+{
+	background: url(../overcast/images/ui-icons_3383bb_256x240.png) no-repeat;
+	background-position: 0 -192px;
+	overflow: hidden;
+	margin: 0 4px 10px;
+	width: 15px;
+	height: 16px;
+	display: inline-block;
+	cursor: pointer;
+	text-indent: -9999999px;
+	border:0;
+	padding:0;
+}
+
+span.text
+{
+	float: left;
+}
+
+.remove_image
+{
+	background: url(../overcast/images/ui-icons_3383bb_256x240.png) no-repeat;
+	background-position: 0 -128px;
+	overflow: hidden;
+	margin: 0 0 0 4px;
+	width: 16px;
+	height: 16px;
+	display: block;
+	float: left;
+	cursor: pointer;
+	border:0;
+	padding:0;
+	text-indent: -999999px;
+}
+#words 
+{
+	color: #3383bb;
+	cursor: pointer;
+	border: 0;
+	padding: 0;
+	margin: 0;
+	height: 16px;
+}
+
+#value_options
+{
+	padding: 0 0 4px 25px;
+	font-weight:bold;
+	margin-bottom: 0;
+	margin-top: -10px;
+}
+
+#values_options > p
+{
+	clear: both;
+}
+
+.doNotShow
+{
+	display: none;
+}

@@ -17,7 +17,7 @@ $(document).ready(function (){
 		}
 	}
 
-	//onload make sure everything is good.
+	//onload make sure everything is rendered correctly.
 	performChange();
 
 	/* Click method for adding a validation */

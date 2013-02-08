@@ -16,7 +16,7 @@ class Question extends AppModel {
  *
  * @var string
  */
-	public $displayField = 'label';
+	public $displayField = 'internal_name';
 
 
 	/**
