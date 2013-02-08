@@ -5,6 +5,7 @@
     table tr td {
         border-bottom: none;
         padding: 10px;
+        width: 50%;
     }
     input[type=radio] {
         float: none;
@@ -13,6 +14,15 @@
         padding: 0;
         line-height: 26px;
     }
+    
+    tbody {
+        width: 100%;
+    }
+    
+    .checkbox input[type="checkbox"] {
+        margin-bottom: 0px;
+    }
+    
 </style>
 
 <?php include("surveyInstanceDiv.ctp"); ?>
@@ -116,18 +126,18 @@
     </table>
     <br />
     <h2>Upload Photo</h2>
-        <div class="white-background black-text">
-            <div id="image_upload" style="width:500px">
-                <script type="text/javascript">
-                    $('#image_upload').ajaxupload({
-                        url: global.base_url + '/webroot/upload.php',
-                        remotePath: global.base_url + '\\webroot\\uploaded_images',
-                        editFilename: true
-                    });
-                </script>
-            </div>
+    <div class="white-background black-text">
+        <div id="image_upload" style="width:500px">
+            <script type="text/javascript">
+                $('#image_upload').ajaxupload({
+                    url: global.base_url + '/webroot/upload.php',
+                    remotePath: global.base_url + '\\webroot\\uploaded_images',
+                    editFilename: true
+                });
+            </script>
         </div>
-    
+    </div>
+
     <?php echo $this->Form->end(__('Submit')); ?>
 
 </div>

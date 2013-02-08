@@ -47,7 +47,7 @@ class SurveyInstancesController extends AppController {
         if (!$this->SurveyInstance->exists()) {
             throw new NotFoundException(__('Invalid survey instance'));
         }
-        $this->SurveyInstance->recursive = 4;
+        $this->SurveyInstance->recursive = 3;
         $this->set('surveyInstance', $this->SurveyInstance->find('first', array(
                     'conditions' => array(
                         'SurveyInstance.id' => $id,
@@ -84,9 +84,9 @@ class SurveyInstancesController extends AppController {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
 
-                if( $question['is_required'] == true )
+                if($question['is_required'] == true )
                 {
-                    //array_push($validations, array('notEmpty'));
+                    //$this->Client->addValidator($question['internal_name'], array('notempty'));
                 }
                 
                 $this->Client->addValidator($question['internal_name'], $validations);
