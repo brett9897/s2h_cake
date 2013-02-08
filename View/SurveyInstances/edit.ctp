@@ -30,8 +30,23 @@
                 <?php
                 echo $this->Form->input('survey_id', array(
                     'label' => '',
+                    'disabled' => 'disabled',
                     'options' => array(
                         $activeSurvey['Survey']['id'] => $activeSurvey['Survey']['id']
+                    )
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Your organization id</td>
+            <td>
+                <?php
+                echo $this->Form->input('organization_id', array(
+                    'label' => '',
+                    'disabled' => 'disabled',
+                    'options' => array(
+                        $organization_id => $organization_id
                     )
                 ));
                 ?>
@@ -52,16 +67,6 @@
             <td>
                 <?php
                 echo $this->Form->input('last_name', array(
-                    'label' => ''
-                ));
-                ?>
-            </td>
-        </tr>
-        <tr>
-            <td>Organization ID</td>
-            <td>
-                <?php
-                echo $this->Form->input('organization_id', array(
                     'label' => ''
                 ));
                 ?>

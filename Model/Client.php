@@ -112,7 +112,7 @@ class Client extends AppModel {
             if (empty($validation)) continue;
             $this->validator()->add($key, array(
                 'validation1' => array(
-                    'rule' => "$validation",
+                    'rule' => $validation,
                     'message' => 'Invalid Input'
                     )));
         }

@@ -73,8 +73,10 @@ class SurveyInstancesController extends AppController {
         $personalInformationGrouping = $groupings[0];
 
         //used to fill out the organization drop down box
-        $organizations = $this->Organization->find('list');
-        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
+        $current_user = $this->Auth->user();
+        $organization_id = $current_user['organization_id'];
+        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
+        $this->set('organization_id', $organization_id);
 
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
@@ -84,7 +86,7 @@ class SurveyInstancesController extends AppController {
 
                 if( $question['is_required'] == true )
                 {
-                    $validations[] = 'notEmpty';
+                    //array_push($validations, array('notEmpty'));
                 }
                 
                 $this->Client->addValidator($question['internal_name'], $validations);
@@ -96,6 +98,7 @@ class SurveyInstancesController extends AppController {
 
             //first, we need to save data into the client table
             $this->Client->create();
+            $this->request->data['Client']['organization_id'] = $organization_id;
             if ($this->Client->save($this->request->data)) {
 
                 //then we need to create the survey instance
@@ -188,8 +191,10 @@ class SurveyInstancesController extends AppController {
         $personalInformationGrouping = $groupings[0];
 
         //used to fill out the organization drop down box
-        $organizations = $this->Organization->find('list');
         $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
+        $current_user = $this->Auth->user();
+        $organization_id = $current_user['organization_id'];
+        $this->set('organization_id', $organization_id);
 
         /*         * ********************** AUTOPOPULATING DATA ************************ */
         $surveyInstance = $activeSurvey['SurveyInstance'][0];
@@ -231,6 +236,7 @@ class SurveyInstancesController extends AppController {
 
             //first, we need to save data into the client table
             $this->request->data['Client']['id'] = $clientID;
+            $this->request->data['Client']['organization_id'] = $organization_id;
             if ($this->Client->save($this->request->data)) {
 
                 //then we need to update all the answers
