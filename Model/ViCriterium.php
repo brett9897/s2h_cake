@@ -24,8 +24,8 @@ class ViCriterium extends AppModel {
 			),
 		),
 		'weight' => array(
-			'decimal' => array(
-				'rule' => array('decimal'),
+			'numeric' => array(
+				'rule' => array('numeric'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
