@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.10.1deb1
+-- version 3.4.5deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 05, 2013 at 10:33 AM
--- Server version: 5.5.29
--- PHP Version: 5.3.10-1ubuntu3.5
+-- Generation Time: Feb 04, 2013 at 07:09 PM
+-- Server version: 5.1.66
+-- PHP Version: 5.3.6-13ubuntu3.9
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `s2h_third_version`
+-- Database: `s2h_cake`
 --
 
 -- --------------------------------------------------------
@@ -690,9 +690,9 @@ CREATE TABLE IF NOT EXISTS `survey_instances` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `client_id` (`client_id`),
   KEY `survey_id` (`survey_id`),
-  KEY `user_id` (`user_id`),
-  KEY `client_id` (`client_id`)
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
@@ -742,7 +742,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `org_id` (`organization_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=8 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=7 ;
 
 --
 -- Dumping data for table `users`
@@ -753,8 +753,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `o
 (3, 'super', 'f866b09d9052ff185fb86bb035d40a0e363990be', 'super', 'super', 1, 'superAdmin', 0, '2013-01-31 00:00:00', '2013-01-31 00:00:00'),
 (4, 'admin', 'f866b09d9052ff185fb86bb035d40a0e363990be', 'admin', 'admin', 1, 'admin', 0, '2013-01-31 00:00:00', '2013-01-31 00:00:00'),
 (5, 'user', 'f866b09d9052ff185fb86bb035d40a0e363990be', 'user', 'user', 1, 'user', 0, '2013-01-31 00:00:00', '2013-01-31 00:00:00'),
-(6, 'vol', 'f866b09d9052ff185fb86bb035d40a0e363990be', 'vol', 'vol', 1, 'volunteer', 0, '2013-01-31 00:00:00', '2013-01-31 00:00:00'),
-(7, 'superAdmin', '6e6dbd12bba6127f4d44f839e44a71fa779ee945', 'Super', 'Admin', 1, 'superAdmin', 0, '2013-02-05 00:00:00', '2013-02-05 00:00:00');
+(6, 'vol', 'f866b09d9052ff185fb86bb035d40a0e363990be', 'vol', 'vol', 1, 'volunteer', 0, '2013-01-31 00:00:00', '2013-01-31 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -771,27 +770,6 @@ CREATE TABLE IF NOT EXISTS `validations` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `vi_criteria`
---
-
-DROP TABLE IF EXISTS `vi_criteria`;
-CREATE TABLE IF NOT EXISTS `vi_criteria` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `question_id` int(10) unsigned DEFAULT NULL,
-  `survey_id` int(10) unsigned DEFAULT NULL,
-  `option_id` int(10) unsigned DEFAULT NULL,
-  `vi_grouping_id` int(10) unsigned DEFAULT NULL,
-  `threshold` varchar(50) DEFAULT NULL,
-  `weight` double NOT NULL,
-  `created` datetime NOT NULL,
-  `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `question_id` (`question_id`,`survey_id`,`option_id`,`vi_grouping_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=2 ;
 
 --
 -- Constraints for dumped tables

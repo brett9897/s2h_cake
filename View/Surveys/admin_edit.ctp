@@ -4,6 +4,7 @@
 	<!--<?php //echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Survey.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('Survey.id'))); ?><br/>-->
 	<?php echo $this->Html->link(__('List Groupings'), array('controller' => 'groupings', 'action' => 'index', $this->Form->value('Survey.id'))); ?><br/>
 	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add')); ?> <br/>
+	<?php echo $this->Html->link(__('Add VI Criterion'), array('controller' => 'vi_criteria', 'action' => 'add', $this->Form->value('Survey.id'))); ?><br/>
 </div>
 <div class="surveys form">
 <?php echo $this->Form->create('Survey'); ?>
