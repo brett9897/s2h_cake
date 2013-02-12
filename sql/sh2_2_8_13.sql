@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.5.1
+-- version 3.4.10.1deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Feb 08, 2013 at 04:57 PM
--- Server version: 5.5.24-log
--- PHP Version: 5.4.3
+-- Generation Time: Feb 12, 2013 at 03:15 PM
+-- Server version: 5.5.29
+-- PHP Version: 5.3.10-1ubuntu3.5
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `s2hcake`
+-- Database: `s2h_third_version`
 --
 
 -- --------------------------------------------------------
@@ -27,6 +27,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `answers`
 --
 
+DROP TABLE IF EXISTS `answers`;
 CREATE TABLE IF NOT EXISTS `answers` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
@@ -48,6 +49,7 @@ CREATE TABLE IF NOT EXISTS `answers` (
 -- Table structure for table `clients`
 --
 
+DROP TABLE IF EXISTS `clients`;
 CREATE TABLE IF NOT EXISTS `clients` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
@@ -77,6 +79,7 @@ INSERT INTO `clients` (`id`, `organization_id`, `first_name`, `last_name`, `ssn`
 -- Table structure for table `feedbacks`
 --
 
+DROP TABLE IF EXISTS `feedbacks`;
 CREATE TABLE IF NOT EXISTS `feedbacks` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
@@ -93,6 +96,7 @@ CREATE TABLE IF NOT EXISTS `feedbacks` (
 -- Table structure for table `groupings`
 --
 
+DROP TABLE IF EXISTS `groupings`;
 CREATE TABLE IF NOT EXISTS `groupings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
@@ -123,6 +127,7 @@ INSERT INTO `groupings` (`id`, `survey_id`, `label`, `ordering`, `is_used`, `cre
 -- Table structure for table `options`
 --
 
+DROP TABLE IF EXISTS `options`;
 CREATE TABLE IF NOT EXISTS `options` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
@@ -490,6 +495,7 @@ INSERT INTO `options` (`id`, `question_id`, `label`, `created`, `modified`) VALU
 -- Table structure for table `organizations`
 --
 
+DROP TABLE IF EXISTS `organizations`;
 CREATE TABLE IF NOT EXISTS `organizations` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
@@ -514,6 +520,7 @@ INSERT INTO `organizations` (`id`, `name`, `isDeleted`, `created`, `modified`) V
 -- Table structure for table `questions`
 --
 
+DROP TABLE IF EXISTS `questions`;
 CREATE TABLE IF NOT EXISTS `questions` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
@@ -640,6 +647,7 @@ INSERT INTO `questions` (`id`, `survey_id`, `grouping_id`, `internal_name`, `lab
 -- Table structure for table `surveys`
 --
 
+DROP TABLE IF EXISTS `surveys`;
 CREATE TABLE IF NOT EXISTS `surveys` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
@@ -664,6 +672,7 @@ INSERT INTO `surveys` (`id`, `organization_id`, `label`, `isActive`, `isDeleted`
 -- Table structure for table `survey_instances`
 --
 
+DROP TABLE IF EXISTS `survey_instances`;
 CREATE TABLE IF NOT EXISTS `survey_instances` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
@@ -685,6 +694,7 @@ CREATE TABLE IF NOT EXISTS `survey_instances` (
 -- Table structure for table `types`
 --
 
+DROP TABLE IF EXISTS `types`;
 CREATE TABLE IF NOT EXISTS `types` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
@@ -713,6 +723,7 @@ INSERT INTO `types` (`id`, `label`, `created`, `modified`) VALUES
 -- Table structure for table `users`
 --
 
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE IF NOT EXISTS `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `username` varchar(127) NOT NULL,
@@ -746,6 +757,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `first_name`, `last_name`, `o
 -- Table structure for table `validations`
 --
 
+DROP TABLE IF EXISTS `validations`;
 CREATE TABLE IF NOT EXISTS `validations` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `label` varchar(255) NOT NULL,
@@ -761,6 +773,7 @@ CREATE TABLE IF NOT EXISTS `validations` (
 -- Table structure for table `vi_criteria`
 --
 
+DROP TABLE IF EXISTS `vi_criteria`;
 CREATE TABLE IF NOT EXISTS `vi_criteria` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `survey_id` int(10) unsigned NOT NULL,
