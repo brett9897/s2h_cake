@@ -1,6 +1,9 @@
 <style>
     dd {
-        padding-left: 15px;
+        padding-left: 300px;
+    }
+    dt {
+        width: 300px;
     }
 
 </style>
@@ -37,14 +40,15 @@
         </dd>
         <?php foreach ($surveyInstance['Survey']['Question'] as $question): ?>
             <dt><?php echo __($question['label']); ?></dt>
-            <dd>
-                <?php foreach ($question['Answer'] as $answer): ?>
+
+            <?php foreach ($question['Answer'] as $answer): ?>
+                <dd>
                     <?php if ($answer['survey_instance_id'] == $id): ?>
                         <?php echo h($answer['value']); ?>
-                        <br />
+                        <br /><br />
                     <?php endif; ?>
-                <?php endforeach; ?>
-            </dd>
+                </dd>
+            <?php endforeach; ?>
         <?php endforeach; ?>
     </dl>
 </div>

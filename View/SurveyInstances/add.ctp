@@ -5,6 +5,7 @@
     table tr td {
         border-bottom: none;
         padding: 10px;
+        width: 50%;
     }
     input[type=radio] {
         float: none;
@@ -13,6 +14,15 @@
         padding: 0;
         line-height: 26px;
     }
+    
+    tbody {
+        width: 100%;
+    }
+    
+    .checkbox input[type="checkbox"] {
+        margin-bottom: 0px;
+    }
+    
 </style>
 
 <?php include("surveyInstanceDiv.ctp"); ?>
@@ -32,8 +42,23 @@
                 <?php
                 echo $this->Form->input('survey_id', array(
                     'label' => '',
+                    'disabled' => 'disabled',
                     'options' => array(
                         $activeSurvey['Survey']['id'] => $activeSurvey['Survey']['id']
+                    )
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Your organization id</td>
+            <td>
+                <?php
+                echo $this->Form->input('organization_id', array(
+                    'label' => '',
+                    'disabled' => 'disabled',
+                    'options' => array(
+                        $organization_id => $organization_id
                     )
                 ));
                 ?>
@@ -60,16 +85,6 @@
             </td>
         </tr>
         <tr>
-            <td>Organization ID</td>
-            <td>
-                <?php
-                echo $this->Form->input('organization_id', array(
-                    'label' => ''
-                ));
-                ?>
-            </td>
-        </tr>
-        <tr>
             <td>SSN</td>
             <td>
                 <?php
@@ -84,7 +99,9 @@
             <td>
                 <?php
                 echo $this->Form->input('dob', array(
-                    'label' => ''
+                    'label' => '',
+                    'minYear' => date('Y') - 150,
+                    'maxYear' => date('Y')
                 ));
                 ?>
             </td>
@@ -109,18 +126,18 @@
     </table>
     <br />
     <h2>Upload Photo</h2>
-        <div class="white-background black-text">
-            <div id="image_upload" style="width:500px">
-                <script type="text/javascript">
-                    $('#image_upload').ajaxupload({
-                        url: global.base_url + '/webroot/upload.php',
-                        remotePath: global.base_url + '\\webroot\\uploaded_images',
-                        editFilename: true
-                    });
-                </script>
-            </div>
+    <div class="white-background black-text">
+        <div id="image_upload" style="width:500px">
+            <script type="text/javascript">
+                $('#image_upload').ajaxupload({
+                    url: global.base_url + '/webroot/upload.php',
+                    remotePath: global.base_url + '\\webroot\\uploaded_images',
+                    editFilename: true
+                });
+            </script>
         </div>
-    
+    </div>
+
     <?php echo $this->Form->end(__('Submit')); ?>
 
 </div>

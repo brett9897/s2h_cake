@@ -47,7 +47,7 @@ class SurveyInstancesController extends AppController {
         if (!$this->SurveyInstance->exists()) {
             throw new NotFoundException(__('Invalid survey instance'));
         }
-        $this->SurveyInstance->recursive = 4;
+        $this->SurveyInstance->recursive = 3;
         $this->set('surveyInstance', $this->SurveyInstance->find('first', array(
                     'conditions' => array(
                         'SurveyInstance.id' => $id,
@@ -73,14 +73,17 @@ class SurveyInstancesController extends AppController {
         $personalInformationGrouping = $groupings[0];
 
         //used to fill out the organization drop down box
-        $organizations = $this->Organization->find('list');
-        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
+        $current_user = $this->Auth->user();
+        $organization_id = $current_user['organization_id'];
+        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
+        $this->set('organization_id', $organization_id);
 
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
+
 
                 //broken right now
                 /*if( $question['is_required'] == true )
@@ -97,6 +100,7 @@ class SurveyInstancesController extends AppController {
 
             //first, we need to save data into the client table
             $this->Client->create();
+            $this->request->data['Client']['organization_id'] = $organization_id;
             if ($this->Client->save($this->request->data)) {
 
                 //then we need to create the survey instance
@@ -258,8 +262,10 @@ class SurveyInstancesController extends AppController {
         $personalInformationGrouping = $groupings[0];
 
         //used to fill out the organization drop down box
-        $organizations = $this->Organization->find('list');
         $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping', 'organizations'));
+        $current_user = $this->Auth->user();
+        $organization_id = $current_user['organization_id'];
+        $this->set('organization_id', $organization_id);
 
         /*         * ********************** AUTOPOPULATING DATA ************************ */
         $surveyInstance = $activeSurvey['SurveyInstance'][0];
@@ -301,6 +307,7 @@ class SurveyInstancesController extends AppController {
 
             //first, we need to save data into the client table
             $this->request->data['Client']['id'] = $clientID;
+            $this->request->data['Client']['organization_id'] = $organization_id;
             if ($this->Client->save($this->request->data)) {
 
                 //then we need to update all the answers

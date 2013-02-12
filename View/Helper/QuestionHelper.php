@@ -19,20 +19,24 @@ class QuestionHelper extends AppHelper {
                     'label' => '',
                         ));
                 break;
-            
+
             //text fields with refused option
             case "textWithRefused":
             case "textAreaWithRefused":
-                $output = $this->Form->input($internalName, array(
+                $output = "<div>";
+                $output .= $this->Form->input($internalName, array(
                     'type' => $type,
-                    'label' => ''
+                    'label' => '',
+                    'style' => 'clear: none; float: left;',
+                    'div' => false
                         ));
-                $output .= "<br />";
-                $output .= $this->Form->input($internalName.' - REFUSED', array(
+                $output .= $this->Form->input($internalName . ' - REFUSED', array(
                     'type' => 'checkbox',
                     'label' => 'Refused',
+                    'style' => 'clear: none; float: left; margin-left: 20px',
+                    'div' => false
                         ));
-
+                $output .= "</div>";
                 break;
 
             //multi-select checkboxes
@@ -73,7 +77,7 @@ class QuestionHelper extends AppHelper {
                     'legend' => false
                         ));
                 break;
-                
+
             //combo box with other text field
             case "selectWithOther":
                 $options = array();
@@ -84,7 +88,7 @@ class QuestionHelper extends AppHelper {
                         $i++;
                     }
                 }
-                
+
                 $output = $this->Form->input($internalName, array(
                     'type' => 'select',
                     'options' => $options,
@@ -96,7 +100,41 @@ class QuestionHelper extends AppHelper {
                     'label' => 'Other'
                         ));
                 break;
+
+            case "date":
+                $output = $this->Form->input($internalName, array(
+                    'type' => 'date',
+                    'label' => '',
+                    'minYear' => date('Y') - 100,
+                    'maxYear' => date('Y') + 20
+                ));
+                break;
+            
+            //multi-select checkboxes with an other text field
+            case "checkboxWithOther":
+                $options = array();
+                if (!empty($question['Option'])) {
+                    $i = 0;
+                    foreach ($question['Option'] as $individualOption) {
+                        $options[$individualOption['label']] = $individualOption['label'];
+                        $i++;
+                    }
+                }
+
+                $output = $this->Form->input($internalName, array(
+                    'multiple' => 'checkbox',
+                    'label' => '',
+                    'type' => 'select',
+                    'options' => $options
+                        ));
+                $output .= "<br />";
+                $output .= $this->Form->input($internalName . "'s associated other field", array(
+                    'type' => 'text',
+                    'label' => 'Other'
+                        ));
+                break;
         }
+      
 
         return $output;
     }
