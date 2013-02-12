@@ -111,4 +111,19 @@ class Survey extends AppModel {
         )
     );
 
+    public function updateActiveFieldToTrue($survey_id)
+    {
+        //get this survey to figure out the organization id
+        $surveys = $this->find('first', array('conditions' => array('id' => $survey_id), 'recursive' => -1));
+
+        //set all surveys in this organization to be inactive.
+        $this->updateAll(
+            array('Survey.isActive' => false), 
+            array('Survey.organization_id' => $surveys['Survey']['organization_id'])
+        );
+
+        //set this survey to active.
+        $this->id = $survey_id;
+        $this->saveField('isActive', true);
+    }
 }

@@ -1,0 +1,19 @@
+.single_line_form
+{
+	display: inline;
+}
+
+.single_line_form div
+{
+	clear: none;
+}
+
+.single_line_form_input
+{
+	float: left;
+}
+
+.single_line_form_input.extra_width
+{
+	width: 226px;
+}

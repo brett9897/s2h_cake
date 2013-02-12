@@ -76,6 +76,7 @@ class GroupingsController extends AppController {
 			$this->paginate = array( 'conditions' => array('Grouping.survey_id' => $id));
 		}
 		$this->set('groupings', $this->paginate('Grouping'));
+		$this->set('survey_id', $id);
 	}
 
 /**
@@ -98,16 +99,26 @@ class GroupingsController extends AppController {
  *
  * @return void
  */
-	public function admin_add() {
+	public function admin_add($survey_id = null) {
 		if ($this->request->is('post')) {
 			$this->Grouping->create();
 			if ($this->Grouping->save($this->request->data)) {
 				$this->Session->setFlash(__('The grouping has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'index', $survey_id));
 			} else {
 				$this->Session->setFlash(__('The grouping could not be saved. Please, try again.'));
 			}
 		}
+
+		if( $survey_id != null )
+		{
+			$this->set('selected_index', $survey_id);
+		}
+		else
+		{
+			$this->set('selected_index', 0);
+		}
+
 		$surveys = $this->Grouping->Survey->find('list');
 		$this->set(compact('surveys'));
 	}

@@ -56,11 +56,11 @@
                 <?php 
                 	if ($logged_in)
                 	{	
-                		echo $this->Html->link('S2H 2.0', array('controller' => 'welcome', 'action' => 'index'));
+                		echo $this->Html->image("banner.png", array("url" => array('controller' => 'welcome', 'action' => 'index')));
                 	}
                 	else
                 	{
-                		echo $this->Html->link('S2H 2.0', array('controller' => 'welcome', 'action' => 'index'));
+                		echo $this->Html->image("banner.png");
                 	}
                 ?>
                 </h1>
