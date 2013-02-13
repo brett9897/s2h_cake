@@ -56,17 +56,16 @@
                 	if ($logged_in)
                 	{	
                         echo "<h1>";
-                		echo $this->Html->link("Homeless Housing Occupancy Project", array('controller' => 'welcome', 'action' => 'index'));
+                		echo $this->Html->link("Street To Home", array('controller' => 'welcome', 'action' => 'index'));
                 	}
                 	else
                 	{
                 ?>
                         <h1 class="not_logged_in">
-                        <div class="header_text_no_link">Homeless Housing Occupancy Project</div>
+                        <div class="header_text_no_link">Street To Home</div>
                 <?php
                 	}
                 ?>
-                    <div class="sub_header">A Cooperation between Georgia Tech and the United Way of Metropolitan Atlanta</div>
                 </h1>
                 <?php
                 /*  * **************************************** 
@@ -129,7 +128,8 @@
                 <?php if ($logged_in): ?>
                     We would appreciate your <?php echo $this->Html->link('Feedback', array('controller' => 'feedbacks', 'action' => 'add')); ?> | 
                     <a href="javascript:toggle('22');">Contact</a> |
-                    <?php echo $this->Html->link('Home', array('controller' => 'welcome', 'action' => 'index')); ?>
+                    <?php echo $this->Html->link('Home', array('controller' => 'welcome', 'action' => 'index')); ?> |
+                    <a href="">C4G</a>
                     <p id ="22" style ="display: none">
                         <br />United Way of Metropolitan Atlanta
                         <br />100 Edgewood Avenue, N.E.

@@ -21,8 +21,11 @@
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 	width: 100%;
-	padding-right: 2px;
+	padding-right: 1px;
 	padding-bottom: 0;
+	border-top: solid 1px #000;
+	border-right: solid 1px #000;
+	border-left: solid 1px #000;
 }
 
 #header > h1 > .sub_header
@@ -35,7 +38,7 @@
 {
 	text-align: right;
 	float: right;
-	padding-right: 2px;
+	padding-right: 10px;
 	color: #fff;
 }
 
@@ -72,7 +75,13 @@ h1.not_logged_in
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
-	color: black;
+	color: #fff;
+}
+
+#footer > a
+{
+	color: #fff;
+	text-decoration: underline;
 }
 
 dl
