@@ -17,6 +17,10 @@ class WelcomeController extends AppController {
 			{
 				$this->redirect(array('action' => 'index', 'admin' => false));
 			}
+			else
+			{
+				return true;
+			}
 		}
 
 		//default deny
@@ -29,7 +33,8 @@ class WelcomeController extends AppController {
 
     public function admin_index()
     {
-
+    	$this->index();
+    	$this->render("index");
     }
 
 }
