@@ -23,6 +23,15 @@ $(document).ready(function (){
 
 	$('#ViCriteriumQuestionId').change(function () {
 
+		//remove empty element if it exists
+		if( $('#ViCriteriumQuestionId').val() != '')
+        {
+            if( $('#ViCriteriumQuestionId > option:first-child').val() == '')
+            {
+                $('#ViCriteriumQuestionId > option:first-child').remove();
+            }
+        }
+
 		//make ajax call to figure out how values should be displayed
 		$.ajax({
 			url: global.base_url + "/admin/vi_criteria/get_values/" + $(this).val() + '.json',

@@ -112,5 +112,24 @@ class SurveyInstance extends AppModel {
         )
     );
 
+    public function getMostRecentSurveyInstanceForEachUser($survey_id, $type = 'all', $params = array())
+    {
+        $this->recursive = 0;
+        $joins = array(
+            array(
+                'table' => 'survey_instances',
+                'alias' => 's2',
+                'type' => 'LEFT',
+                'conditions' => array(
+                    'SurveyInstance.id' => 's2.id',
+                    'SurveyInstance.created <' => 's2.created'
+                )
+            )
+        );
+
+        $params[] = array('joins' => $joins);
+        $params['conditions']['SurveyInstance.survey_id'] = $survey_id;
+        return $this->find($type, $params);
+    }
 
 }

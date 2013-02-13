@@ -126,4 +126,11 @@ class Survey extends AppModel {
         $this->id = $survey_id;
         $this->saveField('isActive', true);
     }
+
+    public function getSurveysForOrganization($organization_id, $type = 'list')
+    {
+        $conditions = array('Survey.organization_id' => $organization_id);
+        $params = array('recursive' => -1, 'conditions' => $conditions);
+        return $this->find($type, $params);
+    }
 }

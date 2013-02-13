@@ -1,18 +1,23 @@
 $(document).ready(function(){
 	oTable = $("#clientsResults").dataTable({
-		//"bJQueryUI": true,                    //tells it to use the JQuery UI theme
+		//"bJQueryUI": true,
 		"sPaginationType": "full_numbers",
 		"bProcessing": true,
 		"bServerSide": true,
-		"sAjaxSource": global.base_url + "/clients/dataTables.json",            //dataTables.json is really dataTables.ctp and is is /app/webroot/ putting the .json tells CakePHP to remove all its html visual wrappers.
-                //"sAjaxSource": global.base_url + "/Controller/ClientController.php",
+		"sAjaxSource": global.base_url + "/admin/survey_instances/dataTables.json",
+		"fnServerParams" : function ( aoData )
+		{
+			aoData.push( {"name": "survey_id", "value": location.href.substring(location.href.lastIndexOf("/") + 1)} );
+		},
 		"aoColumns": [
 		              	{"bSortable": true, "bSearchable": true},
 		              	{"bSortable": true, "bSearchable": true},
 		              	{"bSortable": false, "bSearchable": false},
+		              	{"bSortable": false, "bSearchable": false},
+		              	{"bSortable": true, "bSearchable": false}
 		             ],
 		"aaSorting": [[1, 'asc']]
-	});//.fnSetFilteringDelay(1000);                                        //this was for the seach delay
+	}).fnSetFilteringDelay(1000);
 	
 	$('#clientsResults').on('click', 'tbody tr', function(event){
 		var id = $(this).attr('id');

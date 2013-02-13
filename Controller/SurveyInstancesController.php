@@ -11,6 +11,7 @@ class SurveyInstancesController extends AppController {
 
     public $uses = array('Grouping', 'Survey', 'SurveyInstance', 'Client', 'Question', 'Type', 'Organization', 'Answer', 'Option', 'ViCriterium');
     public $helpers = array('Question');
+    public $components = array('RequestHandler');
 
     /**
      * index method
@@ -364,11 +365,18 @@ class SurveyInstancesController extends AppController {
     /**
      * admin_index method
      *
+     * This is will the reports will be.
      * @return void
      */
-    public function admin_index() {
-        $this->SurveyInstance->recursive = 0;
-        $this->set('surveyInstances', $this->paginate());
+    public function admin_index($survey_id = null) 
+    {
+        if( $survey_id == null )
+        {
+            $user = $this->Auth->user();
+            $surveys = $this->SurveyInstance->Survey->getSurveysForOrganization($user['organization_id'], 'list');
+            $this->set(compact('surveys'));
+            $this->render("select_survey");
+        }
     }
 
     /**
@@ -469,4 +477,90 @@ class SurveyInstancesController extends AppController {
         return (substr($haystack, -$length) === $needle);
     }
 
+    public function admin_dataTables()
+    {
+        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
+        
+        $survey_id = $this->params['url']['survey_id'];
+
+        $params = array('recursive' => 0);
+        
+        //Paging
+        if (isset($this->params['url']['iDisplayStart']) && $this->params['url']['iDisplayLength'] != '-1') {
+            $params['limit'] = $this->params['url']['iDisplayLength'];
+            $params['offset'] = $this->params['url']['iDisplayStart'];
+        }
+
+        //Sorting
+        if (isset($this->params['url']['iSortCol_0'])) {
+            $order = array();
+            for ($i = 0; $i < intval($this->params['url']['iSortingCols']); $i++) {
+                if ($this->params['url']['bSortable_' . intval($this->params['url']['iSortCol_' . $i])] == "true") {
+                    $order[] = $aColumns[intval($this->params['url']['iSortCol_' . $i])] . ' ' . $this->params['url']['sSortDir_' . $i];
+                }
+            }
+
+            $params['order'] = $order;
+        }
+
+        //Filtering---the actual search bar
+        if (isset($this->params['url']['sSearch']) && $this->params['url']['sSearch'] != "") {
+            $comma = strpos($this->params['url']['sSearch'], ',');
+            $space = strpos($this->params['url']['sSearch'], ' ');
+
+            if ($comma === false && $space === false) {
+                $conditions = array('OR' => array());
+                for ($i = 0; $i < count($aColumns); $i++) {
+                    if (isset($this->params['url']['bSearchable_' . $i]) && $this->params['url']['bSearchable_' . $i] == "true") {
+                        $conditions['OR'][$aColumns[$i] . ' LIKE '] = $this->params['url']['sSearch'] . '%';
+                    }
+                }
+            } else {
+                if ($comma !== false) {
+                    $firstName = trim(substr($this->params['url']['sSearch'], $comma + 1));
+                    $lastName = trim(substr($this->params['url']['sSearch'], 0, $comma));
+                } else {
+                    $firstName = trim(substr($this->params['url']['sSearch'], 0, $space));
+                    $lastName = trim(substr($this->params['url']['sSearch'], $space + 1));
+                }
+
+                $conditions = array(
+                    $aColumns[0] . ' LIKE ' => $firstName . '%',
+                    $aColumns[1] . ' LIKE ' => $lastName . '%'
+                );
+            }
+
+            $params['conditions'] = $conditions;
+        }
+
+        $raw_data = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'all', $params);
+
+        $total = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count');
+
+        if (isset($params['conditions'])) {
+            $filteredTotal = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count', array('conditions' => $params['conditions']));
+        } else {
+            $filteredTotal = $total;
+        }
+
+        $output = array(
+            'sEcho' => intval($this->params['url']['sEcho']),
+            'iTotalRecords' => $total,
+            'iTotalDisplayRecords' => $filteredTotal,
+            'aaData' => array()
+        );
+
+        foreach ($raw_data as $result) {
+            $row = array(
+                $result['Client']['first_name'],
+                $result['Client']['last_name'],
+                date('m/d/Y', strtotime(h($result['Client']['dob']))),
+                $result['Client']['ssn'],
+                intVal($result['SurveyInstance']['vi_score']),
+                'DT_RowId' => 'client_' . $result['Client']['id'],
+            );
+            $output['aaData'][] = $row;
+        }
+        $this->set('output', $output);
+    }
 }
