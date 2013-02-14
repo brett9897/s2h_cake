@@ -1,5 +1,6 @@
 <?php echo $this->Html->script('ajaxupload-min.js', FALSE); ?>
 <?php echo $this->Html->css('classicTheme/style'); ?>
+<?php echo $this->Html->script("SurveyInstances/bindPhoto.js", FALSE); ?>
 
 <style type="text/css">
     table tr td {
@@ -7,6 +8,7 @@
         padding: 10px;
         width: 50%;
     }
+
     input[type=radio] {
         float: none;
         width: auto;
@@ -14,16 +16,17 @@
         padding: 0;
         line-height: 26px;
     }
-    
+
     tbody {
         width: 100%;
     }
-    
+
     .checkbox input[type="checkbox"] {
         margin-bottom: 0px;
     }
-    
+
 </style>
+
 
 <?php include("surveyInstanceDiv.ctp"); ?>
 
@@ -117,14 +120,27 @@
             <script type="text/javascript">
                 $('#image_upload').ajaxupload({
                     url: global.base_url + '/webroot/upload.php',
-                    remotePath: global.base_url + '\\webroot\\uploaded_images',
+                    remotePath:<?php echo $remotePath; ?>,
                     editFilename: true
                 });
             </script>
         </div>
     </div>
 
-    <?php echo $this->Form->end(__('Submit')); ?>
+    <?php
+    echo $this->Form->input('photoName', array(
+        'type' => 'hidden',
+        'id' => 'photoName',
+        'value' => 'noneEntered'
+    ));
+    ?>
+
+    <?php
+    echo $this->Form->submit('Submit', array(
+        'onClick' => 'bindPhoto()'
+    ));
+    ?>
+    <?php echo $this->Form->end(); ?>
 
 </div>
 

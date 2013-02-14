@@ -13,6 +13,11 @@ class SurveyInstancesController extends AppController {
     public $helpers = array('Question');
     public $components = array('RequestHandler');
 
+    public function beforeFilter() {
+        parent::beforeFilter();
+        $this->Security->validatePost = false;
+    }
+
     /**
      * index method
      *
@@ -78,6 +83,7 @@ class SurveyInstancesController extends AppController {
         $organization_id = $current_user['organization_id'];
         $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
         $this->set('organization_id', $organization_id);
+        $this->set('remotePath', preg_quote("'" . APP . 'webroot' . DS . 'img' . DS . 'uploaded_images' . "'"));
 
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
@@ -222,10 +228,10 @@ class SurveyInstancesController extends AppController {
                     if ($this->endsWith($key, ' - checkbox other') && !empty($value)) {
                         $fixedKey = str_replace(' - checkbox other', '', $key);
                         $assocQuestion = $this->Question->find('first', array(
-                           'conditions' => array(
-                               'internal_name' => $fixedKey
-                           ) 
-                        ));
+                            'conditions' => array(
+                                'internal_name' => $fixedKey
+                            )
+                                ));
                         $this->Answer->create();
                         $data['Answer'][0] = array(
                             'question_id' => $assocQuestion['Question']['id'],
@@ -377,10 +383,8 @@ class SurveyInstancesController extends AppController {
      * This is will the reports will be.
      * @return void
      */
-    public function admin_index($survey_id = null) 
-    {
-        if( $survey_id == null )
-        {
+    public function admin_index($survey_id = null) {
+        if ($survey_id == null) {
             $user = $this->Auth->user();
             $surveys = $this->SurveyInstance->Survey->getSurveysForOrganization($user['organization_id'], 'list');
             $this->set(compact('surveys'));
@@ -486,14 +490,13 @@ class SurveyInstancesController extends AppController {
         return (substr($haystack, -$length) === $needle);
     }
 
-    public function admin_dataTables()
-    {
+    public function admin_dataTables() {
         $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
-        
+
         $survey_id = $this->params['url']['survey_id'];
 
         $params = array('recursive' => 0);
-        
+
         //Paging
         if (isset($this->params['url']['iDisplayStart']) && $this->params['url']['iDisplayLength'] != '-1') {
             $params['limit'] = $this->params['url']['iDisplayLength'];
@@ -572,4 +575,5 @@ class SurveyInstancesController extends AppController {
         }
         $this->set('output', $output);
     }
+
 }
