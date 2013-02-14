@@ -129,12 +129,13 @@
                     We would appreciate your <?php echo $this->Html->link('Feedback', array('controller' => 'feedbacks', 'action' => 'add')); ?> | 
                     <a href="javascript:toggle('22');">Contact</a> |
                     <?php echo $this->Html->link('Home', array('controller' => 'welcome', 'action' => 'index')); ?> |
-                    <a href="">C4G</a>
+                    <a href="http://www.cc.gatech.edu/about/advancing/c4g" target="blank">C4G</a>
                     <p id ="22" style ="display: none">
                         <br />United Way of Metropolitan Atlanta
                         <br />100 Edgewood Avenue, N.E.
                         <br />Atlanta, Georgia 30303
                         <br /><a href="mailto:test@test.com">Send e-mail to United Way</a>
+                        <br /><a href="http://unitedwayatlanta.org/Pages/Home.aspx" target="blank">United Way Atlanta</a>
                     </p>
 
                 <?php endif; ?>
@@ -142,15 +143,5 @@
         </div>
     
         <?php echo $this->element('sql_dump'); ?>
-        <!-- Lee commented out because I don't know what this does
-        <div class="do_not_show">
-            <?php //echo $this->Html->link('Resources', array('controller' => 'resources', 'action' => 'index'), array('id' => 'resources')); ?>
-            <?php //echo $this->Html->link('Organizations', array('controller' => 'organizations', 'action' => 'index'), array('id' => 'organizations')); ?>
-            <?php // echo $this->Html->link('Reports', array('controller' => 'reports', 'action' => 'index'), array('id' => 'reports')); ?>
-            <?php //echo $this->Html->link('Users', array('controller' => 'users', 'action' => 'index'), array('id' => 'users')); ?>
-            <?php //echo $this->Html->link('Customize', array('controller' => 'customize', 'action' => 'index'), array('id' => 'customize')); ?>
-        </div>
-        -->
-        
     </body>
 </html>
