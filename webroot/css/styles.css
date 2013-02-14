@@ -23,9 +23,9 @@
 	width: 100%;
 	padding-right: 1px;
 	padding-bottom: 0;
-	border-top: solid 1px #000;
+	/*border-top: solid 1px #000;
 	border-right: solid 1px #000;
-	border-left: solid 1px #000;
+	border-left: solid 1px #000;*/
 }
 
 #header > h1 > .sub_header
@@ -78,7 +78,7 @@ h1.not_logged_in
 	color: #fff;
 }
 
-#footer > a
+#footer a
 {
 	color: #fff;
 	text-decoration: underline;

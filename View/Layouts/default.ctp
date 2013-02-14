@@ -129,12 +129,13 @@
                     We would appreciate your <?php echo $this->Html->link('Feedback', array('controller' => 'feedbacks', 'action' => 'add')); ?> | 
                     <a href="javascript:toggle('22');">Contact</a> |
                     <?php echo $this->Html->link('Home', array('controller' => 'welcome', 'action' => 'index')); ?> |
-                    <a href="">C4G</a>
+                    <a href="http://www.cc.gatech.edu/about/advancing/c4g" target="blank">C4G</a>
                     <p id ="22" style ="display: none">
                         <br />United Way of Metropolitan Atlanta
                         <br />100 Edgewood Avenue, N.E.
                         <br />Atlanta, Georgia 30303
                         <br /><a href="mailto:test@test.com">Send e-mail to United Way</a>
+                        <br /><a href="http://unitedwayatlanta.org/Pages/Home.aspx" target="blank">United Way Atlanta</a>
                     </p>
 
                 <?php endif; ?>
