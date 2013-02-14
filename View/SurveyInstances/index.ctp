@@ -13,7 +13,11 @@
         <?php foreach ($surveyInstances as $surveyInstance): ?>
             <tr>
                 <td>
-                    <?php echo $this->Html->link($surveyInstance['Survey']['label'], array('controller' => 'surveys', 'action' => 'view', $surveyInstance['Survey']['id'])); ?>
+                    <?php if ($isAtLeastAdmin): ?>
+                        <?php echo $this->Html->link($surveyInstance['Survey']['label'], array('controller' => 'surveys', 'action' => 'view', $surveyInstance['Survey']['id'])); ?>
+                    <?php else: ?>
+                        <strong><?php echo $surveyInstance['Survey']['label']; ?></strong>
+                    <?php endif; ?>
                 </td>
                 <td>
                     <?php echo $this->Html->link($surveyInstance['Client']['first_name'], array('controller' => 'clients', 'action' => 'view', $surveyInstance['Client']['id'])); ?>

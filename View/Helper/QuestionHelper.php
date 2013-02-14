@@ -128,7 +128,7 @@ class QuestionHelper extends AppHelper {
                     'options' => $options
                         ));
                 $output .= "<br />";
-                $output .= $this->Form->input($internalName . "'s associated other field", array(
+                $output .= $this->Form->input($internalName . ' - checkbox other', array(
                     'type' => 'text',
                     'label' => 'Other'
                         ));
