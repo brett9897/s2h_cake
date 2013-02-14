@@ -52,15 +52,18 @@
         <div id="container">
 
             <div id="header">
-                <h1>
                 <?php 
                 	if ($logged_in)
                 	{	
-                		echo $this->Html->link('S2H 2.0', array('controller' => 'welcome', 'action' => 'index'));
+                        echo "<h1>";
+                		echo $this->Html->link("Street To Home", array('controller' => 'welcome', 'action' => 'index'));
                 	}
                 	else
                 	{
-                		echo $this->Html->link('S2H 2.0', array('controller' => 'welcome', 'action' => 'index'));
+                ?>
+                        <h1 class="not_logged_in">
+                        <div class="header_text_no_link">Street To Home</div>
+                <?php
                 	}
                 ?>
                 </h1>
@@ -70,23 +73,7 @@
                  *  message in the top right hand corner of every page
                  * **************************************** */
                 ?>
-                <div style="text-align: right; float: right;">
-                    <?php if ($logged_in): ?>
-                        Currently Logged in as: <?php echo $current_user['username']; ?> | 
-                        <?php echo $this->Html->link('Edit Profile', array('controller' => 'users', 'action' => 'edit', $current_user['id'])); ?> | 
-                        <script>
-                            jQuery(document).ready(function(){  
-                                jQuery('#top_links').removeClass('do_not_show');
-                            });
-                        </script>
-                        <?php echo $this->Html->link('Sign Out', array('controller' => 'users', 'action' => 'logout', 'admin' => false)); ?>
-                    <?php endif; ?>
-                </div>
 
-                <?php /******************************************************/ ?>
-
-    
-                <h1>&nbsp;</h1>
                 <ul id="top_links" class="do_not_show">
                     <?php if ($isAtLeastAdmin): ?>
                         <li><input type="radio" id="radioSurveyAdmin" name="radioSurveyAdmin" /><label for="radioSurveyAdmin">Surveys</label></li>
@@ -99,10 +86,24 @@
                     
                 </ul>
 
+                <div id="user_info">
+                    <?php if ($logged_in): ?>
+                        Currently Logged in as: <?php echo $current_user['username']; ?> | 
+                        <?php echo $this->Html->link('Edit Profile', array('controller' => 'users', 'action' => 'edit', $current_user['id'])); ?> | 
+                        <script>
+                            jQuery(document).ready(function(){  
+                                jQuery('#top_links').removeClass('do_not_show');
+                            });
+                        </script>
+                        <?php echo $this->Html->link('Sign Out', array('controller' => 'users', 'action' => 'logout', 'admin' => false)); ?>
+                    <?php endif; ?>
+                </div>
+
+                <div class="clear"></div>
             </div>
 
             <div id="bodyContainer" style="width:100%; ">
-                <div id="content" style="width:97%;float:left; border-radius: 5px;">
+                <div id="content">
                     <?php echo $this->Session->flash(); ?>
 
                     <?php echo $this->fetch('content'); ?>
@@ -123,11 +124,12 @@
                 
             
             </div>
-            <div id="footer" style="text-align: center; margin-left:auto; margin-left:auto;">
+            <div id="footer">
                 <?php if ($logged_in): ?>
                     We would appreciate your <?php echo $this->Html->link('Feedback', array('controller' => 'feedbacks', 'action' => 'add')); ?> | 
                     <a href="javascript:toggle('22');">Contact</a> |
-                    <?php echo $this->Html->link('Home', array('controller' => 'welcome', 'action' => 'index')); ?>
+                    <?php echo $this->Html->link('Home', array('controller' => 'welcome', 'action' => 'index')); ?> |
+                    <a href="">C4G</a>
                     <p id ="22" style ="display: none">
                         <br />United Way of Metropolitan Atlanta
                         <br />100 Edgewood Avenue, N.E.

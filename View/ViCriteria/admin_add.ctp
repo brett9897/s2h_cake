@@ -14,7 +14,7 @@
 	?>
 		<div id="question" class="doNotShow">
 		<?php
-			echo $this->Form->input('question_id');
+			echo $this->Form->input('question_id', array('empty' => 'Choose Question...'));
 			echo $this->Form->input('relational_operator', array('type' => 'select', 'options' => array_combine($relational_operator_options, $relational_operator_options)));
 		?>
 			<div id="values_text" class="doNotShow">

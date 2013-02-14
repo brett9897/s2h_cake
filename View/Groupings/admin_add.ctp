@@ -10,7 +10,7 @@
 	<fieldset>
 		<legend><?php echo __('Admin Add Grouping'); ?></legend>
 	<?php
-		echo $this->Form->input('survey_id');
+		echo $this->Form->input('survey_id', array('selected' => $selected_index));
 		echo $this->Form->input('label');
 		echo $this->Form->input('ordering');
 		echo $this->Form->input('is_used');

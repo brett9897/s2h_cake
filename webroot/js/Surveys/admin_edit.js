@@ -1,7 +1,9 @@
 $(document).ready( function() {
 	$('#accordion').accordion({
 		header: "> div > h3",
-		heightStyle: "content"
+		heightStyle: "content",
+        active: false,
+        collapsible: true
 	})
 	.sortable({
         axis: "y",

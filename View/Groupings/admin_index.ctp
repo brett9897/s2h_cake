@@ -1,6 +1,6 @@
 <div class="actionsNoButton">
 	<h3><?php echo __('Actions'); ?></h3>
-	<?php echo $this->Html->link(__('New Grouping'), array('action' => 'add')); ?><br/>
+	<?php echo $this->Html->link(__('New Grouping'), array('action' => 'add', $survey_id)); ?><br/>
 	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?><br/>
 	<?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?><br/>
 	<?php echo $this->Html->link(__('New Question'), array('controller' => 'questions', 'action' => 'add')); ?><br/>

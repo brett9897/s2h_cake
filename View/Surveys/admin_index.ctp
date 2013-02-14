@@ -1,3 +1,4 @@
+<?php $this->Html->script('Surveys/admin_index.js', false); ?>
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Surveys'), array('action' => 'index')); ?><br/>
 	<?php echo $this->Html->link(__('New Survey'), array('action' => 'add')); ?><br/>
@@ -10,6 +11,7 @@
 			<th><?php echo $this->Paginator->sort('label'); ?></th>
 			<th><?php echo $this->Paginator->sort('created'); ?></th>
 			<th><?php echo $this->Paginator->sort('modified'); ?></th>
+			<th>Active</th>
 			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	<?php
@@ -21,6 +23,16 @@
 		<td><?php echo h($survey['Survey']['label']); ?>&nbsp;</td>
 		<td><?php echo h($survey['Survey']['created']); ?>&nbsp;</td>
 		<td><?php echo h($survey['Survey']['modified']); ?>&nbsp;</td>
+		<?php if( $survey['Survey']['isActive'] == true ): ?>
+			<td>
+				<?php 
+					echo $this->Form->input('', 
+						array('type' => 'checkbox', 'checked' => 'true', 'disabled' => 'true', 'id' => 'active_' . $survey['Survey']['id'], 'class' => 'active')); 
+				?>&nbsp;
+			</td>
+		<?php else: ?>
+			<td><?php echo $this->Form->input('', array('type' => 'checkbox', 'id' => 'active_' . $survey['Survey']['id'], 'class' => 'active')); ?>&nbsp;</td>
+		<?php endif; ?>
 		<td class="actions">
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $survey['Survey']['id'])); ?>
 		</td>

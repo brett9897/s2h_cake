@@ -7,6 +7,8 @@ App::uses('AppController', 'Controller');
  */
 class SurveysController extends AppController {
 
+	public $components = array('RequestHandler', 'Security');
+
 	public function isAuthorized($user = null)
 	{
 		//non admin pages can be accessed by anyone
@@ -24,6 +26,19 @@ class SurveysController extends AppController {
 		//default deny
 		return false;
 	}
+
+	public function beforeFilter()
+	{
+		parent::beforeFilter();
+		
+		//turn off security just for this request
+		if( $this->request->action === 'admin_update_active' )
+		{
+			$this->Security->validatePost = false;
+			$this->Security->csrfCheck = false;
+		}
+	}
+
 /**
  * index method
  *
@@ -89,6 +104,18 @@ class SurveysController extends AppController {
 				$this->request->data['Survey']['organization_id'] = $user['organization_id'];
 			}
 			if ($this->Survey->save($this->request->data)) {
+				//create a personal information grouping
+				$this->Survey->Grouping->create();
+				$grouping = array();
+				$grouping['Grouping'] = array(
+					'survey_id' => $this->Survey->id,
+					'label' => 'Personal Information',
+					'ordering' => 1,
+					'is_used' => 1
+				);
+
+				$this->Survey->Grouping->save($grouping);
+				
 				$this->Session->setFlash(__('The survey has been saved'));
 				$this->redirect(array('action' => 'index'));
 			} else {
@@ -179,5 +206,22 @@ class SurveysController extends AppController {
 		}
 		$this->Session->setFlash(__('Survey was not deleted'));
 		$this->redirect(array('action' => 'index'));
+	}
+
+	public function admin_update_active()
+	{
+		if( $this->RequestHandler->isAjax() )
+		{
+			$survey = $this->request->data['Survey'];
+			$this->Survey->updateActiveFieldToTrue($survey['id']);
+
+			$response = array( 'status' => 'OK', 'message' => 'Saved successfully', 'timestamp' => date('m-d-Y H:i:s') );
+		}
+		else
+		{
+			$response = array( 'status' => 'ERROR', 'message' => 'Must be an ajax call', 'timestamp' => date('m-d-Y H:i:s') );
+		}
+
+		$this->set('response', $response);
 	}
 }

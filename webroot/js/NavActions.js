@@ -31,7 +31,7 @@ jQuery(document).ready(function(){
     
     jQuery("#radioReportsAdmin").click(function () {
         
-        location.href = global.base_url + "/admin/clients/index";
+        location.href = global.base_url + "/admin/survey_instances/index";
         
     });
 

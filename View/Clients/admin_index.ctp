@@ -1,5 +1,4 @@
-<?php $this->Html->css('dataTables/demo_page', null, array('inline' => false)); ?>
-<?php $this->Html->css('dataTables/demo_table', null, array('inline' => false)); ?>
+<?php $this->Html->css('dataTables/jquery.dataTables', null, array('inline' => false)); ?>
 
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Survey Instances'), array('controller' => 'survey_instances', 'action' => 'index', 'admin' => false)); ?> <br/>
@@ -15,9 +14,9 @@
     //$this->Html->script('jquery-1.8.3.min', FALSE);                
     //$this->Html->script('jquery-ui-1.9.2.custom.min', FALSE);                
     
-    $this->Html->script('jquery.dataTables', FALSE);     //putting false param tells cakephp to put this in the header of the html
+    $this->Html->script('jquery.dataTables.min.js', FALSE);     //putting false param tells cakephp to put this in the header of the html
     //$this->Html->script('shCore.js', FALSE);                
-    $this->Html->script('clients_index', FALSE);            
+    $this->Html->script('clients_index.js', FALSE);            
     
 ?>
 
@@ -35,6 +34,8 @@
                                                 <th>First Name</th>
                                                 <th>Last Name</th>
                                                 <th>DOB</th>
+                                                <th>SSN</th>
+                                                <th>VI Score</th>
                                             </thead>
                                         </table>
                                 </div>
