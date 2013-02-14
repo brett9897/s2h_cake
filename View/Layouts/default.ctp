@@ -143,15 +143,5 @@
         </div>
     
         <?php echo $this->element('sql_dump'); ?>
-        <!-- Lee commented out because I don't know what this does
-        <div class="do_not_show">
-            <?php //echo $this->Html->link('Resources', array('controller' => 'resources', 'action' => 'index'), array('id' => 'resources')); ?>
-            <?php //echo $this->Html->link('Organizations', array('controller' => 'organizations', 'action' => 'index'), array('id' => 'organizations')); ?>
-            <?php // echo $this->Html->link('Reports', array('controller' => 'reports', 'action' => 'index'), array('id' => 'reports')); ?>
-            <?php //echo $this->Html->link('Users', array('controller' => 'users', 'action' => 'index'), array('id' => 'users')); ?>
-            <?php //echo $this->Html->link('Customize', array('controller' => 'customize', 'action' => 'index'), array('id' => 'customize')); ?>
-        </div>
-        -->
-        
     </body>
 </html>

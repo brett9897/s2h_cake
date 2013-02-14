@@ -104,7 +104,7 @@ class GroupingsController extends AppController {
 			$this->Grouping->create();
 			if ($this->Grouping->save($this->request->data)) {
 				$this->Session->setFlash(__('The grouping has been saved'));
-				$this->redirect(array('action' => 'index', $survey_id));
+				$this->redirect(array('controller' => 'surveys', 'action' => 'edit', $survey_id));
 			} else {
 				$this->Session->setFlash(__('The grouping could not be saved. Please, try again.'));
 			}

@@ -106,7 +106,7 @@ class ViCriteriaController extends AppController {
 			$this->ViCriterium->create();
 			if ($this->ViCriterium->save($this->request->data)) {
 				$this->Session->setFlash(__('The VI criterion has been saved'));
-				$this->redirect(array('action' => 'index', $survey_id));
+				$this->redirect(array('controller' => 'surveys',  'action' => 'edit', $survey_id));
 			} else {
 				$this->Session->setFlash(__('The vi criterium could not be saved. Please, try again.'));
 			}

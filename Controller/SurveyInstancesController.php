@@ -379,13 +379,7 @@ class SurveyInstancesController extends AppController {
      */
     public function admin_index($survey_id = null) 
     {
-        if( $survey_id == null )
-        {
-            $user = $this->Auth->user();
-            $surveys = $this->SurveyInstance->Survey->getSurveysForOrganization($user['organization_id'], 'list');
-            $this->set(compact('surveys'));
-            $this->render("select_survey");
-        }
+        $this->render_reports_page($survey_id);
     }
 
     /**
@@ -486,7 +480,7 @@ class SurveyInstancesController extends AppController {
         return (substr($haystack, -$length) === $needle);
     }
 
-    public function admin_dataTables()
+    public function dataTables()
     {
         $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
         
@@ -542,6 +536,11 @@ class SurveyInstancesController extends AppController {
             $params['conditions'] = $conditions;
         }
 
+        if( isset($this->params['url']['user_id']) )
+        {
+            $params['conditions']['SurveyInstance.user_id'] = $this->params['url']['user_id'];   
+        }
+
         $raw_data = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'all', $params);
 
         $total = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count');
@@ -571,5 +570,23 @@ class SurveyInstancesController extends AppController {
             $output['aaData'][] = $row;
         }
         $this->set('output', $output);
+    }
+
+    public function reports($survey_id = null)
+    {
+        $this->render_reports_page($survey_id);
+        $cur_user = $this->Auth->user();
+        $this->set('user_id', $cur_user['id']);
+    }
+
+    public function render_reports_page($survey_id = null)
+    {
+        if( $survey_id == null )
+        {
+            $user = $this->Auth->user();
+            $surveys = $this->SurveyInstance->Survey->getSurveysForOrganization($user['organization_id'], 'list');
+            $this->set(compact('surveys'));
+            $this->render("select_survey");
+        }
     }
 }

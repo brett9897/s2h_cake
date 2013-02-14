@@ -4,6 +4,7 @@
 	<?php echo $this->Html->link(__('New Survey'), array('action' => 'add')); ?><br/>
 </div>
 <div class="surveys index">
+	<div id="save_message"></div>
 	<h2><?php echo __('Surveys'); ?></h2>
 	<table cellpadding="0" cellspacing="0">
 	<tr>

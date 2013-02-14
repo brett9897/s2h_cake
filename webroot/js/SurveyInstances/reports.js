@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	var user_id = $('#user_id').val();
 	oTable = $("#clientsResults").dataTable({
 		//"bJQueryUI": true,
 		"sPaginationType": "full_numbers",
@@ -7,7 +8,12 @@ $(document).ready(function(){
 		"sAjaxSource": global.base_url + "/survey_instances/dataTables.json",
 		"fnServerParams" : function ( aoData )
 		{
-			aoData.push( {"name": "survey_id", "value": location.href.substring(location.href.lastIndexOf("/") + 1)} );
+			aoData.push({
+				"name": "survey_id", "value": location.href.substring(location.href.lastIndexOf("/") + 1)
+			});
+			aoData.push({
+				"name": "user_id", "value": user_id
+			});
 		},
 		"aoColumns": [
 		              	{"bSortable": true, "bSearchable": true},

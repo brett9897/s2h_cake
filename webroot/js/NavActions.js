@@ -25,7 +25,7 @@ jQuery(document).ready(function(){
     
     jQuery("#radioReports").click(function () {
         
-        location.href = global.base_url + "/clients/index";
+        location.href = global.base_url + "/survey_instances/reports";
         
     });
     
