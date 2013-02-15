@@ -7,7 +7,7 @@ class QuestionHelper extends AppHelper {
     public function giveMeInputString($question) {
         $internalName = $question['internal_name'];
         $type = $question['Type']['label'];
-        $output = "";    
+        $output = "";
 
         switch ($type) {
 
@@ -107,9 +107,9 @@ class QuestionHelper extends AppHelper {
                     'label' => '',
                     'minYear' => date('Y') - 100,
                     'maxYear' => date('Y') + 20
-                ));
+                        ));
                 break;
-            
+
             //multi-select checkboxes with an other text field
             case "checkboxWithOther":
                 $options = array();
@@ -133,8 +133,48 @@ class QuestionHelper extends AppHelper {
                     'label' => 'Other'
                         ));
                 break;
+
+
+            //month and year combos (with refused)
+            case "monthsYears":
+                $months = array();
+                $months[0] = '';
+                $years = array();
+                $years[0] = '';
+                for ($i = 1; $i <= 12; $i++) {
+                    $months[$i] = $i;
+                }
+                
+                for ($i = 1; $i <= 15; $i++) {
+                    $years[$i] = $i;
+                }
+                $years[16] = '15+';
+
+                $output .= $this->Form->input($internalName . ' - MONTHS', array(
+                    'type' => 'select',
+                    'options' => $months,
+                    'label' => 'MONTHS ',
+                    'legend' => false,
+                    'div' => false
+                        ));
+                
+                $output .= '&nbsp;&nbsp' . $this->Form->input($internalName . ' - YEARS', array(
+                    'type' => 'select',
+                    'options' => $years,
+                    'label' => 'YEARS ',
+                    'legend' => false,
+                    'div' => false
+                        )); 
+                
+                $output .= '&nbsp;&nbsp;' . $this->Form->input($internalName . ' - REFUSED', array(
+                    'type' => 'checkbox',
+                    'label' => 'Refused',
+                    'div' => false,
+                    'style' => 'float: none;',
+                ));
+                break;
         }
-      
+
         return $output;
     }
 
