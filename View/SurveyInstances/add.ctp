@@ -25,6 +25,12 @@
         margin-bottom: 0px;
     }
 
+    form .required label {
+        color: #e32;
+        content: '*';
+        display:inline;
+    }
+
 </style>
 
 
@@ -54,7 +60,7 @@
             </td>
         </tr>
         <tr>
-            <td>First Name</td>
+            <td><strong>First Name<font color="red">*</font></strong></td>
             <td>
                 <?php
                 echo $this->Form->input('first_name', array(
@@ -64,7 +70,7 @@
             </td>
         </tr>
         <tr>
-            <td>Last Name</td>
+            <td><strong>Last Name<font color="red">*</font></strong></td>
             <td>
                 <?php
                 echo $this->Form->input('last_name', array(
@@ -105,15 +111,19 @@
             endif;
             foreach ($grouping['Question'] as $question):
                 echo "<tr>";
-                echo "<td>" . $question['label'] . "</td>";
+                if ($question['is_required']):
+                    echo '<td><strong>' . $question['label'] . "<font color='red'>*</font></strong></td>";
+                else:
+                    echo "<td>" . $question['label'] . "</td>";
+                endif;
                 echo "<td>" . $this->Question->giveMeInputString($question) . "</td>";
-                echo "</tr>";
             endforeach;
-
         endforeach;
         ?>
     </table>
     <br />
+
+    <!-------------------UPLOAD PHOTO ----------------------------------->
     <h2>Upload Photo</h2>
     <div class="white-background black-text">
         <div id="image_upload" style="width:500px">
@@ -128,10 +138,11 @@
     </div>
 
     <?php
+    //hidden field to map photo to client
     echo $this->Form->input('photoName', array(
         'type' => 'hidden',
         'id' => 'photoName',
-        'value' => 'noneEntered'
+        'value' => 'none.png'
     ));
     ?>
 

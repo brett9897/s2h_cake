@@ -6,7 +6,8 @@
     
     <?php echo $this->Html->image($imagePath, array(
         'style' => "float: left; width:200px; height:200px",
-        'fullBase' => true
+        'fullBase' => true,
+        'alt' => 'person'
         )); ?>
     <dl>
         <dt><?php echo __('Organization'); ?></dt>

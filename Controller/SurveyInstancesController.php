@@ -90,16 +90,9 @@ class SurveyInstancesController extends AppController {
             foreach ($grouping['Question'] as $question) {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
-
-
-                if ($question['is_required'] == true) {
-                    //$this->Client->addValidator($question['internal_name'], array('notempty'));
-                }
-                //broken right now
-                /* if( $question['is_required'] == true )
-                  {
-                  $validations[] = 'array("notEmpty")';
-                  } */
+                
+                //if question is required, we need to set a notempty validation for it
+                if ($question['is_required']) array_push($validations, 'notempty');
 
                 $this->Client->addValidator($question['internal_name'], $validations);
             }

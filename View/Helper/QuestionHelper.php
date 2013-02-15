@@ -7,14 +7,14 @@ class QuestionHelper extends AppHelper {
     public function giveMeInputString($question) {
         $internalName = $question['internal_name'];
         $type = $question['Type']['label'];
-        $output;
+        $output = "";    
 
         switch ($type) {
 
             //text fields or text areas
             case "text":
             case "textarea":
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'type' => $type,
                     'label' => '',
                         ));
@@ -23,7 +23,7 @@ class QuestionHelper extends AppHelper {
             //text fields with refused option
             case "textWithRefused":
             case "textAreaWithRefused":
-                $output = "<div>";
+                $output .= "<div>";
                 $output .= $this->Form->input($internalName, array(
                     'type' => $type,
                     'label' => '',
@@ -54,7 +54,7 @@ class QuestionHelper extends AppHelper {
                     'multiple' => 'checkbox',
                     'label' => '',
                     'type' => 'select',
-                    'options' => $options
+                    'options' => $options,
                         ));
                 break;
 
@@ -70,7 +70,7 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'type' => $type,
                     'options' => $options,
                     'label' => '',
@@ -89,7 +89,7 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'type' => 'select',
                     'options' => $options,
                     'label' => ''
@@ -102,7 +102,7 @@ class QuestionHelper extends AppHelper {
                 break;
 
             case "date":
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'type' => 'date',
                     'label' => '',
                     'minYear' => date('Y') - 100,
@@ -121,7 +121,7 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'multiple' => 'checkbox',
                     'label' => '',
                     'type' => 'select',
@@ -135,7 +135,6 @@ class QuestionHelper extends AppHelper {
                 break;
         }
       
-
         return $output;
     }
 
