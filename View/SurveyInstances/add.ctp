@@ -33,6 +33,17 @@
 
 </style>
 
+<script>
+    $(function() {
+        $("#datepicker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            yearRange: "-100:+0" 
+        });
+    });
+</script>
+
 
 <?php include("surveyInstanceDiv.ctp"); ?>
 

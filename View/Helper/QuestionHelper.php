@@ -1,7 +1,7 @@
 <?php
 
 class QuestionHelper extends AppHelper {
-
+    
     public $helpers = array('Html', 'Form');
 
     public function giveMeInputString($question) {
@@ -103,10 +103,8 @@ class QuestionHelper extends AppHelper {
 
             case "date":
                 $output .= $this->Form->input($internalName, array(
-                    'type' => 'date',
-                    'label' => '',
-                    'minYear' => date('Y') - 100,
-                    'maxYear' => date('Y') + 20
+                    'id' => 'datepicker',
+                    'label' => ''
                         ));
                 break;
 

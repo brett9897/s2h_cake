@@ -31,6 +31,7 @@ class SurveyInstancesController extends AppController {
             'conditions' => array(
                 'Survey.isActive' => 1,
                 'SurveyInstance.user_id' => $user_id,
+                'Survey.organization_id' => $user['organization_id']
             )
                 ));
         $this->paginate = array(
@@ -93,7 +94,7 @@ class SurveyInstancesController extends AppController {
 
                 //if question is required, we need to set a notempty validation for it
                 if ($question['is_required'])
-                        array_push($validations, 'notempty');
+                   //     array_push($validations, 'notempty');
                     $this->Client->addValidator($question['internal_name'], $validations);
             }
         }
@@ -330,11 +331,10 @@ class SurveyInstancesController extends AppController {
 
         $dataArray = array(
             'Client' => array(
-                'id' => $clientID,
                 'first_name' => $client['Client']['first_name'],
                 'last_name' => $client['Client']['last_name'],
-                'organization_id' => $client['Client']['organization_id'],
                 'ssn' => $client['Client']['ssn'],
+                'dob' => $client['Client']['dob']
             )
         );
         foreach ($groupings as $grouping) {
@@ -347,7 +347,7 @@ class SurveyInstancesController extends AppController {
                 $dataArray['Client'][$question['internal_name']] = $answer['Answer']['value'];
             }
         }
-      //  $this->data = $dataArray;
+        $this->data = $dataArray;
 
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
@@ -364,7 +364,6 @@ class SurveyInstancesController extends AppController {
 
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
-
             //first, we need to save data into the client table
             $this->Client->create();
             $this->request->data['Client']['organization_id'] = $organization_id;
@@ -374,14 +373,14 @@ class SurveyInstancesController extends AppController {
                 $this->SurveyInstance->create();
                 $user_id = $this->Auth->user();
                 $user_id = $user_id['id'];
-                $data = array('SurveyInstance' => array(
+                $dataSurveyInstance = array('SurveyInstance' => array(
                         'survey_id' => $activeSurvey['Survey']['id'],
                         'client_id' => $this->Client->id,
                         'user_id' => $user_id,
                         'vi_score' => 0,
                         'is_Deleted' => 0
                         ));
-                $this->SurveyInstance->save($data['SurveyInstance']);
+                $this->SurveyInstance->save($dataSurveyInstance['SurveyInstance']);
 
                 //used to calculate vi_score as we go along
                 $vi_score = 0;
