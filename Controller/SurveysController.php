@@ -70,7 +70,9 @@ class SurveysController extends AppController {
  * @return void
  */
 	public function admin_index() {
+		$cur_user = $this->Auth->user();
 		$this->Survey->recursive = 0;
+		$this->paginate = array('conditions' => array( 'Survey.organization_id' => $cur_user['organization_id']));
 		$this->set('surveys', $this->paginate());
 	}
 
