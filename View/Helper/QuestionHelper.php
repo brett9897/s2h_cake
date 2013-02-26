@@ -1,20 +1,20 @@
 <?php
 
 class QuestionHelper extends AppHelper {
-
+    
     public $helpers = array('Html', 'Form');
 
     public function giveMeInputString($question) {
         $internalName = $question['internal_name'];
         $type = $question['Type']['label'];
-        $output;
+        $output = "";
 
         switch ($type) {
 
             //text fields or text areas
             case "text":
             case "textarea":
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'type' => $type,
                     'label' => '',
                         ));
@@ -23,7 +23,7 @@ class QuestionHelper extends AppHelper {
             //text fields with refused option
             case "textWithRefused":
             case "textAreaWithRefused":
-                $output = "<div>";
+                $output .= "<div>";
                 $output .= $this->Form->input($internalName, array(
                     'type' => $type,
                     'label' => '',
@@ -54,7 +54,7 @@ class QuestionHelper extends AppHelper {
                     'multiple' => 'checkbox',
                     'label' => '',
                     'type' => 'select',
-                    'options' => $options
+                    'options' => $options,
                         ));
                 break;
 
@@ -70,7 +70,7 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'type' => $type,
                     'options' => $options,
                     'label' => '',
@@ -89,7 +89,7 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'type' => 'select',
                     'options' => $options,
                     'label' => ''
@@ -102,14 +102,12 @@ class QuestionHelper extends AppHelper {
                 break;
 
             case "date":
-                $output = $this->Form->input($internalName, array(
-                    'type' => 'date',
-                    'label' => '',
-                    'minYear' => date('Y') - 100,
-                    'maxYear' => date('Y') + 20
-                ));
+                $output .= $this->Form->input($internalName, array(
+                    'id' => 'datepicker',
+                    'label' => ''
+                        ));
                 break;
-            
+
             //multi-select checkboxes with an other text field
             case "checkboxWithOther":
                 $options = array();
@@ -121,7 +119,7 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
-                $output = $this->Form->input($internalName, array(
+                $output .= $this->Form->input($internalName, array(
                     'multiple' => 'checkbox',
                     'label' => '',
                     'type' => 'select',
@@ -133,8 +131,47 @@ class QuestionHelper extends AppHelper {
                     'label' => 'Other'
                         ));
                 break;
+
+
+            //month and year combos (with refused)
+            case "monthsYears":
+                $months = array();
+                $months[0] = '';
+                $years = array();
+                $years[0] = '';
+                for ($i = 1; $i <= 12; $i++) {
+                    $months[$i] = $i;
+                }
+                
+                for ($i = 1; $i <= 15; $i++) {
+                    $years[$i] = $i;
+                }
+                $years[16] = '15+';
+
+                $output .= $this->Form->input($internalName . ' - MONTHS', array(
+                    'type' => 'select',
+                    'options' => $months,
+                    'label' => 'MONTHS ',
+                    'legend' => false,
+                    'div' => false
+                        ));
+                
+                $output .= '&nbsp;&nbsp' . $this->Form->input($internalName . ' - YEARS', array(
+                    'type' => 'select',
+                    'options' => $years,
+                    'label' => 'YEARS ',
+                    'legend' => false,
+                    'div' => false
+                        )); 
+                
+                $output .= '&nbsp;&nbsp;' . $this->Form->input($internalName . ' - REFUSED', array(
+                    'type' => 'checkbox',
+                    'label' => 'Refused',
+                    'div' => false,
+                    'style' => 'float: none;',
+                ));
+                break;
         }
-      
 
         return $output;
     }
