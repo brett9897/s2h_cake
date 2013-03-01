@@ -70,7 +70,9 @@ class SurveysController extends AppController {
  * @return void
  */
 	public function admin_index() {
+		$cur_user = $this->Auth->user();
 		$this->Survey->recursive = 0;
+		$this->paginate = array('conditions' => array( 'Survey.organization_id' => $cur_user['organization_id']));
 		$this->set('surveys', $this->paginate());
 	}
 
@@ -181,7 +183,15 @@ class SurveysController extends AppController {
 			$this->set(compact('organizations'));
 		}
 		
-		$this->set('groupings', $this->Survey->Grouping->getByOrderNumber($id, 'ASC'));
+		$groupings = $this->Survey->Grouping->getByOrderNumber($id, 'ASC');
+		
+		//prepend the default questions to groupings[0] for personal information
+		$default_questions = $this->build_default_questions();
+
+		//need to fix ordering
+		$groupings[0]['Question'] = array_merge($default_questions, $groupings[0]['Question']);
+
+		$this->set('groupings', $groupings);
 	}
 
 /**
@@ -223,5 +233,90 @@ class SurveysController extends AppController {
 		}
 
 		$this->set('response', $response);
+	}
+
+	private function build_default_questions()
+	{
+		$default_questions = array(
+			array(
+				'id' => null,
+				'ordering' => 1,
+				'label' => 'First Name',
+				'Type' => array(
+					'id' => null,
+					'label' => 'default'
+				),
+				'Option' => array(),
+				'is_used' => 1
+			),
+			array(
+				'id' => null,
+				'ordering' => 2,
+				'label' => 'Middle Name',
+				'Type' => array(
+					'id' => null,
+					'label' => 'default'
+				),
+				'Option' => array(),
+				'is_used' => 1
+			),
+			array(
+				'id' => null,
+				'ordering' => 3,
+				'label' => 'Last Name',
+				'Type' => array(
+					'id' => null,
+					'label' => 'default'
+				),
+				'Option' => array(),
+				'is_used' => 1
+			),
+			array(
+				'id' => null,
+				'ordering' => 4,
+				'label' => 'Last 4 of SSN',
+				'Type' => array(
+					'id' => null,
+					'label' => 'default'
+				),
+				'Option' => array(),
+				'is_used' => 1
+			),
+			array(
+				'id' => null,
+				'ordering' => 5,
+				'label' => 'DOB',
+				'Type' => array(
+					'id' => null,
+					'label' => 'default'
+				),
+				'Option' => array(),
+				'is_used' => 1
+			),
+			array(
+				'id' => null,
+				'ordering' => 6,
+				'label' => 'Nickname',
+				'Type' => array(
+					'id' => null,
+					'label' => 'default'
+				),
+				'Option' => array(),
+				'is_used' => 1
+			),
+			array(
+				'id' => null,
+				'ordering' => 7,
+				'label' => 'Phone Number',
+				'Type' => array(
+					'id' => null,
+					'label' => 'default'
+				),
+				'Option' => array(),
+				'is_used' => 1
+			),
+		);
+
+		return $default_questions;
 	}
 }

@@ -54,6 +54,27 @@ class Client extends AppModel {
             //'on' => 'create', // Limit validation to 'create' or 'update' operations
             ),
         ),
+        'ssn' => array(
+            'number' => array(
+                'rule' => 'numeric',
+                'message' => 'Must be 4 digits'
+            ),
+            'atMost4' => array(
+                'rule' => array('maxLength', 4),
+                'message' => 'Must be 4 digits'
+            ),
+            'atLeast4' => array(
+                'rule' => array('minLength', 4),
+                'message' => 'Must be 4 digits'
+            )
+        ),
+        'phone_number' => array(
+            'phone' => array(
+                'rule' => array('phone', null, 'us'),
+                'allowEmpty' => true,
+                'message' => 'Must enter a valid phone number'
+            )
+        )
     );
 
     //The Associations below have been created with all possible keys, those that are not needed can be removed
