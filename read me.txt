@@ -1,0 +1,29 @@
+gjohn@Duality:/var/www/s2h_cake$ git pull
+remote: Counting objects: 332, done.
+remote: Compressing objects: 100% (172/172), done.
+remote: Total 282 (delta 210), reused 168 (delta 100)
+Receiving objects: 100% (282/282), 144.14 KiB, done.
+Resolving deltas: 100% (210/210), completed with 36 local objects.
+From https://github.com/brett9897/s2h_cake
+   8503339..9f4eae6  master     -> origin/master
+Updating 8503339..9f4eae6
+error: Your local changes to the following files would be overwritten by merge:
+	Controller/ClientsController.php
+	webroot/js/clients_index.js
+Please, commit your changes or stash them before you can merge.
+Aborting
+john@Duality:/var/www/s2h_cake$ git status
+# On branch master
+# Your branch is behind 'origin/master' by 22 commits, and can be fast-forwarded.
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   Controller/ClientsController.php
+#	modified:   webroot/js/clients_index.js
+#
+no changes added to commit (use "git add" and/or "git commit -a")
+john@Duality:/var/www/s2h_cake$ git checkout Controller/ClientsController.php
+john@Duality:/var/www/s2h_cake$ git checkout  webroot/js/clients_index.js
+john@Duality:/var/www/s2h_cake$ 
