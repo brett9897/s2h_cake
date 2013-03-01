@@ -59,6 +59,7 @@ class AppController extends Controller {
     }
     
     public function beforeFilter() {
+        $this->Security->blackHoleCallback = 'forceSSL';
         $this->set('logged_in', $this->Auth->loggedIn());
         $this->set('current_user', $this->Auth->user());
         $authUser = $this->Auth->user();
@@ -66,5 +67,11 @@ class AppController extends Controller {
         if ($authUser['type'] == 'admin' || $authUser['type'] == 'superAdmin') $isAtLeastAdmin = true;
         $this->set('isAtLeastAdmin', $isAtLeastAdmin);
         $this->set('tip_render', null);
+    }
+
+    public function forceSSL()
+    {
+        if( !isset($_SERVER['REDIRECT_HTTPS']) )
+            $this->redirect('https://' . $_SERVER['SERVER_NAME'] . $this->here);
     }
 }

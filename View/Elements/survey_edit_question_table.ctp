@@ -26,8 +26,15 @@
 		?>
 		<td><?php echo $options;?></td>
 		<td><?php echo $this->Binary->convertToTF($question['is_used']);?></td>
-		<td><?php echo $this->Html->link('edit', 
-				array('controller' => 'questions', 'action' => 'edit', $question['id']));?></td>
+		<td>
+			<?php 
+				if( $question['Type']['id'] != null )
+				{
+					echo $this->Html->link('edit', 
+						array('controller' => 'questions', 'action' => 'edit', $question['id']));
+				}
+			?>
+		</td>
 	</tr>
 <?php endforeach; ?>
 </table>

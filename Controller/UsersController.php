@@ -40,7 +40,7 @@ class UsersController extends AppController {
         parent::beforeFilter();                                 //calls the parent's class before beforeFilter()...the AppControler
         $this->Security->ValidatePost=FALSE;
         $this->Security->csrfCheck=FALSE;
-        
+        $this->Security->requireSecure(array('login'));
     }
     
     /**

@@ -81,6 +81,16 @@
             </td>
         </tr>
         <tr>
+            <td>Middle Name</td>
+            <td>
+                <?php
+                echo $this->Form->input('middle_name', array(
+                    'label' => ''
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
             <td><strong>Last Name<font color="red">*</font></strong></td>
             <td>
                 <?php
@@ -91,7 +101,7 @@
             </td>
         </tr>
         <tr>
-            <td>SSN</td>
+            <td>Last 4 of SSN</td>
             <td>
                 <?php
                 echo $this->Form->input('ssn', array(
@@ -108,6 +118,26 @@
                     'label' => '',
                     'minYear' => date('Y') - 150,
                     'maxYear' => date('Y')
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Nickname</td>
+            <td>
+                <?php
+                echo $this->Form->input('nickname', array(
+                    'label' => ''
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Phone Number</td>
+            <td>
+                <?php
+                echo $this->Form->input('phone_number', array(
+                    'label' => ''
                 ));
                 ?>
             </td>
