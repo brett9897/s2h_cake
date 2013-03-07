@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jan 17, 2013 at 05:41 PM
--- Server version: 5.5.28
--- PHP Version: 5.3.10-1ubuntu3.4
+-- Generation Time: Mar 04, 2013 at 08:39 PM
+-- Server version: 5.5.29
+-- PHP Version: 5.3.10-1ubuntu3.5
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
@@ -26,29 +26,27 @@ SET time_zone = "+00:00";
 --
 -- Table structure for table `answers`
 --
--- Creation: Jan 17, 2013 at 10:39 PM
---
 
 DROP TABLE IF EXISTS `answers`;
 CREATE TABLE IF NOT EXISTS `answers` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `question_id` int(10) unsigned NOT NULL,
   `client_id` int(10) unsigned NOT NULL,
+  `survey_instance_id` int(10) unsigned NOT NULL,
   `value` text NOT NULL,
   `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `fK_answers_question` (`question_id`),
-  KEY `fk_answers_client` (`client_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  KEY `fk_answers_client` (`client_id`),
+  KEY `survey_instance_id` (`survey_instance_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=48 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `clients`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `clients`;
@@ -56,22 +54,40 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
   `first_name` varchar(50) NOT NULL,
+  `middle_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `ssn` varchar(9) NOT NULL,
   `dob` date NOT NULL,
+  `nickname` varchar(50) NOT NULL,
+  `phone_number` varchar(15) NOT NULL,
   `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `fk_client_organization` (`organization_id`)
+  KEY `organization_id` (`organization_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=71 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedbacks`
+--
+
+DROP TABLE IF EXISTS `feedbacks`;
+CREATE TABLE IF NOT EXISTS `feedbacks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) unsigned NOT NULL,
+  `feedback` text NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `groupings`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `groupings`;
@@ -85,14 +101,12 @@ CREATE TABLE IF NOT EXISTS `groupings` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `survey_id` (`survey_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `options`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `options`;
@@ -104,14 +118,12 @@ CREATE TABLE IF NOT EXISTS `options` (
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `fk_options_questions` (`question_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1005 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `organizations`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `organizations`;
@@ -121,15 +133,15 @@ CREATE TABLE IF NOT EXISTS `organizations` (
   `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  PRIMARY KEY (`id`),
+  KEY `name` (`name`),
+  KEY `name_2` (`name`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `questions`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `questions`;
@@ -150,17 +162,15 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `validation_3` varchar(100) DEFAULT NULL,
   `validation_4` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `type_id` (`type_id`),
   KEY `grouping_id` (`grouping_id`),
-  KEY `survey_id` (`survey_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  KEY `survey_id` (`survey_id`),
+  KEY `type_id` (`type_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=100 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `surveys`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `surveys`;
@@ -168,18 +178,17 @@ CREATE TABLE IF NOT EXISTS `surveys` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
   `label` varchar(255) NOT NULL,
+  `isActive` tinyint(1) NOT NULL,
   `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `survey_instances`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `survey_instances`;
@@ -193,17 +202,15 @@ CREATE TABLE IF NOT EXISTS `survey_instances` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `survey_id` (`survey_id`),
-  UNIQUE KEY `client_id` (`client_id`),
-  UNIQUE KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  KEY `survey_id` (`survey_id`),
+  KEY `user_id` (`user_id`),
+  KEY `client_id` (`client_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `types`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `types`;
@@ -213,14 +220,12 @@ CREATE TABLE IF NOT EXISTS `types` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `users`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `users`;
@@ -236,15 +241,13 @@ CREATE TABLE IF NOT EXISTS `users` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `org_id` (`organization_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+  KEY `org_id` (`organization_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
 
 -- --------------------------------------------------------
 
 --
 -- Table structure for table `validations`
---
--- Creation: Jan 17, 2013 at 10:39 PM
 --
 
 DROP TABLE IF EXISTS `validations`;
@@ -257,6 +260,28 @@ CREATE TABLE IF NOT EXISTS `validations` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `vi_criteria`
+--
+
+DROP TABLE IF EXISTS `vi_criteria`;
+CREATE TABLE IF NOT EXISTS `vi_criteria` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `survey_id` int(10) unsigned NOT NULL,
+  `question_id` int(10) unsigned DEFAULT NULL,
+  `type` enum('question','grouping') NOT NULL,
+  `relational_operator` enum('<','>','=','<=','>=') DEFAULT NULL,
+  `values` varchar(255) NOT NULL,
+  `weight` float NOT NULL,
+  `created` datetime NOT NULL,
+  `modified` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `question_id` (`question_id`),
+  KEY `survey_id` (`survey_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+
 --
 -- Constraints for dumped tables
 --
@@ -265,48 +290,62 @@ CREATE TABLE IF NOT EXISTS `validations` (
 -- Constraints for table `answers`
 --
 ALTER TABLE `answers`
-  ADD CONSTRAINT `answers_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`),
-  ADD CONSTRAINT `answers_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`);
+  ADD CONSTRAINT `answers_ibfk_6` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `answers_ibfk_7` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `answers_ibfk_8` FOREIGN KEY (`survey_instance_id`) REFERENCES `survey_instances` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `clients`
 --
 ALTER TABLE `clients`
-  ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`);
+  ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `feedbacks`
+--
+ALTER TABLE `feedbacks`
+  ADD CONSTRAINT `feedbacks_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
 --
 -- Constraints for table `groupings`
 --
 ALTER TABLE `groupings`
-  ADD CONSTRAINT `groupings_ibfk_1` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`);
+  ADD CONSTRAINT `groupings_ibfk_2` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `options`
 --
 ALTER TABLE `options`
-  ADD CONSTRAINT `options_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`);
+  ADD CONSTRAINT `options_ibfk_2` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `questions`
 --
 ALTER TABLE `questions`
-  ADD CONSTRAINT `questions_ibfk_3` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`),
-  ADD CONSTRAINT `questions_ibfk_1` FOREIGN KEY (`grouping_id`) REFERENCES `groupings` (`id`),
-  ADD CONSTRAINT `questions_ibfk_2` FOREIGN KEY (`type_id`) REFERENCES `types` (`id`);
+  ADD CONSTRAINT `questions_ibfk_4` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `questions_ibfk_5` FOREIGN KEY (`grouping_id`) REFERENCES `groupings` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `questions_ibfk_6` FOREIGN KEY (`type_id`) REFERENCES `types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `survey_instances`
 --
 ALTER TABLE `survey_instances`
-  ADD CONSTRAINT `survey_instances_ibfk_1` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`),
-  ADD CONSTRAINT `survey_instances_ibfk_2` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`),
-  ADD CONSTRAINT `survey_instances_ibfk_3` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
+  ADD CONSTRAINT `survey_instances_ibfk_4` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `survey_instances_ibfk_5` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `survey_instances_ibfk_6` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `users_ibfk_1` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`);
+
+--
+-- Constraints for table `vi_criteria`
+--
+ALTER TABLE `vi_criteria`
+  ADD CONSTRAINT `vi_criteria_ibfk_1` FOREIGN KEY (`question_id`) REFERENCES `questions` (`id`),
+  ADD CONSTRAINT `vi_criteria_ibfk_2` FOREIGN KEY (`survey_id`) REFERENCES `surveys` (`id`);
 SET FOREIGN_KEY_CHECKS=1;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,4 +1,5 @@
 <?php
+	require_once(APP . DS . 'Vendor' . DS . 'Spyc.php');
 /**
  * This file is loaded automatically by the app/webroot/index.php file after core.php
  *
@@ -106,3 +107,12 @@ CakeLog::config('error', array(
 	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 	'file' => 'error',
 ));
+
+$options = Spyc::YAMLLoad('configure.yml');
+if( isset($options['plugins']) )
+{
+	foreach( $options['plugins'] as $plugin )
+	{
+		CakePlugin::load($plugin);
+	}
+}

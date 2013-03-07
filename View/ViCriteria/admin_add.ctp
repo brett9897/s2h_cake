@@ -3,7 +3,12 @@
 	$this->Html->css('VI_Criteria/admin_add', null, array('inline' => false));
 ?>
 <div class="actionsNoButton">
-	<?php echo $this->Html->link(__('List VI Criteria'), array('action' => 'index', $survey_id)); ?><br/>
+	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?><br/>
+	<?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?><br/>
+	<?php echo $this->Html->link(__('Edit Survey'), array('controller' => 'surveys', 'action' => 'edit', $survey_id)); ?><br/>
+	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add', $survey_id)); ?> <br/>
+	<?php echo $this->Html->link(__('New VI Criterion'), array('controller' => 'vi_criteria', 'action' => 'add', $survey_id), array('class'=>'active_link')); ?><br/>
+	<?php echo $this->Html->link(__('List VI Criteria'), array('controller' => 'vi_criteria', 'action' => 'index', $survey_id)); ?><br/>
 </div>
 <div class="viCriteria form">
 <?php echo $this->Form->create('ViCriterium'); ?>

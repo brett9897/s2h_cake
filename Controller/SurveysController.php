@@ -142,9 +142,17 @@ class SurveysController extends AppController {
 	public function admin_edit($id = null) {
 		$this->Survey->id = $id;
 		$user = $this->Auth->user();
+		$hasInstance = false;
 		if (!$this->Survey->exists()) {
 			throw new NotFoundException(__('Invalid survey'));
 		}
+
+		if( $this->Survey->hasInstance() )
+		{
+			$this->Session->setFlash(__('This survey has already been given to someone and can no longer be edited.'));
+			$hasInstance = true;
+		}
+
 		if ($this->request->is('post') || $this->request->is('put')) {
 			if( ! isset($this->request->data['Survey']['organization_id']) )
 			{
@@ -183,15 +191,20 @@ class SurveysController extends AppController {
 			$this->set(compact('organizations'));
 		}
 		
-		$groupings = $this->Survey->Grouping->getByOrderNumber($id, 'ASC');
-		
-		//prepend the default questions to groupings[0] for personal information
-		$default_questions = $this->build_default_questions();
+		if( !$hasInstance )
+		{
+			$groupings = $this->Survey->Grouping->getByOrderNumber($id, 'ASC');
+			
+			//prepend the default questions to groupings[0] for personal information
+			$default_questions = $this->build_default_questions();
 
-		//need to fix ordering
-		$groupings[0]['Question'] = array_merge($default_questions, $groupings[0]['Question']);
+			//need to fix ordering
+			$groupings[0]['Question'] = array_merge($default_questions, $groupings[0]['Question']);
 
-		$this->set('groupings', $groupings);
+			$this->set('groupings', $groupings);
+		}
+
+		$this->set('hasInstance', $hasInstance);
 	}
 
 /**
@@ -318,5 +331,62 @@ class SurveysController extends AppController {
 		);
 
 		return $default_questions;
+	}
+
+	public function admin_clone($id = null)
+	{
+
+		$label = '';
+
+		if( isset($this->params['url']['label']) )
+		{
+			$label = $this->params['url']['label'];
+		}
+
+		if( $id == null )
+		{
+			$this->redirect(array('action' => 'choose', '?' => array( 'label' => $label)));
+		}
+
+		$this->Survey->id = $id;
+		
+		if (!$this->Survey->exists()) {
+			throw new NotFoundException(__('Invalid survey'));
+		}
+
+		if ($this->request->is('post'))
+		{
+			$user = $this->Auth->user();
+			$this->request->data['Survey']['organization_id'] = $user['organization_id'];
+			
+			if( $this->Survey->clone_survey($this->request->data) )
+			{
+				$this->Session->setFlash(__('The survey has been cloned'));
+				$this->redirect(array('action' => 'edit', $this->Survey->id));
+			} 
+			else 
+			{
+				$this->Session->setFlash(__('The survey could not be cloned. Please, try again.'));
+				$this->Survey->id = $id;
+			}
+		}
+		else
+		{
+			$this->request->data['Survey']['label'] = $label;
+		}
+
+		$this->set('survey_name', $this->Survey->getSurveyName());
+	}
+
+	function admin_choose()
+	{
+		$cur_user = $this->Auth->user();
+		$this->Survey->recursive = 0;
+		$surveys = $this->Survey->find('list', array('conditions' => array('Survey.organization_id' => $cur_user['organization_id'])));
+		$this->set(compact('surveys'));
+		if( isset($this->params['url']['label']) )
+		{
+			$this->set('label', $this->params['url']['label']);
+		}
 	}
 }
