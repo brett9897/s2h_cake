@@ -8,8 +8,8 @@
 		<th>Edit</th>
 	</tr>
 <?php foreach( $questions as $question ): ?>
-	<tr id="question_<?php echo $question['id'];?>" class="question">
-		<td><?php echo $this->Form->input('ordering', array( 'type' => 'text', 'label' => '', 'size' => 2, 'class' => 'ordering', 'value' => $question['ordering']));?></td>
+	<tr id="question_<?php echo $question['id'];?>" class="question <?php echo str_replace(' ', '_', $question['label']);?>">
+		<td><?php echo $this->Form->input('ordering', array( 'type' => 'text', 'label' => '', 'size' => 2, 'class' => 'ordering '. str_replace(' ', '_', $question['label']), 'value' => $question['ordering']));?></td>
 		<td><?php echo $question['label'];?></td>
 		<td><?php echo $question['Type']['label'];?></td>
 		<?php

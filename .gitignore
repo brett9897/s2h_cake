@@ -10,3 +10,4 @@ nbproject/*
 !empty
 /nbproject/private/
 *.orig
+*.yml

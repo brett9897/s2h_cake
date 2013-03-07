@@ -8,6 +8,7 @@ App::uses('AppController', 'Controller');
 class GroupingsController extends AppController {
 
 	public $components = array('RequestHandler', 'Security');
+	public $uses = array('Grouping', 'Survey');
 
 	public function isAuthorized($user = null)
 	{
@@ -99,7 +100,17 @@ class GroupingsController extends AppController {
  *
  * @return void
  */
-	public function admin_add($survey_id = null) {
+	public function admin_add($survey_id) {
+		
+		if( $survey_id != null )
+		{
+			$this->Survey->id = $survey_id;
+			if( $this->Survey->hasInstance() )
+			{
+				$this->redirect(array('controller' => 'surveys', 'action' => 'edit', $survey_id));
+			}
+		}
+
 		if ($this->request->is('post')) {
 			$this->Grouping->create();
 			if ($this->Grouping->save($this->request->data)) {
@@ -113,10 +124,6 @@ class GroupingsController extends AppController {
 		if( $survey_id != null )
 		{
 			$this->set('selected_index', $survey_id);
-		}
-		else
-		{
-			$this->set('selected_index', 0);
 		}
 
 		$surveys = $this->Grouping->Survey->find('list');

@@ -1,8 +1,12 @@
 <?php $this->Html->script('Questions/admin_add.js', false);?>
 <?php $this->Html->css('Questions/admin_add', null, array('inline' => false)); ?>
 <div class="actionsNoButton">
-	<?php echo $this->Html->link(__('List Questions'), array('action' => 'index')); ?><br/>
-	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add')); ?><br/>
+	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?><br/>
+	<?php echo $this->Html->link(__('New Survey'), array('controller' => 'surveys', 'action' => 'add')); ?><br/>
+	<?php echo $this->Html->link(__('Edit Survey'), array('controller' => 'surveys', 'action' => 'edit', $survey_id)); ?><br/>
+	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add', $survey_id)); ?> <br/>
+	<?php echo $this->Html->link(__('New VI Criterion'), array('controller' => 'vi_criteria', 'action' => 'add', $survey_id)); ?><br/>
+	<?php echo $this->Html->link(__('List VI Criterion'), array('controller' => 'vi_criteria', 'action' => 'index', $survey_id)); ?><br/>
 </div>
 <div class="questions form">
 <?php echo $this->Form->create('Question'); ?>

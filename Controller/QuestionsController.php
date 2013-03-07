@@ -119,7 +119,7 @@ class QuestionsController extends AppController {
  */
 	public function admin_add($grouping_id) {
 		$grouping = $this->Question->Grouping->read(null, $grouping_id);
-
+		$survey_id = $grouping['Grouping']['survey_id'];
 		if ($this->request->is('post')) {
 			$this->Question->create();
 
@@ -128,7 +128,7 @@ class QuestionsController extends AppController {
 			unset( $this->request->data['Option'] );
 
 			//get the survey id
-			$this->request->data['Question']['survey_id'] = $grouping['Grouping']['survey_id'];
+			$this->request->data['Question']['survey_id'] = $survey_id;
 
 			if ($this->Question->save($this->request->data)) {
 				
@@ -164,6 +164,7 @@ class QuestionsController extends AppController {
 		$this->set(compact('groupings', 'types'));
 		$this->set('selected_grouping_id', $grouping_id);
 		$this->set('validation_options', $validation_options);
+		$this->set('survey_id', $survey_id);
 	}
 
 /**
@@ -250,6 +251,7 @@ class QuestionsController extends AppController {
 		$this->set(compact('groupings', 'types'));
 		$this->set('selected_grouping_id', $this->request->data['Question']['grouping_id']);
 		$this->set('validation_options', $validation_options);	
+		$this->set('survey_id', $this->request->data['Question']['survey_id']);
 	}
 
 /**

@@ -93,3 +93,8 @@ function add_question( grouping_id )
 {
     location.href = global.base_url + '/admin/questions/add/' + grouping_id;
 }
+
+function send_to_clone( id )
+{
+    location.href = global.base_url + '/admin/surveys/clone/' + id;
+}

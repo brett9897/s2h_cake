@@ -1,4 +1,4 @@
-<div class="actionsNoButton">
+<!--<div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Groupings'), array('action' => 'index', $this->Form->value('Grouping.survey_id'))); ?><br/>
 	<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $this->Form->value('Grouping.id')), null, __('Are you sure you want to delete # %s?', $this->Form->value('Grouping.id'))); ?><br/>
 	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?> <br/>
@@ -20,4 +20,4 @@
 	?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
-</div>
+</div>-->

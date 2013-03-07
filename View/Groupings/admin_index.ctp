@@ -1,4 +1,4 @@
-<div class="actionsNoButton">
+<!--<div class="actionsNoButton">
 	<h3><?php echo __('Actions'); ?></h3>
 	<?php echo $this->Html->link(__('New Grouping'), array('action' => 'add', $survey_id)); ?><br/>
 	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?><br/>
@@ -46,4 +46,4 @@
 		echo $this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));
 	?>
 	</div>
-</div>
+</div>-->

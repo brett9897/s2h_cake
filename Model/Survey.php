@@ -19,6 +19,99 @@ class Survey extends AppModel {
      */
     public $displayField = 'label';
 
+    public function hasInstance()
+    {
+        $conditions = array(
+            'survey_id' => $this->id
+        );
+        $params = array('recursive' => -1, 'conditions' => $conditions);
+        return ($this->SurveyInstance->find('count', $params) > 0) ? true : false;
+    }
+
+    public function getSurveyName()
+    {
+        $conditions = array(
+            'id' => $this->id
+        );
+        $fields = array('Survey.label');
+        $params = array('recursive' => -1, 'fields' => $fields, 'conditions' => $conditions);
+
+        $result = $this->find('first', $params);
+
+        return $result['Survey']['label'];
+    }
+
+    public function clone_survey($data)
+    {
+        $dataSource = $this->getDataSource();
+        $old_survey = $this->find('first', array('conditions' => array('Survey.id' => $this->id)));
+        $this->create();
+
+        $new_survey = array();
+        $new_survey['Survey'] = $data['Survey'];
+
+        $dataSource->begin();
+
+        if( $this->save($new_survey['Survey']) )
+        {
+            echo $this->id;
+            $new_survey['Grouping'] = $old_survey['Grouping'];
+            foreach( $new_survey['Grouping'] as &$grouping )
+            {
+                unset($grouping['id']);
+                $grouping['survey_id'] = $this->id;
+            }
+            unset($grouping);
+
+            $new_survey['Question'] = array();
+
+            $i = 0;
+            foreach( $new_survey['Grouping'] as $grouping )
+            {
+                $this->Grouping->create();
+                if( $this->Grouping->save($grouping) )
+                {
+                    //find questions that should be associated with this grouping
+                    foreach( $old_survey['Question'] as $question )
+                    {
+                        if( $question['grouping_id'] == $old_survey['Grouping'][$i]['id'] )
+                        {
+                            $new_question = $question;
+                            unset($new_question['id']);
+                            $new_question['survey_id'] = $this->id;
+                            $new_question['grouping_id'] = $this->Grouping->id;
+                            $new_survey['Question'][] = $new_question;
+                        }
+                    }
+            
+                }
+                else
+                {
+                    $dataSource->rollback();
+                    return false;
+                }
+
+                $i++;
+            }
+
+            //now save questions
+            $this->Question->create();
+            if( !$this->Question->saveAll($new_survey['Question']) )
+            {
+                $dataSource->rollback();
+                return false;
+            }
+        }
+        else
+        {
+            $dataSource->rollback();
+            return false;
+        }
+
+        $dataSource->commit();
+        return true;
+    }
+
     /**
      * Validation rules
      *
