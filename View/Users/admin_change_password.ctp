@@ -1,4 +1,9 @@
-<div class="users form no-border">
+<div class="actionsNoButton">
+    <?php echo $this->Html->link(__('List Users'), array('action' => 'index')); ?>
+     <br/>
+    <?php echo $this->Html->link(__('New User'), array('action' => 'add')); ?> <br/>
+</div>
+<div class="users form">
 <?php echo $this->Form->create('User'); ?>
 	<fieldset>
 		<legend><?php echo __('Edit User'); ?></legend>

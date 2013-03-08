@@ -11,6 +11,7 @@
 		echo $this->Form->input('id');
 		echo $this->Form->input('username');
 		echo $this->Form->input('password', array('type' => 'hidden'));
+		echo $this->Html->link(__('Change Password'), array('action' => 'change_password', $this->Form->value('User.id')));
 		echo $this->Form->input('first_name');
 		echo $this->Form->input('last_name');
 		echo $this->Form->input('organization_id', array('type' => 'hidden'));

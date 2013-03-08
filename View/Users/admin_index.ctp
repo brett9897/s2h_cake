@@ -1,4 +1,6 @@
 <div class="actionsNoButton">
+	<?php echo $this->Html->link(__('List Users'), array('action' => 'index'), array('class' => 'active_link')); ?>
+	 <br/>
     <?php echo $this->Html->link(__('New User'), array('action' => 'add')); ?> <br/>
 </div>
 
@@ -12,6 +14,7 @@
 			<th><?php echo $this->Paginator->sort('organization_id'); ?></th>
 			<th><?php echo $this->Paginator->sort('type'); ?></th>
 			<th><?php echo $this->Paginator->sort('isDeleted'); ?></th>
+			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	<?php
 	foreach ($users as $user): ?>
@@ -24,6 +27,14 @@
 		</td>
 		<td><?php echo h($user['User']['type']); ?>&nbsp;</td>
 		<td><?php echo $this->Binary->convertToTF($user['User']['isDeleted']); ?>&nbsp;</td>
+		<td class="actions">
+			<?php 
+				if( $user['can_edit'] )
+				{
+					echo $this->Html->link(__('Edit'), array('action' => 'edit', $user['User']['id']));
+				}
+			?>
+		</td>
 	</tr>
 <?php endforeach; ?>
 	</table>

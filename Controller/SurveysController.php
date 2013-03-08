@@ -44,10 +44,10 @@ class SurveysController extends AppController {
  *
  * @return void
  */
-	public function index() {
+	/*public function index() {
 		$this->Survey->recursive = 0;
 		$this->set('surveys', $this->paginate());
-	}
+	}*/
 
 /**
  * view method
@@ -56,13 +56,13 @@ class SurveysController extends AppController {
  * @param string $id
  * @return void
  */
-	public function view($id = null) {
+	/*public function view($id = null) {
 		$this->Survey->id = $id;
 		if (!$this->Survey->exists()) {
 			throw new NotFoundException(__('Invalid survey'));
 		}
 		$this->set('survey', $this->Survey->read(null, $id));
-	}
+	}*/
 
 /**
  * admin_index method

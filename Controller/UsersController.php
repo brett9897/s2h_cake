@@ -82,8 +82,33 @@ class UsersController extends AppController {
      * @return void
      */
     public function admin_index() {
+        $cur_user = $this->Auth->user();
         $this->User->recursive = 0;
-        $this->set('users', $this->paginate());
+        $this->paginate = array(
+            'conditions' => array(
+                'User.organization_id' => $cur_user['organization_id']
+            ),
+            'order' => array('User.username' => 'asc')
+        );
+        $users = $this->paginate();
+        foreach( $users as &$user )
+        {
+            if( $user['User']['id'] == $cur_user['id'] )
+            {
+                $user['can_edit'] = true;
+            }
+            elseif( $user['User']['type'] == 'admin' || $user['User']['type'] == 'superAdmin' )
+            {
+                $user['can_edit'] = false;
+            }
+            else
+            {
+                $user['can_edit'] = true;
+            }
+
+        }
+        unset($user);
+        $this->set('users', $users);
     }
 
     /**
@@ -142,10 +167,23 @@ class UsersController extends AppController {
      */
     public function admin_edit($id = null) {
         $this->User->id = $id;
+        $user = $this->User->read(null, $id);
+        $cur_user = $this->Auth->user();
+
+        
+        if( (($user['User']['type'] == 'admin' || $user['User']['type'] == 'superAdmin') && 
+                $user['User']['id'] != $cur_user['id']) ||
+                $user['User']['organization_id'] != $cur_user['organization_id'] )
+        {
+            $this->Session->setFlash(__('You do not have permission to edit that user.'));
+            $this->redirect(array('action' => 'index'));
+        }        
+
         if (!$this->User->exists()) {
             throw new NotFoundException(__('Invalid user'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
+            $this->request->data['User']['password_confirmation'] = $this->request->data['User']['password'];
             if ($this->User->save($this->request->data)) {
                 $this->Session->setFlash(__('The user has been saved'));
                 $this->redirect(array('action' => 'index'));
@@ -193,15 +231,24 @@ class UsersController extends AppController {
      */
     public function edit($id = null) {
         $this->User->id = $id;
+        $cur_user = $this->Auth->user();
+
+        if( $id != $cur_user['id'] )
+        {
+            $this->Session->setFlash(__('You do not have permission to view that page.'));
+            $this->redirect(array('controller' => 'welcome', 'action' => 'index'));
+        }
+
         if (!$this->User->exists()) {
             throw new NotFoundException(__('Invalid user'));
         }
         if ($this->request->is('post') || $this->request->is('put')) {
+            $this->request->data['User']['password_confirmation'] = $this->request->data['User']['password'];
             if ($this->User->save($this->request->data)) {
-                $this->Session->setFlash(__('The user has been saved'));
-                $this->redirect(array('action' => 'index'));
+                $this->Session->setFlash(__('Your profile has been saved.'));
+                $this->redirect(array('controller' => 'welcome', 'action' => 'index'));
             } else {
-                $this->Session->setFlash(__('The user could not be saved. Please, try again.'));
+                $this->Session->setFlash(__('Your profile could not be saved. Please, try again.'));
             }
         } else {
             $this->request->data = $this->User->read(null, $id);
@@ -217,8 +264,45 @@ class UsersController extends AppController {
      * @param string $id if ()
      * @return void
      */
-    public function change_password($id = null) {
-        $this->User->id = $id;                                                  //How does it get the user id?....it is set null! <-default value is null if nothing is passed in
+    public function change_password() {
+        $cur_user = $this->Auth->user();
+        $this->User->id = $cur_user['id'];
+
+        if (isset($this->request->data['cancel'])) {
+            $this->Session->setFlash(__('Password changes were cancelled.', true));
+            $this->redirect( array('action' => 'edit', $this->User->id) );  
+        }
+        else {
+
+            if (!$this->User->exists()) {
+                throw new NotFoundException(__('Invalid user'));
+            }
+            if ($this->request->is('post') || $this->request->is('put')) {                  //this checks to see if the form has been submitted
+                 $this->request->data['User']['pwd'] = $this->request->data['User']['password'];
+ 
+                 if( $this->User->save($this->request->data) ){
+                    $this->Session->setFlash(__('Password has been Saved.'));
+                    $this->redirect( array('action' => 'edit', $this->User->id) );                 
+                 }
+            }else {
+                $this->request->data = $this->User->read(null, $cur_user['id']);
+            }   
+        }
+    }
+
+    public function admin_change_password($id = null) 
+    {
+        $this->User->id = $id;
+        $user = $this->User->read(null, $id);
+        $cur_user = $this->Auth->user();
+        if( (($user['User']['type'] == 'admin' || $user['User']['type'] == 'superAdmin') && 
+                $user['User']['id'] != $cur_user['id']) ||
+                $user['User']['organization_id'] != $cur_user['organization_id'] )
+        {
+            $this->Session->setFlash(__('You do not have permission to edit that user.'));
+            $this->redirect(array('action' => 'index'));
+        } 
+
         if (isset($this->request->data['cancel'])) {
             $this->Session->setFlash(__('Password changes were cancelled.', true));
             $this->redirect( array('action' => 'edit', $this->User->id) );  
