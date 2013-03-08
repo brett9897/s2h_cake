@@ -36,13 +36,46 @@ class UsersController extends AppController {
         $this->render('login');
     }
 
+    public function isAuthorized($user = null)
+    {
+        //non admin pages can be accessed by anyone
+        if( empty($this->request->params['admin']) )
+        {
+            return true;
+        }
+
+        //only admins can access admin actions
+        if( isset($this->request->params['admin']) )
+        {
+            return (bool)($user['type'] === 'admin' || $user['type'] === 'superAdmin');
+        }
+
+        //default deny
+        return false;
+    }
+
+    private $type_options;
     public function beforeFilter(){
         parent::beforeFilter();                                 //calls the parent's class before beforeFilter()...the AppControler
         $this->Security->ValidatePost=FALSE;
         $this->Security->csrfCheck=FALSE;
         $this->Security->requireSecure(array('login'));
+
+        // get column type
+        $type = $this->User->getColumnType('type');
+         
+        // extract values in single quotes separated by comma
+        preg_match_all("/'(.*?)'/", $type, $enums);
+         
+        // enums
+        $this->type_options = $enums[1];
     }
     
+    public function beforeRender()
+    {
+        parent::beforeRender();
+    }
+
     /**
      * admin_index method
      *
@@ -89,6 +122,15 @@ class UsersController extends AppController {
         }
         $organizations = $this->User->Organization->find('list');           //list just creats an assoc array btwn ID and display
         $this->set(compact('organizations'));
+        $cur_user = $this->Auth->user();
+        $this->set('selected_id', $cur_user['organization_id']);
+        
+        for( $i = 0; $i < count($this->type_options); $i++)
+        {
+            if( $this->type_options[$i] == 'superAdmin' ) unset($this->type_options[$i]);
+        }
+
+        $this->set('type_options', $this->type_options);
     }
 
     /**
@@ -176,7 +218,7 @@ class UsersController extends AppController {
      * @return void
      */
     public function change_password($id = null) {
-        $this->User->id = $id;                                                  //How does it get the user id?....it is set null!
+        $this->User->id = $id;                                                  //How does it get the user id?....it is set null! <-default value is null if nothing is passed in
         if (isset($this->request->data['cancel'])) {
             $this->Session->setFlash(__('Password changes were cancelled.', true));
             $this->redirect( array('action' => 'edit', $this->User->id) );  
@@ -188,7 +230,7 @@ class UsersController extends AppController {
             }
             if ($this->request->is('post') || $this->request->is('put')) {                  //this checks to see if the form has been submitted
                  $this->request->data['User']['pwd'] = $this->request->data['User']['password'];
-                 //$this->User->save($this->request->data);   
+ 
                  if( $this->User->save($this->request->data) ){
                     $this->Session->setFlash(__('Password has been Saved.'));
                     $this->redirect( array('action' => 'edit', $this->User->id) );                 
