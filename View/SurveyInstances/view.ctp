@@ -46,12 +46,14 @@
                 <dt><?php echo __($question['label']); ?></dt>
 
                 <?php foreach ($question['Answer'] as $answer): ?>
+                    <?php if ($answer['survey_instance_id'] == $surveyInstance['SurveyInstance']['id']): ?>
                     <dd>
                         <?php if ($answer['survey_instance_id'] == $id): ?>
                             <?php echo h($answer['value']); ?>
                             <br /><br />
                         <?php endif; ?>
                     </dd>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             <?php endforeach; ?>
             <br />
