@@ -1,11 +1,7 @@
 $(document).ready(function (){
-	$('#ViCriteriumType').change(function () {
-		performChange();
-	});
-
-	function performChange()
+	function initialize()
 	{
-		var type = $('#ViCriteriumType > option:selected').text();
+		var type = $('#ViCriteriumType').val();
 		if( type == "question" )
 		{
 			$('#groupings').addClass('doNotShow');
@@ -18,34 +14,17 @@ $(document).ready(function (){
 			$('#groupings').addClass('doNotShow');
 			$('#question').removeClass('doNotShow');
 			$('#values_text').removeClass('doNotShow');
-			$('#ViCriteriumQuestionId').parent().addClass('doNotShow');
+			$('#question_id').parent().addClass('doNotShow');
 		}
 		else
 		{
 			$('#question').addClass('doNotShow');
 			$('#groupings').removeClass('doNotShow');
 		}
-	}
 
-	//onload make sure everything is rendered correctly.
-	performChange();
-
-	$('#ViCriteriumQuestionId').change(function () {
-		performQuestionChange();
-	});
-
-	function performQuestionChange()
-	{
-		
 		if( $('#ViCriteriumQuestionId').val() != '')
         {
-        	//remove empty element if it exists
-            if( $('#ViCriteriumQuestionId > option:first-child').val() == '')
-            {
-                $('#ViCriteriumQuestionId > option:first-child').remove();
-            }
-        
-
+           
 			//make ajax call to figure out how values should be displayed
 			$.ajax({
 				url: global.base_url + "/admin/vi_criteria/get_values/" + $('#ViCriteriumQuestionId').val() + '.json',
@@ -67,6 +46,7 @@ $(document).ready(function (){
 			else
 			{
 				$('#values_text').addClass('doNotShow');
+				$('#ViCriteriumValues').attr('value', '');
 				$('#values_select').removeClass('doNotShow');
 
 				//build select
@@ -81,7 +61,8 @@ $(document).ready(function (){
 		}
 	}
 
-	performQuestionChange();
+	//onload make sure everything is rendered correctly.
+	initialize();
 
 	$('#values').on('click', function () {
 		$('#values_form').dialog( 'open' );

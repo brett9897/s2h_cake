@@ -10,6 +10,24 @@ class ViCriteriaController extends AppController {
 	public $uses = array('ViCriterium', 'Option', 'Grouping');
 	public $components = array('RequestHandler');
 
+	public function isAuthorized($user = null)
+	{
+		//non admin pages can be accessed by anyone
+		if( empty($this->request->params['admin']) )
+		{
+			return true;
+		}
+
+		//only admins can access admin actions
+		if( isset($this->request->params['admin']) )
+		{
+			return (bool)($user['type'] === 'admin' || $user['type'] === 'superAdmin');
+		}
+
+		//default deny
+		return false;
+	}
+
 	function beforeFilter()
 	{
 		parent::beforeFilter();
@@ -80,25 +98,28 @@ class ViCriteriaController extends AppController {
  * @return void
  */
 	public function admin_add($survey_id) {
-		echo "I got to start";
+
+		if( $survey_id != null )
+		{
+			$this->ViCriterium->Survey->id = $survey_id;
+			if( $this->ViCriterium->Survey->hasInstance() )
+			{
+				$this->redirect(array('controller' => 'surveys', 'action' => 'edit', $survey_id));
+			}
+		}
+
+		$values_array = array();
 		if ($this->request->is('post')) {
-			echo "something was submitted";
-			$this->request->data['ViCriterium']['weight'] = floatval($this->request->data['ViCriterium']['weight']);
-			var_dump($this->request->data);
+			
+			$this->request->data['ViCriterium']['weight'] = $this->request->data['ViCriterium']['weight'];
+			
 			if( isset($this->request->data['ViCriterium']['values_array']) )
 			{
-				$values = '';
-				foreach( $this->request->data['ViCriterium']['values_array'] as $value )
-				{
-					$values .= $value . ',';
-				}
-
-				$values = substr($values, 0, -1);
-
-				$this->request->data['ViCriterium']['values'] = $values;
+				$this->request->data['ViCriterium']['values'] = implode(',', $this->request->data['ViCriterium']['values_array']);
+				$values_array = $this->request->data['ViCriterium']['values_array']; //save for possible later use
 				unset($this->request->data['ViCriterium']['values_array']);
 			}
-			if( $this->request->data['ViCriterium']['type'] === 'grouping' )
+			if( $this->request->data['ViCriterium']['type'] === 'grouping' || $this->request->data['ViCriterium']['type'] === 'age' )
 			{
 				$this->request->data['ViCriterium']['question_id'] = null;
 			}
@@ -111,13 +132,14 @@ class ViCriteriaController extends AppController {
 				$this->redirect(array('controller' => 'surveys',  'action' => 'edit', $survey_id));
 			} else {
 				$this->Session->setFlash(__('The vi criterium could not be saved. Please, try again.'));
+				$this->set('errors', $this->ViCriterium->validationErrors);
 			}
 		}
 		$questions = $this->ViCriterium->Question->find('list', array('conditions' => array('Question.survey_id' => $survey_id )));
 		$groupings = $this->Grouping->find('list', array('conditions' => array('Grouping.survey_id' => $survey_id )));
 		$this->set(compact('questions', 'groupings'));
 		$this->set('survey_id', $survey_id);
-		echo "I got to bottom";
+		$this->set('values_array', $values_array);
 	}
 
 /**
@@ -129,21 +151,62 @@ class ViCriteriaController extends AppController {
  */
 	public function admin_edit($id = null) {
 		$this->ViCriterium->id = $id;
+		$survey_id = $this->ViCriterium->getSurveyId();
+
+		if( $survey_id != null )
+		{
+			$this->ViCriterium->Survey->id = $survey_id;
+			if( $this->ViCriterium->Survey->hasInstance() )
+			{
+				$this->redirect(array('controller' => 'surveys', 'action' => 'edit', $survey_id));
+			}
+		}
+		
+		$values_array = array();
+
 		if (!$this->ViCriterium->exists()) {
 			throw new NotFoundException(__('Invalid vi criterium'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
+			$this->request->data['ViCriterium']['weight'] = $this->request->data['ViCriterium']['weight'];
+			
+			if( isset($this->request->data['ViCriterium']['values_array']) )
+			{
+				$this->request->data['ViCriterium']['values'] = implode(',', $this->request->data['ViCriterium']['values_array']);
+				$values_array = $this->request->data['ViCriterium']['values_array']; //save for possible later use
+				unset($this->request->data['ViCriterium']['values_array']);
+			}
+			if( $this->request->data['ViCriterium']['type'] === 'grouping' )
+			{
+				$this->request->data['ViCriterium']['question_id'] = null;
+			}
+
+			$this->request->data['ViCriterium']['survey_id'] = $survey_id;
+
 			if ($this->ViCriterium->save($this->request->data)) {
 				$this->Session->setFlash(__('The vi criterium has been saved'));
-				$this->redirect(array('action' => 'index'));
+				$this->redirect(array('action' => 'index', $survey_id));
 			} else {
 				$this->Session->setFlash(__('The vi criterium could not be saved. Please, try again.'));
+				$this->set('errors', $this->ViCriterium->validationErrors);
 			}
 		} else {
 			$this->request->data = $this->ViCriterium->read(null, $id);
+			if( strpos($this->request->data['ViCriterium']['values'], ',') === false )
+			{
+				$values_array[] = $this->request->data['ViCriterium']['values'];
+			}
+			else
+			{
+				$values_array = explode(',', $this->request->data['ViCriterium']['values']);
+			}
 		}
-		$questions = $this->ViCriterium->Question->find('list');
-		$this->set(compact('questions'));
+		$questions = $this->ViCriterium->Question->find('list', array('conditions' => array('Question.survey_id' => $survey_id )));
+		$groupings = $this->Grouping->find('list', array('conditions' => array('Grouping.survey_id' => $survey_id )));
+		$this->set(compact('questions', 'groupings'));
+		$this->set('survey_id', $survey_id);
+		$this->set('selected_type', $this->request->data['ViCriterium']['type']);
+		$this->set('values_array', $values_array);
 	}
 
 /**
@@ -159,23 +222,22 @@ class ViCriteriaController extends AppController {
 			throw new MethodNotAllowedException();
 		}
 		$this->ViCriterium->id = $id;
+		$survey_id = $this->ViCriterium->getSurveyId();
 		if (!$this->ViCriterium->exists()) {
 			throw new NotFoundException(__('Invalid vi criterium'));
 		}
 		if ($this->ViCriterium->delete()) {
 			$this->Session->setFlash(__('Vi criterium deleted'));
-			$this->redirect(array('action' => 'index'));
+			$this->redirect(array('action' => 'index', $survey_id));
 		}
 		$this->Session->setFlash(__('Vi criterium was not deleted'));
-		$this->redirect(array('action' => 'index'));
+		$this->redirect(array('action' => 'index', $survey_id));
 	}
 
 
 	public function admin_get_values($questionId = null)
 	{
-		//if there are any options for the question present them as the possible values.
-		$this->Option->recursive = -1;
-		$result = $this->Option->find('all', array('conditions' => array('Option.question_id' => $questionId), 'fields' => array('Option.id', 'Option.label')));
+		$result = $this->get_values($questionId);
 		if( count($result) > 0 )
 		{
 			$this->set('response', array( 'response' => array('status' => 'good', 'timestamp' => date('m-d-Y H:i:s'), 'options' => $result)));
@@ -184,5 +246,13 @@ class ViCriteriaController extends AppController {
 		{
 			$this->set('response', array( 'response' => array('status' => 'good', 'timestamp' => date('m-d-Y H:i:s'), 'options' => 'NULL')));
 		}
+	}
+
+	private function get_values($questionId)
+	{
+		//if there are any options for the question present them as the possible values.
+		$this->Option->recursive = -1;
+		$result = $this->Option->find('all', array('conditions' => array('Option.question_id' => $questionId), 'fields' => array('Option.id', 'Option.label')));
+		return $result;
 	}
 }

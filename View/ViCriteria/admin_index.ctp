@@ -29,6 +29,7 @@
 		<td><?php echo h($viCriterium['ViCriterium']['weight']); ?>&nbsp;</td>
 		<td class="actions">
 			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $viCriterium['ViCriterium']['id'])); ?>
+			<?php echo $this->Form->postLink(__('Delete'), array('action' => 'delete', $viCriterium['ViCriterium']['id']), null, __('Are you sure you want to delete VI Criterion for "%s"?', str_replace('?', '', $viCriterium['Question']['label']))); ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

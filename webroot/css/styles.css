@@ -239,7 +239,7 @@ form
 	width:100%;
 }
 
-div.form.no-border, div.index.no-border
+div.form.no-border, div.index.no-border, div.view.no-border
 {
 	border: 0px;
 }

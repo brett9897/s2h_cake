@@ -25,13 +25,22 @@
 			<div id="values_text" class="doNotShow">
 				<?php echo $this->Form->input('values', array('required' => 'false')); ?>
 			</div>
-			<div id="values_select" class="doNotShow">
+			<div id="values_select" class="doNotShow <?php echo (isset($errors['values'])) ? 'error' : '';?>">
 				<div id="values">
 					<span id="plus_image">plus sign</span><span id="words">Click to add values</span>
 				</div>
 
 				<div id="value_options">
+					<?php foreach( $values_array as $value ): ?>
+						<div class="value_entry">
+							<input type="hidden" name="data[ViCriterium][values_array][]" value="<?php echo $value; ?>" />
+							<p><span class="text"><?php echo $value; ?></span><span class="remove_image"></span></p>
+						</div>
+					<?php endforeach; ?>
 				</div>
+				<?php if( isset($errors['values']) ): ?>
+						<div class="error-message"><?php echo $errors['values'][0]; ?></div>
+				<?php endif; ?>
 			</div>
 		</div>
 		<div id="groupings" class="doNotShow">
@@ -45,7 +54,7 @@
 			</div>
 		</div>
 		<?php
-			echo $this->Form->input('weight');
+			echo $this->Form->input('weight', array('required' => false, 'type' => 'text'));
 		?>
 	</fieldset>
 <?php echo $this->Form->end(__('Submit')); ?>
