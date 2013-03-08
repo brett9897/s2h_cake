@@ -18,18 +18,15 @@ class SurveyInstancesController extends AppController {
         $this->Security->validatePost = false;
     }
 
-    public function isAuthorized($user = null)
-    {
+    public function isAuthorized($user = null) {
         //non admin pages can be accessed by anyone
-        if( empty($this->request->params['admin']) )
-        {
+        if (empty($this->request->params['admin'])) {
             return true;
         }
 
         //only admins can access admin actions
-        if( isset($this->request->params['admin']) )
-        {
-            return (bool)($user['type'] === 'admin' || $user['type'] === 'superAdmin');
+        if (isset($this->request->params['admin'])) {
+            return (bool) ($user['type'] === 'admin' || $user['type'] === 'superAdmin');
         }
 
         //default deny
@@ -55,7 +52,7 @@ class SurveyInstancesController extends AppController {
                     )));
             $this->paginate = array(
                 'conditions' => array(
-                    'Survey.id' => $activeSurvey['Survey']['id'],          
+                    'Survey.id' => $activeSurvey['Survey']['id'],
                 )
             );
         } else if ($user['type'] == 'volunteer' || $user['type'] == 'user') {
@@ -67,7 +64,7 @@ class SurveyInstancesController extends AppController {
 
             $this->paginate = array(
                 'conditions' => array(
-                    'survey_id' => $activeSurvey['Survey']['id'],         
+                    'survey_id' => $activeSurvey['Survey']['id'],
                     'SurveyInstance.user_id' => $user_id
                 )
             );
@@ -87,11 +84,18 @@ class SurveyInstancesController extends AppController {
         if (!$this->SurveyInstance->exists()) {
             throw new NotFoundException(__('Invalid survey instance'));
         }
-        $this->SurveyInstance->recursive = 3;
-        $this->set('surveyInstance', $this->SurveyInstance->find('first', array(
-                    'conditions' => array(
-                        'SurveyInstance.id' => $id,
-                        ))));
+        $surveyInstance = $this->SurveyInstance->find('first', array(
+            'conditions' => array(
+                'SurveyInstance.id' => $id
+                )));
+        $this->Grouping->recursive = 3;
+        $groupings = $this->Grouping->find('all', array(
+            'conditions' => array(
+                'Grouping.survey_id' => $surveyInstance['SurveyInstance']['survey_id']
+            )
+                ));
+        $this->set('surveyInstance', $surveyInstance);
+        $this->set('groupings', $groupings);
         $this->set('id', $id);
     }
 
@@ -128,12 +132,11 @@ class SurveyInstancesController extends AppController {
             foreach ($grouping['Question'] as $question) {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
-                
+
                 if ($question['is_required']) {
-      //              array_push($validations, 'notempty');
+                    //              array_push($validations, 'notempty');
                 }
                 $this->Client->addValidator($question['internal_name'], $validations);
-                
             }
         }
 
@@ -332,14 +335,10 @@ class SurveyInstancesController extends AppController {
                 $id = $this->SurveyInstance->id;
                 $survey = $this->SurveyInstance->read(null, $id);
                 $criterion = $this->ViCriterium->find('first', array('conditions' => array('ViCriterium.type' => 'age')));
-                if( count($criterion) > 0 )
-                {
+                if (count($criterion) > 0) {
                     $vi_score += $this->calculate_age_score(
-                                    $this->request->data['Client']['dob'], 
-                                    $criterion['ViCriterium']['values'], 
-                                    $criterion['ViCriterium']['relational_operator'],
-                                    $criterion['ViCriterium']['weight']
-                                );
+                            $this->request->data['Client']['dob'], $criterion['ViCriterium']['values'], $criterion['ViCriterium']['relational_operator'], $criterion['ViCriterium']['weight']
+                    );
                 }
                 $survey['SurveyInstance']['vi_score'] = $vi_score;
                 $this->SurveyInstance->save($survey);
@@ -603,14 +602,10 @@ class SurveyInstancesController extends AppController {
                 $id = $this->SurveyInstance->id;
                 $survey = $this->SurveyInstance->read(null, $id);
                 $criterion = $this->ViCriterium->find('first', array('conditions' => array('ViCriterium.type' => 'age')));
-                if( count($criterion) > 0 )
-                {
+                if (count($criterion) > 0) {
                     $vi_score += $this->calculate_age_score(
-                                    $this->request->data['Client']['dob'], 
-                                    $criterion['ViCriterium']['values'], 
-                                    $criterion['ViCriterium']['relational_operator'],
-                                    $criterion['ViCriterium']['weight']
-                                );
+                            $this->request->data['Client']['dob'], $criterion['ViCriterium']['values'], $criterion['ViCriterium']['relational_operator'], $criterion['ViCriterium']['weight']
+                    );
                 }
                 $survey['SurveyInstance']['vi_score'] = $vi_score;
                 $this->SurveyInstance->save($survey);
@@ -882,13 +877,11 @@ class SurveyInstancesController extends AppController {
         $this->set('response', $response);
     }
 
-    private function calculate_age_score($dob, $age_threshold, $relational_operator, $weight)
-    {
+    private function calculate_age_score($dob, $age_threshold, $relational_operator, $weight) {
         $age = $this->get_current_age($dob);
         $score = 0;
 
-        switch ($relational_operator) 
-        {
+        switch ($relational_operator) {
             case '<':
                 if ($age < $age_threshold) {
                     $score += $weight;
@@ -919,21 +912,16 @@ class SurveyInstancesController extends AppController {
         return $score;
     }
 
-    private function get_current_age($dob)
-    {
-        list($y,$m,$d) = explode('-', $dob);
-    
-        if (($m = (date('m') - $m)) < 0) 
-        {
+    private function get_current_age($dob) {
+        list($y, $m, $d) = explode('-', $dob);
+
+        if (($m = (date('m') - $m)) < 0) {
             $y++;
-        } 
-        elseif ($m == 0 && date('d') - $d < 0) 
-        {
+        } elseif ($m == 0 && date('d') - $d < 0) {
             $y++;
         }
-        
+
         return date('Y') - $y;
-    
     }
 
 }

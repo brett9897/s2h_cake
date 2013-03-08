@@ -100,10 +100,11 @@ class QuestionHelper extends AppHelper {
                     'label' => 'Other'
                         ));
                 break;
-
+                
+                //FIXME: change to datepickr later
             case "date":
                 $output .= $this->Form->input($internalName, array(
-                    'id' => 'datepicker',
+                    'type' => 'date',
                     'label' => ''
                         ));
                 break;
