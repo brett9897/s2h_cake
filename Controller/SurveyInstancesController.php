@@ -18,6 +18,24 @@ class SurveyInstancesController extends AppController {
         $this->Security->validatePost = false;
     }
 
+    public function isAuthorized($user = null)
+    {
+        //non admin pages can be accessed by anyone
+        if( empty($this->request->params['admin']) )
+        {
+            return true;
+        }
+
+        //only admins can access admin actions
+        if( isset($this->request->params['admin']) )
+        {
+            return (bool)($user['type'] === 'admin' || $user['type'] === 'superAdmin');
+        }
+
+        //default deny
+        return false;
+    }
+
     /**
      * index method
      *
@@ -30,7 +48,7 @@ class SurveyInstancesController extends AppController {
         $conditions;
 
         if ($user['type'] == 'admin') {
-            $activeSurvey = $this->SurveyInstance->find('first', array(
+            $activeSurvey = $this->Survey->find('first', array(
                 'conditions' => array(
                     'Survey.isActive' => 1
                     )));
@@ -41,7 +59,7 @@ class SurveyInstancesController extends AppController {
                 )
             );
         } else if ($user['type'] == 'volunteer' || $user['type'] == 'user') {
-            $activeSurvey = $this->SurveyInstance->find('first', array(
+            $activeSurvey = $this->Survey->find('first', array(
                 'conditions' => array(
                     'Survey.isActive' => 1
                     )));
@@ -313,6 +331,16 @@ class SurveyInstancesController extends AppController {
                 //update vi score
                 $id = $this->SurveyInstance->id;
                 $survey = $this->SurveyInstance->read(null, $id);
+                $criterion = $this->ViCriterium->find('first', array('conditions' => array('ViCriterium.type' => 'age')));
+                if( count($criterion) > 0 )
+                {
+                    $vi_score += $this->calculate_age_score(
+                                    $this->request->data['Client']['dob'], 
+                                    $criterion['ViCriterium']['values'], 
+                                    $criterion['ViCriterium']['relational_operator'],
+                                    $criterion['ViCriterium']['weight']
+                                );
+                }
                 $survey['SurveyInstance']['vi_score'] = $vi_score;
                 $this->SurveyInstance->save($survey);
 
@@ -574,6 +602,16 @@ class SurveyInstancesController extends AppController {
                 //update vi score
                 $id = $this->SurveyInstance->id;
                 $survey = $this->SurveyInstance->read(null, $id);
+                $criterion = $this->ViCriterium->find('first', array('conditions' => array('ViCriterium.type' => 'age')));
+                if( count($criterion) > 0 )
+                {
+                    $vi_score += $this->calculate_age_score(
+                                    $this->request->data['Client']['dob'], 
+                                    $criterion['ViCriterium']['values'], 
+                                    $criterion['ViCriterium']['relational_operator'],
+                                    $criterion['ViCriterium']['weight']
+                                );
+                }
                 $survey['SurveyInstance']['vi_score'] = $vi_score;
                 $this->SurveyInstance->save($survey);
 
@@ -842,6 +880,60 @@ class SurveyInstancesController extends AppController {
         if (!empty($client))
             $response = $client['Client']['id'];
         $this->set('response', $response);
+    }
+
+    private function calculate_age_score($dob, $age_threshold, $relational_operator, $weight)
+    {
+        $age = $this->get_current_age($dob);
+        $score = 0;
+
+        switch ($relational_operator) 
+        {
+            case '<':
+                if ($age < $age_threshold) {
+                    $score += $weight;
+                }
+                break;
+            case '>':
+                if ($age > $age_threshold) {
+                    $score += $weight;
+                }
+                break;
+            case '=':
+                if ($age == $age_threshold) {
+                    $score += $weight;
+                }
+                break;
+            case '<=':
+                if ($age <= $age_threshold) {
+                    $score += $weight;
+                }
+                break;
+            case '>=':
+                if ($age >= $age_threshold) {
+                    $score += $weight;
+                }
+                break;
+        }
+
+        return $score;
+    }
+
+    private function get_current_age($dob)
+    {
+        list($y,$m,$d) = explode('-', $dob);
+    
+        if (($m = (date('m') - $m)) < 0) 
+        {
+            $y++;
+        } 
+        elseif ($m == 0 && date('d') - $d < 0) 
+        {
+            $y++;
+        }
+        
+        return date('Y') - $y;
+    
     }
 
 }
