@@ -37,7 +37,6 @@ class ClientsController extends AppController {
         $client = $this->Client->read(null, $id);
         $this->set('client', $client);
         $photoName = $client['Client']['photoName'];
-        var_dump($photoName);
         $this->set('photoName', $photoName);
     }
 
