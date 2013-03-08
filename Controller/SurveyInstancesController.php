@@ -50,24 +50,24 @@ class SurveyInstancesController extends AppController {
         if ($user['type'] == 'admin') {
             $activeSurvey = $this->Survey->find('first', array(
                 'conditions' => array(
-                    'Survey.isActive' => 1
+                    'Survey.isActive' => 1,
+                    'Survey.organization_id' => $user['organization_id']
                     )));
             $this->paginate = array(
                 'conditions' => array(
-                    'survey_id' => $activeSurvey['Survey']['id'],
-                    'Survey.organization_id' => $user['organization_id']
+                    'Survey.id' => $activeSurvey['Survey']['id'],          
                 )
             );
         } else if ($user['type'] == 'volunteer' || $user['type'] == 'user') {
             $activeSurvey = $this->Survey->find('first', array(
                 'conditions' => array(
-                    'Survey.isActive' => 1
+                    'Survey.isActive' => 1,
+                    'Survey.organization_id' => $user['organization_id']
                     )));
 
             $this->paginate = array(
                 'conditions' => array(
-                    'survey_id' => $activeSurvey['Survey']['id'],
-                    'Survey.organization_id' => $user['organization_id'],
+                    'survey_id' => $activeSurvey['Survey']['id'],         
                     'SurveyInstance.user_id' => $user_id
                 )
             );
@@ -107,7 +107,7 @@ class SurveyInstancesController extends AppController {
         $activeSurvey = $this->Survey->find('first', array(
             'conditions' => array(
                 'isActive' => 1,
-                'organization_id' => $current_user['organization_id']
+                'Survey.organization_id' => $current_user['organization_id']
             )
                 ));
         if (empty($activeSurvey)) {
@@ -130,7 +130,7 @@ class SurveyInstancesController extends AppController {
                     $question['validation_3'], $question['validation_4']);
                 
                 if ($question['is_required']) {
-                    array_push($validations, 'notempty');
+      //              array_push($validations, 'notempty');
                 }
                 $this->Client->addValidator($question['internal_name'], $validations);
                 

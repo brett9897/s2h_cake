@@ -5,8 +5,11 @@
 <style type="text/css">
     table tr td {
         border-bottom: none;
-        padding: 10px;
+        padding-right: 20px;
+        padding-bottom: 10px;
+        padding-top: 10px;
         width: 50%;
+        min-width: 300px;
     }
 
     input[type=radio] {
@@ -19,6 +22,7 @@
 
     tbody {
         width: 100%;
+        min-width: 750px;
     }
 
     .checkbox input[type="checkbox"] {
@@ -205,6 +209,7 @@
                             echo "<td>" . $question['label'] . "</td>";
                         endif;
                         echo "<td>" . $this->Question->giveMeInputString($question) . "</td>";
+                        echo "</tr>";
                     endif;
                 endforeach;
             endif;
