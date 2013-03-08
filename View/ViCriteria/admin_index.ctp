@@ -15,6 +15,7 @@
 			<th><?php echo $this->Paginator->sort('relational_operator'); ?></th>
 			<th><?php echo $this->Paginator->sort('values'); ?></th>
 			<th><?php echo $this->Paginator->sort('weight'); ?></th>
+			<th class="actions"><?php echo __('Actions'); ?></th>
 	</tr>
 	<?php
 	foreach ($viCriteria as $viCriterium): ?>
@@ -26,6 +27,9 @@
 		<td><?php echo h($viCriterium['ViCriterium']['relational_operator']); ?>&nbsp;</td>
 		<td><?php echo h($viCriterium['ViCriterium']['values']); ?>&nbsp;</td>
 		<td><?php echo h($viCriterium['ViCriterium']['weight']); ?>&nbsp;</td>
+		<td class="actions">
+			<?php echo $this->Html->link(__('Edit'), array('action' => 'edit', $viCriterium['ViCriterium']['id'])); ?>
+		</td>
 	</tr>
 <?php endforeach; ?>
 	</table>

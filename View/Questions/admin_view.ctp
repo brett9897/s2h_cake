@@ -1,7 +1,7 @@
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Questions'), array('action' => 'index', $question['Question']['grouping_id'])); ?><br/>
 	<?php echo $this->Html->link(__('Edit Question'), array('action' => 'edit', $question['Question']['id'])); ?><br/>
-	<?php echo $this->Form->postLink(__('Delete Question'), array('action' => 'delete', $question['Question']['id']), null, __('Are you sure you want to delete # %s?', $question['Question']['id'])); ?><br/>
+	<?php //echo $this->Form->postLink(__('Delete Question'), array('action' => 'delete', $question['Question']['id']), null, __('Are you sure you want to delete # %s?', $question['Question']['id'])); ?><br/>
 	<?php echo $this->Html->link(__('New Question'), array('action' => 'add', $question['Question']['grouping_id'])); ?><br/>
 	<?php echo $this->Html->link(__('List Groupings'), array('controller' => 'groupings', 'action' => 'index', $question['Question']['survey_id'])); ?> <br/>
 	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add')); ?> <br/>

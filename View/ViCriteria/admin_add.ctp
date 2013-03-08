@@ -23,7 +23,7 @@
 			echo $this->Form->input('relational_operator', array('type' => 'select', 'options' => array_combine($relational_operator_options, $relational_operator_options)));
 		?>
 			<div id="values_text" class="doNotShow">
-				<?php echo $this->Form->input('values'); ?>
+				<?php echo $this->Form->input('values', array('required' => 'false')); ?>
 			</div>
 			<div id="values_select" class="doNotShow">
 				<div id="values">

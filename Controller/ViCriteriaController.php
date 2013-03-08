@@ -80,7 +80,9 @@ class ViCriteriaController extends AppController {
  * @return void
  */
 	public function admin_add($survey_id) {
+		echo "I got to start";
 		if ($this->request->is('post')) {
+			echo "something was submitted";
 			$this->request->data['ViCriterium']['weight'] = floatval($this->request->data['ViCriterium']['weight']);
 			var_dump($this->request->data);
 			if( isset($this->request->data['ViCriterium']['values_array']) )
@@ -115,6 +117,7 @@ class ViCriteriaController extends AppController {
 		$groupings = $this->Grouping->find('list', array('conditions' => array('Grouping.survey_id' => $survey_id )));
 		$this->set(compact('questions', 'groupings'));
 		$this->set('survey_id', $survey_id);
+		echo "I got to bottom";
 	}
 
 /**
