@@ -20,7 +20,7 @@
                     <?php endif; ?>
                 </td>
                 <td>
-                    <?php echo $this->Html->link($surveyInstance['Client']['first_name'], array('controller' => 'clients', 'action' => 'view', $surveyInstance['Client']['id'])); ?>
+                    <?php echo $this->Html->link($surveyInstance['Client']['first_name'] . ' ' . $surveyInstance['Client']['last_name'], array('controller' => 'clients', 'action' => 'view', $surveyInstance['Client']['id'])); ?>
                 </td>
                 <td>
                     <?php echo $this->Html->link($surveyInstance['User']['first_name'], array('controller' => 'users', 'action' => 'view', $surveyInstance['User']['id'])); ?>

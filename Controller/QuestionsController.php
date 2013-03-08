@@ -45,10 +45,10 @@ class QuestionsController extends AppController {
  *
  * @return void
  */
-	public function index() {
+	/*public function index() {
 		$this->Question->recursive = 0;
 		$this->set('questions', $this->paginate());
-	}
+	}*/
 
 /**
  * view method
@@ -57,13 +57,13 @@ class QuestionsController extends AppController {
  * @param string $id
  * @return void
  */
-	public function view($id = null) {
+	/*public function view($id = null) {
 		$this->Question->id = $id;
 		if (!$this->Question->exists()) {
 			throw new NotFoundException(__('Invalid question'));
 		}
 		$this->set('question', $this->Question->read(null, $id));
-	}
+	}*/
 
 /**
  * admin_index method
@@ -153,7 +153,7 @@ class QuestionsController extends AppController {
 
 		$groupings = $this->Question->Grouping->getListByOrderNumber($grouping['Grouping']['survey_id'], 'ASC');
 		$types = $this->Question->Type->find('list');
-		$validations = $this->InternalValidation->find('all');
+		$validations = $this->InternalValidation->find('all', array('order' => array('label ASC')));
 
 		$validation_options = array();
 		foreach( $validations as $validation )
@@ -240,7 +240,7 @@ class QuestionsController extends AppController {
 
 		$groupings = $this->Question->Grouping->getListByOrderNumber($this->request->data['Question']['survey_id'], 'ASC');
 		$types = $this->Question->Type->find('list');
-		$validations = $this->InternalValidation->find('all', array( ));
+		$validations = $this->InternalValidation->find('all', array('order' => array('label ASC')));
 
 		$validation_options = array();
 		foreach( $validations as $validation )

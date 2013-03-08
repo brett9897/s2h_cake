@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 3.4.10.1deb1
+-- version 3.4.11.1deb1
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 04, 2013 at 08:39 PM
+-- Generation Time: Mar 08, 2013 at 04:50 PM
 -- Server version: 5.5.29
--- PHP Version: 5.3.10-1ubuntu3.5
+-- PHP Version: 5.4.6-1ubuntu1.1
 
 SET FOREIGN_KEY_CHECKS=0;
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `s2h_third_version`
+-- Database: `s2h`
 --
 
 -- --------------------------------------------------------
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `answers` (
   KEY `fK_answers_question` (`question_id`),
   KEY `fk_answers_client` (`client_id`),
   KEY `survey_instance_id` (`survey_instance_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=48 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=142 ;
 
 -- --------------------------------------------------------
 
@@ -54,18 +54,15 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `organization_id` int(10) unsigned NOT NULL,
   `first_name` varchar(50) NOT NULL,
-  `middle_name` varchar(50) NOT NULL,
   `last_name` varchar(50) NOT NULL,
   `ssn` varchar(9) NOT NULL,
   `dob` date NOT NULL,
-  `nickname` varchar(50) NOT NULL,
-  `phone_number` varchar(15) NOT NULL,
   `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `organization_id` (`organization_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=71 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=77 ;
 
 -- --------------------------------------------------------
 
@@ -101,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `groupings` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `survey_id` (`survey_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=20 ;
 
 -- --------------------------------------------------------
 
@@ -118,7 +115,7 @@ CREATE TABLE IF NOT EXISTS `options` (
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   PRIMARY KEY (`id`),
   KEY `fk_options_questions` (`question_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1005 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=1486 ;
 
 -- --------------------------------------------------------
 
@@ -136,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `organizations` (
   PRIMARY KEY (`id`),
   KEY `name` (`name`),
   KEY `name_2` (`name`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 -- --------------------------------------------------------
 
@@ -150,7 +147,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   `survey_id` int(10) unsigned NOT NULL,
   `grouping_id` int(10) unsigned NOT NULL,
   `internal_name` varchar(50) NOT NULL,
-  `label` varchar(255) NOT NULL,
+  `label` text NOT NULL,
   `type_id` smallint(5) unsigned NOT NULL,
   `ordering` smallint(5) unsigned NOT NULL,
   `is_used` tinyint(1) NOT NULL,
@@ -165,7 +162,7 @@ CREATE TABLE IF NOT EXISTS `questions` (
   KEY `grouping_id` (`grouping_id`),
   KEY `survey_id` (`survey_id`),
   KEY `type_id` (`type_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=100 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=171 ;
 
 -- --------------------------------------------------------
 
@@ -183,7 +180,7 @@ CREATE TABLE IF NOT EXISTS `surveys` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=6 ;
 
 -- --------------------------------------------------------
 
@@ -197,15 +194,15 @@ CREATE TABLE IF NOT EXISTS `survey_instances` (
   `survey_id` int(10) unsigned NOT NULL,
   `client_id` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
-  `vi_score` int(10) unsigned NOT NULL,
+  `vi_score` double unsigned NOT NULL,
   `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `client_id` (`client_id`),
   KEY `survey_id` (`survey_id`),
-  KEY `user_id` (`user_id`),
-  KEY `client_id` (`client_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
 -- --------------------------------------------------------
 
@@ -220,7 +217,7 @@ CREATE TABLE IF NOT EXISTS `types` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=12 ;
 
 -- --------------------------------------------------------
 
@@ -242,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `org_id` (`organization_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=10 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
 -- --------------------------------------------------------
 
@@ -258,7 +255,7 @@ CREATE TABLE IF NOT EXISTS `validations` (
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=11 ;
 
 -- --------------------------------------------------------
 
@@ -280,7 +277,7 @@ CREATE TABLE IF NOT EXISTS `vi_criteria` (
   PRIMARY KEY (`id`),
   KEY `question_id` (`question_id`),
   KEY `survey_id` (`survey_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=26 ;
 
 --
 -- Constraints for dumped tables

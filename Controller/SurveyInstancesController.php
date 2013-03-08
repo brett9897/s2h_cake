@@ -180,50 +180,52 @@ class SurveyInstancesController extends AppController {
                             $values = array($values);
 
                         //figure out if there is a vi_criterion for this question
-                        $criterion = $this->ViCriterium->find('first', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
-                        $found = false;
+                        $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
+                        
+                        foreach ($criteria as $criterion){
+                            $found = false;
+                            foreach ($values as $value) {
+                                if (count($criterion) > 0) {
+                                    if (strpos($criterion['ViCriterium']['values'], ',') === false) {
+                                        $criterion_values = array($criterion['ViCriterium']['values']);
+                                    } else {
+                                        $criterion_values = explode(',', $criterion['ViCriterium']['values']);
+                                    }
 
-                        foreach ($values as $value) {
-                            if (count($criterion) > 0) {
-                                if (strpos($criterion['ViCriterium']['values'], ',') === false) {
-                                    $criterion_values = array($criterion['ViCriterium']['values']);
-                                } else {
-                                    $criterion_values = explode(',', $criterion['ViCriterium']['values']);
-                                }
-
-                                if (!$found) {
-                                    foreach ($criterion_values as $c_value) {
-                                        switch ($criterion['ViCriterium']['relational_operator']) {
-                                            case '<':
-                                                if ($value < $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '>':
-                                                if ($value > $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '=':
-                                                if ($value == $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '<=':
-                                                if ($value <= $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '>=':
-                                                if ($value >= $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
+                                    if (!$found) {
+                                        foreach ($criterion_values as $c_value) {
+                                            switch ($criterion['ViCriterium']['relational_operator']) {
+                                                case '<':
+                                                    if ($value < $c_value) {
+                                                        $vi_score += $criterion['ViCriterium']['weight'];
+                                                        $found = true;
+                                                    }
+                                                    break;
+                                                case '>':
+                                                    if ($value > $c_value) {
+                                                        $vi_score += $criterion['ViCriterium']['weight'];
+                                                        $found = true;
+                                                    }
+                                                    break;
+                                                case '=':
+                                                    if ($value == $c_value) {
+                                                        $vi_score += $criterion['ViCriterium']['weight'];
+                                                        $found = true;
+                                                    }
+                                                    break;
+                                                case '<=':
+                                                    if ($value <= $c_value) {
+                                                        $vi_score += $criterion['ViCriterium']['weight'];
+                                                        //$found = true;
+                                                    }
+                                                    break;
+                                                case '>=':
+                                                    if ($value >= $c_value) {
+                                                        $vi_score += $criterion['ViCriterium']['weight'];
+                                                        //$found = true;
+                                                    }
+                                                    break;
+                                            }
                                         }
                                     }
                                 }

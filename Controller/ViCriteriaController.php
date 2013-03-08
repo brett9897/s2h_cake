@@ -135,7 +135,11 @@ class ViCriteriaController extends AppController {
 				$this->set('errors', $this->ViCriterium->validationErrors);
 			}
 		}
-		$questions = $this->ViCriterium->Question->find('list', array('conditions' => array('Question.survey_id' => $survey_id )));
+		$questions = $this->ViCriterium->Question->find('list', array(
+							'conditions' => array('Question.survey_id' => $survey_id ), 
+							'order' => array('Question.internal_name ASC') 
+						)
+		);
 		$groupings = $this->Grouping->find('list', array('conditions' => array('Grouping.survey_id' => $survey_id )));
 		$this->set(compact('questions', 'groupings'));
 		$this->set('survey_id', $survey_id);

@@ -11,7 +11,7 @@
 <div class="questions form">
 <?php echo $this->Form->create('Question'); ?>
 	<fieldset>
-		<legend><?php echo __('Admin Edit Question'); ?></legend>
+		<legend><?php echo __('Edit Question'); ?></legend>
 	<?php
 		echo $this->Form->input('grouping_id', array('selected' => $selected_grouping_id));
 		echo $this->Form->input('internal_name');
