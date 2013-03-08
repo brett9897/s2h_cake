@@ -37,8 +37,8 @@ class ClientsController extends AppController {
         $client = $this->Client->read(null, $id);
         $this->set('client', $client);
         $photoName = $client['Client']['photoName'];
-        $imagePath = DS . 'uploaded_images' . DS . $photoName;
-        $this->set('imagePath', $imagePath);
+        var_dump($photoName);
+        $this->set('photoName', $photoName);
     }
 
     /**

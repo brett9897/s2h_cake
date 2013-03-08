@@ -4,10 +4,8 @@
 <div class="clients view">
     <h2><?php echo __('Client'); ?></h2>
     
-    <?php echo $this->Html->image($imagePath, array(
-        'style' => "float: left; width:200px; height:200px",
-        'fullBase' => true,
-        'alt' => 'person'
+    <?php echo $this->Html->image($photoName, array(
+        'style' => "float: left; width:200px; height:200px"
         )); ?>
     <dl>
         <dt><?php echo __('Organization'); ?></dt>

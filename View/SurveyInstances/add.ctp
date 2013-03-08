@@ -161,7 +161,7 @@
             </td>
         </tr>
         <tr>
-            <td>DOB</td>
+            <td><strong>DOB<strong><font color="red">*</font></td>
             <td>
                 <?php
                 echo $this->Form->input('dob', array(
