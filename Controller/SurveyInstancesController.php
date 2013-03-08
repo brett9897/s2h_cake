@@ -27,18 +27,33 @@ class SurveyInstancesController extends AppController {
         $this->SurveyInstance->recursive = 0;
         $user = $this->Auth->user();
         $user_id = $user['id'];
-        $activeSurvey = $this->SurveyInstance->find('first', array(
-            'conditions' => array(
-                'Survey.isActive' => 1,
-                'SurveyInstance.user_id' => $user_id,
-                'Survey.organization_id' => $user['organization_id']
-            )
-                ));
-        $this->paginate = array(
-            'conditions' => array(
-                'survey_id' => $activeSurvey['Survey']['id']
-            )
-        );
+        $conditions;
+
+        if ($user['type'] == 'admin') {
+            $activeSurvey = $this->SurveyInstance->find('first', array(
+                'conditions' => array(
+                    'Survey.isActive' => 1,
+                    'Survey.organization_id' => $user['organization_id']
+                    )));
+            $this->paginate = array(
+                'conditions' => array(
+                    'survey_id' => $activeSurvey['Survey']['id'],
+                )
+            );
+        } else if ($user['type'] == 'volunteer' || $user['type'] == 'user') {
+            $activeSurvey = $this->SurveyInstance->find('first', array(
+                'conditions' => array(
+                    'Survey.isActive' => 1,
+                    'Survey.organization_id' => $user['organization_id']
+                    )));
+
+            $this->paginate = array(
+                'conditions' => array(
+                    'survey_id' => $activeSurvey['Survey']['id'],
+                    'SurveyInstance.user_id' => $user_id
+                )
+            );
+        }
         $this->set('surveyInstances', $this->paginate($this->SurveyInstance));
     }
 
@@ -107,9 +122,7 @@ class SurveyInstancesController extends AppController {
             if ($this->request->data['Client']['whichClient'] == 'newClient') {
                 $this->Client->create();
                 $this->Client->save($this->request->data);
-            }
-            
-            else {
+            } else {
                 $this->Client->id = $this->request->data['Client']['oldClientID'];
             }
 
@@ -800,6 +813,8 @@ class SurveyInstancesController extends AppController {
     }
 
     public function checkIfClientExists() {
+        $user = $this->Auth->user();
+        $userOrganization = $user['organization_id'];
         $firstName = $this->request->data('firstName');
         $lastName = $this->request->data('lastName');
         $dob = $this->request->data('dob');
@@ -809,7 +824,8 @@ class SurveyInstancesController extends AppController {
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'dob' => $dob,
-                'ssn' => $ssn
+                'ssn' => $ssn,
+                'organization_id' => $userOrganization
             )
                 ));
         $response = 0;
