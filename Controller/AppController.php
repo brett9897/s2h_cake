@@ -64,8 +64,11 @@ class AppController extends Controller {
         $this->set('current_user', $this->Auth->user());
         $authUser = $this->Auth->user();
         $isAtLeastAdmin = false;
+        $isSuperAdmin = false;
         if ($authUser['type'] == 'admin' || $authUser['type'] == 'superAdmin') $isAtLeastAdmin = true;
+        if ($authUser['type'] == 'superAdmin') $isSuperAdmin = true;
         $this->set('isAtLeastAdmin', $isAtLeastAdmin);
+        $this->set('isSuperAdmin', $isSuperAdmin);
         $this->set('tip_render', null);
     }
 

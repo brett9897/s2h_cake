@@ -10,7 +10,7 @@ App::uses('AppController', 'Controller');
 class SurveyInstancesController extends AppController {
 
     public $uses = array('Grouping', 'Survey', 'SurveyInstance', 'Client', 'Question', 'Type', 'Organization', 'Answer', 'Option', 'ViCriterium');
-    public $helpers = array('Question');
+    public $helpers = array('Question', 'Html');
     public $components = array('RequestHandler');
 
     public function beforeFilter() {
@@ -69,6 +69,7 @@ class SurveyInstancesController extends AppController {
      */
     public function add() {
         /*         * *************************** RETRIEVING DATA *********************** */
+        var_dump($this->Session->read('requestData'));
         $this->Survey->recursive = 3;
         $activeSurvey = $this->Survey->find('first', array(
             'conditions' => array(
@@ -92,209 +93,211 @@ class SurveyInstancesController extends AppController {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
 
-                //if question is required, we need to set a notempty validation for it
                 if ($question['is_required'])
-                   //     array_push($validations, 'notempty');
                     $this->Client->addValidator($question['internal_name'], $validations);
             }
         }
 
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
-
             //first, we need to save data into the client table
-            $this->Client->create();
             $this->request->data['Client']['organization_id'] = $organization_id;
-            if ($this->Client->save($this->request->data)) {
 
-                //then we need to create the survey instance
-                $this->SurveyInstance->create();
-                $user_id = $this->Auth->user();
-                $user_id = $user_id['id'];
-                $data = array('SurveyInstance' => array(
-                        'survey_id' => $activeSurvey['Survey']['id'],
-                        'client_id' => $this->Client->id,
-                        'user_id' => $user_id,
-                        'vi_score' => 0,
-                        'is_Deleted' => 0
-                        ));
-                $this->SurveyInstance->save($data['SurveyInstance']);
+            //checking to see if the user wishes to save the data to a new client or to an existing one
+            if ($this->request->data['Client']['whichClient'] == 'newClient') {
+                $this->Client->create();
+                $this->Client->save($this->request->data);
+            }
+            
+            else {
+                $this->Client->id = $this->request->data['Client']['oldClientID'];
+            }
 
-                //used to calculate vi_score as we go along
-                $vi_score = 0;
+            //then we need to create the survey instance
+            $this->SurveyInstance->create();
+            $user_id = $this->Auth->user();
+            $user_id = $user_id['id'];
+            $data = array('SurveyInstance' => array(
+                    'survey_id' => $activeSurvey['Survey']['id'],
+                    'client_id' => $this->Client->id,
+                    'user_id' => $user_id,
+                    'vi_score' => 0,
+                    'is_Deleted' => 0
+                    ));
+            $this->SurveyInstance->save($data['SurveyInstance']);
 
-                //then we need to save all the answers
-                $data['Answer'] = array();
-                foreach ($groupings as $grouping) {
-                    $i = 0;
-                    foreach ($grouping['Question'] as $question) {
-                        $values = $this->request->data['Client'][$question['internal_name']];
-                        if (gettype($values) != 'array')
-                            $values = array($values);
+            //used to calculate vi_score as we go along
+            $vi_score = 0;
 
-                        //figure out if there is a vi_criterion for this question
-                        $criterion = $this->ViCriterium->find('first', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
-                        $found = false;
+            //then we need to save all the answers
+            $data['Answer'] = array();
+            foreach ($groupings as $grouping) {
+                $i = 0;
+                foreach ($grouping['Question'] as $question) {
+                    $values = $this->request->data['Client'][$question['internal_name']];
+                    if (gettype($values) != 'array')
+                        $values = array($values);
 
-                        foreach ($values as $value) {
-                            if (count($criterion) > 0) {
-                                if (strpos($criterion['ViCriterium']['values'], ',') === false) {
-                                    $criterion_values = array($criterion['ViCriterium']['values']);
-                                } else {
-                                    $criterion_values = explode(',', $criterion['ViCriterium']['values']);
-                                }
+                    //figure out if there is a vi_criterion for this question
+                    $criterion = $this->ViCriterium->find('first', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
+                    $found = false;
 
-                                if (!$found) {
-                                    foreach ($criterion_values as $c_value) {
-                                        switch ($criterion['ViCriterium']['relational_operator']) {
-                                            case '<':
-                                                if ($value < $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '>':
-                                                if ($value > $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '=':
-                                                if ($value == $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '<=':
-                                                if ($value <= $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                            case '>=':
-                                                if ($value >= $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                    $found = true;
-                                                }
-                                                break;
-                                        }
+                    foreach ($values as $value) {
+                        if (count($criterion) > 0) {
+                            if (strpos($criterion['ViCriterium']['values'], ',') === false) {
+                                $criterion_values = array($criterion['ViCriterium']['values']);
+                            } else {
+                                $criterion_values = explode(',', $criterion['ViCriterium']['values']);
+                            }
+
+                            if (!$found) {
+                                foreach ($criterion_values as $c_value) {
+                                    switch ($criterion['ViCriterium']['relational_operator']) {
+                                        case '<':
+                                            if ($value < $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                                $found = true;
+                                            }
+                                            break;
+                                        case '>':
+                                            if ($value > $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                                $found = true;
+                                            }
+                                            break;
+                                        case '=':
+                                            if ($value == $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                                $found = true;
+                                            }
+                                            break;
+                                        case '<=':
+                                            if ($value <= $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                                $found = true;
+                                            }
+                                            break;
+                                        case '>=':
+                                            if ($value >= $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                                $found = true;
+                                            }
+                                            break;
                                     }
                                 }
                             }
-                            $this->Answer->create();
-                            $data['Answer'][$i] = array(
-                                'question_id' => $question['id'],
-                                'client_id' => $this->Client->id,
-                                'survey_instance_id' => $this->SurveyInstance->id,
-                                'value' => $value,
-                                'isDeleted' => 0,
-                            );
-                            $this->Answer->save($data['Answer'][$i]);
                         }
-                    }
-                }
-
-                //endsWith-other logic
-                foreach ($this->request->data['Client'] as $key => $value) {
-
-                    //MONTHS-YEARS
-                    if ($this->endsWith($key, ' - YEARS') && !empty($value)) {
-                        $fixedKey = str_replace(' - YEARS', '', $key);
-                        $months = $this->request->data['Client'][$fixedKey . ' - MONTHS'];
-                        $assocQuestion = $this->Question->find('first', array(
-                            'conditions' => array(
-                                'internal_name' => $fixedKey
-                            )
-                                ));
-                        $value = $value . ' years, ' . $months . ' months';
                         $this->Answer->create();
-                        $data['Answer'][0] = array(
-                            'question_id' => $assocQuestion['Question']['id'],
+                        $data['Answer'][$i] = array(
+                            'question_id' => $question['id'],
                             'client_id' => $this->Client->id,
                             'survey_instance_id' => $this->SurveyInstance->id,
                             'value' => $value,
                             'isDeleted' => 0,
                         );
-                        $this->Answer->save($data['Answer'][0]);
-                    }
-
-                    //REFUSED
-                    if ($this->endsWith($key, ' - REFUSED') && $value == 1) {
-                        $fixedKey = str_replace(' - REFUSED', '', $key);
-                        $assocAnswer = $this->Answer->find('first', array(
-                            'conditions' => array(
-                                'Question.internal_name' => $fixedKey
-                            )
-                                ));
-
-                        //overwriting question if exists with 'REFUSED'
-                        if (!empty($assocAnswer)) {
-                            $this->Answer->id = $assocAnswer['Answer']['id'];
-                            $this->Answer->saveField('value', 'REFUSED');
-                        }
-
-                        //else creating the answer
-                        else {
-                            $assocQuestion = $this->Question->find('first', array(
-                                'conditions' => array(
-                                    'internal_name' => $fixedKey
-                                )
-                                    ));
-                            $this->Answer->create();
-                            $data['Answer'][0] = array(
-                                'question_id' => $assocQuestion['Question']['id'],
-                                'client_id' => $this->Client->id,
-                                'survey_instance_id' => $this->SurveyInstance->id,
-                                'value' => 'REFUSED',
-                                'isDeleted' => 0,
-                            );
-                            $this->Answer->save($data['Answer'][0]);
-                        }
-                    }
-
-                    //OTHER
-                    if ($this->endsWith($key, ' - OTHER') && !empty($value)) {
-                        $fixedKey = str_replace(' - OTHER', '', $key);
-                        $assocAnswer = $this->Answer->find('first', array(
-                            'conditions' => array(
-                                'Question.internal_name' => $fixedKey
-                            )
-                                ));
-                        $this->Answer->id = $assocAnswer['Answer']['id'];
-                        $this->Answer->saveField('value', $value);
-                    }
-
-                    //CHECKBOX OTHER
-                    if ($this->endsWith($key, ' - checkbox other') && !empty($value)) {
-                        $fixedKey = str_replace(' - checkbox other', '', $key);
-                        $assocQuestion = $this->Question->find('first', array(
-                            'conditions' => array(
-                                'internal_name' => $fixedKey
-                            )
-                                ));
-                        $this->Answer->create();
-                        $data['Answer'][0] = array(
-                            'question_id' => $assocQuestion['Question']['id'],
-                            'client_id' => $this->Client->id,
-                            'survey_instance_id' => $this->SurveyInstance->id,
-                            'value' => $value,
-                            'isDeleted' => 0,
-                        );
-                        $this->Answer->save($data['Answer'][0]);
+                        $this->Answer->save($data['Answer'][$i]);
                     }
                 }
-
-                //update vi score
-                $id = $this->SurveyInstance->id;
-                $survey = $this->SurveyInstance->read(null, $id);
-                $survey['SurveyInstance']['vi_score'] = $vi_score;
-                $this->SurveyInstance->save($survey);
-
-                $this->Session->setFlash(__('This Survey has been saved!'));
-                $this->redirect(array('action' => 'index'));
-            } else {
-                $this->Session->setFlash(__('The survey instance could not be saved. Please, try again.'));
             }
+
+            //endsWith-other logic
+            foreach ($this->request->data['Client'] as $key => $value) {
+
+                //MONTHS-YEARS
+                if ($this->endsWith($key, ' - YEARS') && !empty($value)) {
+                    $fixedKey = str_replace(' - YEARS', '', $key);
+                    $months = $this->request->data['Client'][$fixedKey . ' - MONTHS'];
+                    $assocQuestion = $this->Question->find('first', array(
+                        'conditions' => array(
+                            'internal_name' => $fixedKey
+                        )
+                            ));
+                    $value = $value . ' years, ' . $months . ' months';
+                    $this->Answer->create();
+                    $data['Answer'][0] = array(
+                        'question_id' => $assocQuestion['Question']['id'],
+                        'client_id' => $this->Client->id,
+                        'survey_instance_id' => $this->SurveyInstance->id,
+                        'value' => $value,
+                        'isDeleted' => 0,
+                    );
+                    $this->Answer->save($data['Answer'][0]);
+                }
+
+                //REFUSED
+                if ($this->endsWith($key, ' - REFUSED') && $value == 1) {
+                    $fixedKey = str_replace(' - REFUSED', '', $key);
+                    $assocAnswer = $this->Answer->find('first', array(
+                        'conditions' => array(
+                            'Question.internal_name' => $fixedKey
+                        )
+                            ));
+
+                    //overwriting question if exists with 'REFUSED'
+                    if (!empty($assocAnswer)) {
+                        $this->Answer->id = $assocAnswer['Answer']['id'];
+                        $this->Answer->saveField('value', 'REFUSED');
+                    }
+
+                    //else creating the answer
+                    else {
+                        $assocQuestion = $this->Question->find('first', array(
+                            'conditions' => array(
+                                'internal_name' => $fixedKey
+                            )
+                                ));
+                        $this->Answer->create();
+                        $data['Answer'][0] = array(
+                            'question_id' => $assocQuestion['Question']['id'],
+                            'client_id' => $this->Client->id,
+                            'survey_instance_id' => $this->SurveyInstance->id,
+                            'value' => 'REFUSED',
+                            'isDeleted' => 0,
+                        );
+                        $this->Answer->save($data['Answer'][0]);
+                    }
+                }
+
+                //OTHER
+                if ($this->endsWith($key, ' - OTHER') && !empty($value)) {
+                    $fixedKey = str_replace(' - OTHER', '', $key);
+                    $assocAnswer = $this->Answer->find('first', array(
+                        'conditions' => array(
+                            'Question.internal_name' => $fixedKey
+                        )
+                            ));
+                    $this->Answer->id = $assocAnswer['Answer']['id'];
+                    $this->Answer->saveField('value', $value);
+                }
+
+                //CHECKBOX OTHER
+                if ($this->endsWith($key, ' - checkbox other') && !empty($value)) {
+                    $fixedKey = str_replace(' - checkbox other', '', $key);
+                    $assocQuestion = $this->Question->find('first', array(
+                        'conditions' => array(
+                            'internal_name' => $fixedKey
+                        )
+                            ));
+                    $this->Answer->create();
+                    $data['Answer'][0] = array(
+                        'question_id' => $assocQuestion['Question']['id'],
+                        'client_id' => $this->Client->id,
+                        'survey_instance_id' => $this->SurveyInstance->id,
+                        'value' => $value,
+                        'isDeleted' => 0,
+                    );
+                    $this->Answer->save($data['Answer'][0]);
+                }
+            }
+
+            //update vi score
+            $id = $this->SurveyInstance->id;
+            $survey = $this->SurveyInstance->read(null, $id);
+            $survey['SurveyInstance']['vi_score'] = $vi_score;
+            $this->SurveyInstance->save($survey);
+
+            $this->Session->setFlash(__('This Survey has been saved!'));
+            $this->redirect(array('action' => 'index'));
         }
     }
 
@@ -323,7 +326,7 @@ class SurveyInstancesController extends AppController {
         $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
         $this->set('organization_id', $organization_id);
         $this->set('remotePath', preg_quote("'" . APP . 'webroot' . DS . 'img' . DS . 'uploaded_images' . "'"));
-        
+
         /*         * ********************** AUTOPOPULATING DATA ************************ */
         $surveyInstance = $activeSurvey['SurveyInstance'][0];
         $clientID = $surveyInstance['client_id'];
@@ -337,6 +340,7 @@ class SurveyInstancesController extends AppController {
                 'dob' => $client['Client']['dob']
             )
         );
+
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
                 $answer = $this->Answer->find('first', array(
@@ -355,9 +359,7 @@ class SurveyInstancesController extends AppController {
                 $validations = array($question['validation_1'], $question['validation_2'],
                     $question['validation_3'], $question['validation_4']);
 
-                //if question is required, we need to set a notempty validation for it
                 if ($question['is_required'])
-                //        array_push($validations, 'notempty');
                     $this->Client->addValidator($question['internal_name'], $validations);
             }
         }
@@ -559,7 +561,6 @@ class SurveyInstancesController extends AppController {
             }
         }
     }
-     
 
     /**
      * delete method
@@ -578,10 +579,10 @@ class SurveyInstancesController extends AppController {
             throw new NotFoundException(__('Invalid survey instance'));
         }
         if ($this->SurveyInstance->delete()) {
-            $this->Session->setFlash(__('Survey instance deleted'));
+            $this->Session->setFlash(__('Survey deleted'));
             $this->redirect(array('action' => 'index'));
         }
-        $this->Session->setFlash(__('Survey instance was not deleted'));
+        $this->Session->setFlash(__('Survey was not deleted'));
         $this->redirect(array('action' => 'index'));
     }
 
@@ -796,6 +797,25 @@ class SurveyInstancesController extends AppController {
             $this->set(compact('surveys'));
             $this->render("select_survey");
         }
+    }
+
+    public function checkIfClientExists() {
+        $firstName = $this->request->data('firstName');
+        $lastName = $this->request->data('lastName');
+        $dob = $this->request->data('dob');
+        $ssn = $this->request->data('ssn');
+        $client = $this->Client->find('first', array(
+            'conditions' => array(
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'dob' => $dob,
+                'ssn' => $ssn
+            )
+                ));
+        $response = 0;
+        if (!empty($client))
+            $response = $client['Client']['id'];
+        $this->set('response', $response);
     }
 
 }

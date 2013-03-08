@@ -38,5 +38,13 @@ jQuery(document).ready(function(){
     jQuery('#radioUsersAdmin').click(function() {
         location.href = global.base_url + "/admin/users/index";
     });
+    
+    jQuery('#radioOrganizationsAdmin').click(function() {
+        location.href = global.base_url + "/admin/organizations/index";
+    });
+    
+    jQuery('#radioSurveyInstanceAdmin').click(function() {
+        location.href = global.base_url + "/survey_instances/index";
+    });
     	    
 });

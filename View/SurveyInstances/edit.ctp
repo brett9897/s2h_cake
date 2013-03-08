@@ -33,18 +33,23 @@
 
 </style>
 
+<script>
+    $(function() {
+        $("#datepicker").datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            yearRange: "-100:+0" 
+        });
+    });
+</script>
+
 
 <?php include("surveyInstanceDiv.ctp"); ?>
 
 <div class="surveyInstances form">
     <h2>Edit Survey</h2>
     <table>
-        <tr>
-            <?php echo $this->Form->create('Client'); ?>
-
-            <!-- personal information from the client table -->
-            <td><h3>Personal Information</h3></td>
-        </tr>
         <tr>
             <td> Your active Survey </td>
             <td>
@@ -70,6 +75,16 @@
             </td>
         </tr>
         <tr>
+            <td>Middle Name</td>
+            <td>
+                <?php
+                echo $this->Form->input('middle_name', array(
+                    'label' => ''
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
             <td><strong>Last Name<font color="red">*</font></strong></td>
             <td>
                 <?php
@@ -80,7 +95,17 @@
             </td>
         </tr>
         <tr>
-            <td>SSN</td>
+            <td>Nickname</td>
+            <td>
+                <?php
+                echo $this->Form->input('nickname', array(
+                    'label' => ''
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Last 4 of SSN</td>
             <td>
                 <?php
                 echo $this->Form->input('ssn', array(
@@ -97,6 +122,16 @@
                     'label' => '',
                     'minYear' => date('Y') - 150,
                     'maxYear' => date('Y')
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Phone Number</td>
+            <td>
+                <?php
+                echo $this->Form->input('phone_number', array(
+                    'label' => ''
                 ));
                 ?>
             </td>

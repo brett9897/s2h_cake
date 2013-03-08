@@ -79,9 +79,13 @@
                         <li><input type="radio" id="radioSurveyAdmin" name="radioSurveyAdmin" /><label for="radioSurveyAdmin">Surveys</label></li>
                         <li><input type="radio" id="radioReportsAdmin" name="radioReportsAdmin" /><label for="radioReportsAdmin">Reports</label></li>
                         <li><input type="radio" id="radioUsersAdmin" name="radioUsersAdmin" /><label for="radioUsersAdmin">Users</label></li>
+                        <li><input type="radio" id="radioSurveyInstanceAdmin" name="radioSurveyInstanceAdmin" /><label for="radioSurveyInstanceAdmin">Fill Out Survey</label></li>
                     <?php else: ?>
                         <li><input type="radio" id="radioSurvey" name="radioSurvey" /><label for="radioSurvey">Surveys</label></li>
                         <li><input type="radio" id="radioReports" name="radioReports" /><label for="radioReports">Reports</label></li>
+                    <?php endif; ?>
+                    <?php if ($isSuperAdmin): ?>
+                        <li><input type="radio" id="radioOrganizationsAdmin" name="radioOrganizationsAdmin" /><label for="radioOrganizationsAdmin">Organizations</label></li>
                     <?php endif; ?>
                     
                 </ul>

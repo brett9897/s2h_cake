@@ -57,16 +57,19 @@ class Client extends AppModel {
         'ssn' => array(
             'number' => array(
                 'rule' => 'numeric',
-                'message' => 'Must be 4 digits'
+                'message' => 'Must be 4 digits',
+                'allowEmpty' => true
             ),
             'atMost4' => array(
                 'rule' => array('maxLength', 4),
-                'message' => 'Must be 4 digits'
+                'message' => 'Must be 4 digits',
+                'allowEmpty' => true
             ),
             'atLeast4' => array(
                 'rule' => array('minLength', 4),
-                'message' => 'Must be 4 digits'
-            )
+                'message' => 'Must be 4 digits',
+                'allowEmpty' => true
+            ),
         ),
         'phone_number' => array(
             'phone' => array(

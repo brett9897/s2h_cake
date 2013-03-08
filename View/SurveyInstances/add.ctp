@@ -1,6 +1,6 @@
 <?php echo $this->Html->script('ajaxupload-min.js', FALSE); ?>
 <?php echo $this->Html->css('classicTheme/style'); ?>
-<?php echo $this->Html->script("SurveyInstances/bindPhoto.js", FALSE); ?>
+<?php echo $this->Html->script("SurveyInstances/add.js", FALSE); ?>
 
 <style type="text/css">
     table tr td {
@@ -31,6 +31,8 @@
         display:inline;
     }
 
+
+
 </style>
 
 <script>
@@ -42,6 +44,41 @@
             yearRange: "-100:+0" 
         });
     });
+    
+    function checkIfClientExists() {
+    
+        //retrieving DOM data
+        var firstName = $('#ClientFirstName').val();
+        var lastName = $('#ClientLastName').val();
+        var dobMonth = $('#ClientDobMonth').val();
+        var dobDay = $('#ClientDobDay').val();
+        var dobYear = $('#ClientDobYear').val();
+        var ssn = $('#ClientSsn').val();
+        
+        if (firstName != "" && lastName != "" && dobMonth != "" &&
+            dobDay != "" && dobYear != "" && ssn != "") { 
+        
+            var dob = dobYear + "-" + dobMonth + "-" + dobDay;
+        
+            //setting up call
+            var data = {
+                firstName : firstName, 
+                lastName : lastName, 
+                dob : dob, 
+                ssn : ssn
+            };
+            var url = global.base_url + "/survey_instances/checkIfClientExists";    
+            $.post(url, data, function(response) {
+                if (response != 0) {
+                    var userResponse = confirm("A client having the same first and last names, dob and ssn already exists.  Do you want to save this survey data to that client?");
+                            if (userResponse == true) {
+                                  $('#whichClient').val("oldClient"); 
+                                  $('#oldClientID').val(response);
+                              }
+                }
+            })
+        }
+    }
 </script>
 
 
@@ -75,7 +112,8 @@
             <td>
                 <?php
                 echo $this->Form->input('first_name', array(
-                    'label' => ''
+                    'label' => '',
+                    'onBlur' => 'checkIfClientExists()'
                 ));
                 ?>
             </td>
@@ -95,6 +133,17 @@
             <td>
                 <?php
                 echo $this->Form->input('last_name', array(
+                    'label' => '',
+                    'onBlur' => 'checkIfClientExists()'
+                ));
+                ?>
+            </td>
+        </tr>
+        <tr>
+            <td>Nickname</td>
+            <td>
+                <?php
+                echo $this->Form->input('nickname', array(
                     'label' => ''
                 ));
                 ?>
@@ -105,7 +154,8 @@
             <td>
                 <?php
                 echo $this->Form->input('ssn', array(
-                    'label' => ''
+                    'label' => '',
+                    'onBlur' => 'checkIfClientExists()'
                 ));
                 ?>
             </td>
@@ -117,17 +167,9 @@
                 echo $this->Form->input('dob', array(
                     'label' => '',
                     'minYear' => date('Y') - 150,
-                    'maxYear' => date('Y')
-                ));
-                ?>
-            </td>
-        </tr>
-        <tr>
-            <td>Nickname</td>
-            <td>
-                <?php
-                echo $this->Form->input('nickname', array(
-                    'label' => ''
+                    'maxYear' => date('Y'),
+                    'empty' => true,
+                    'onBlur' => 'checkIfClientExists()'
                 ));
                 ?>
             </td>
@@ -169,7 +211,7 @@
         endforeach;
         ?>
     </table>
-    <br />
+    <br /><br />
 
     <!-------------------UPLOAD PHOTO ----------------------------------->
     <h2>Upload Photo</h2>
@@ -192,6 +234,19 @@
         'id' => 'photoName',
         'value' => 'none.png'
     ));
+
+    //hidden fields for creating new client or using existing one
+    echo $this->Form->input('whichClient', array(
+        'type' => 'hidden',
+        'id' => 'whichClient',
+        'value' => 'newClient'
+    ));
+    
+     echo $this->Form->input('oldClientID', array(
+        'type' => 'hidden',
+        'id' => 'oldClientID',
+        'value' => '0'
+    ));
     ?>
 
     <?php
@@ -199,7 +254,6 @@
         'onClick' => 'bindPhoto()'
     ));
     ?>
-    <?php echo $this->Form->end(); ?>
 
 </div>
 

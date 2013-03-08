@@ -3,3 +3,6 @@ function bindPhoto() {
     var hiddenField = document.getElementById("photoName"); 
     hiddenField.value = fileName;
 }
+
+
+
