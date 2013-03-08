@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Mar 08, 2013 at 04:50 PM
+-- Generation Time: Mar 08, 2013 at 05:10 PM
 -- Server version: 5.5.29
 -- PHP Version: 5.4.6-1ubuntu1.1
 
@@ -57,6 +57,7 @@ CREATE TABLE IF NOT EXISTS `clients` (
   `last_name` varchar(50) NOT NULL,
   `ssn` varchar(9) NOT NULL,
   `dob` date NOT NULL,
+  `photoName` varchar(255) NOT NULL,
   `isDeleted` tinyint(1) NOT NULL,
   `created` datetime NOT NULL,
   `modified` datetime NOT NULL,
