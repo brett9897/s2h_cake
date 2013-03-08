@@ -90,7 +90,7 @@ class SurveyInstancesController extends AppController {
         $this->SurveyInstance->recursive = 3;
         $this->set('surveyInstance', $this->SurveyInstance->find('first', array(
                     'conditions' => array(
-                        'SurveyInstance.id' => $id,
+                        'SurveyInstance.id' => $id
                         ))));
         $this->set('id', $id);
     }
