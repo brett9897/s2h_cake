@@ -38,17 +38,23 @@
             <?php echo h($surveyInstance['Client']['dob']); ?>
             &nbsp;
         </dd>
-        <?php foreach ($surveyInstance['Survey']['Question'] as $question): ?>
-            <dt><?php echo __($question['label']); ?></dt>
+        <?php foreach ($groupings as $grouping): ?>
+            <?php if ($grouping['Grouping']['label'] != 'Personal Information'): ?>
+                <h2><?php echo $grouping['Grouping']['label']; ?></h2>
+            <?php endif; ?>
+            <?php foreach ($grouping['Question'] as $question): ?>
+                <dt><?php echo __($question['label']); ?></dt>
 
-            <?php foreach ($question['Answer'] as $answer): ?>
-                <dd>
-                    <?php if ($answer['survey_instance_id'] == $id): ?>
-                        <?php echo h($answer['value']); ?>
-                        <br /><br />
-                    <?php endif; ?>
-                </dd>
+                <?php foreach ($question['Answer'] as $answer): ?>
+                    <dd>
+                        <?php if ($answer['survey_instance_id'] == $id): ?>
+                            <?php echo h($answer['value']); ?>
+                            <br /><br />
+                        <?php endif; ?>
+                    </dd>
+                <?php endforeach; ?>
             <?php endforeach; ?>
+            <br />
         <?php endforeach; ?>
     </dl>
 </div>
