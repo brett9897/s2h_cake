@@ -1,7 +1,7 @@
 <?php $this->Html->script('Surveys/admin_index.js', false); ?>
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Surveys'), array('action' => 'index'), array('class' => 'active_link')); ?><br/>
-	<?php echo $this->Html->link(__('New Survey'), array('action' => 'add')); ?><br/>
+	<?php echo $this->Html->link(__('Create New Survey'), array('action' => 'add')); ?><br/>
 </div>
 <div class="surveys index">
 	<div id="save_message"></div>

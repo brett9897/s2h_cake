@@ -2,7 +2,7 @@
 <?php $this->Html->css('Surveys/admin_edit', null, array( 'inline' => false)); ?>
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Surveys'), array('action' => 'index')); ?><br/>
-	<?php echo $this->Html->link(__('New Survey'), array('action' => 'add')); ?><br/>
+	<?php echo $this->Html->link(__('Create New Survey'), array('action' => 'add')); ?><br/>
 	<?php echo $this->Html->link(__('Edit Survey'), array('action' => 'edit', $this->Form->value('Survey.id')), array('class' => 'active_link')); ?><br/>
 	<?php echo $this->Html->link(__('New Grouping'), array('controller' => 'groupings', 'action' => 'add', $this->Form->value('Survey.id'))); ?> <br/>
 	<?php echo $this->Html->link(__('New VI Criterion'), array('controller' => 'vi_criteria', 'action' => 'add', $this->Form->value('Survey.id'))); ?><br/>
