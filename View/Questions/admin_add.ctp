@@ -1,4 +1,4 @@
-<?php $this->Html->script('Questions/admin_add.js', false);?>
+<?php $this->Html->script('Questions/admin_add.min.js', false);?>
 <?php $this->Html->css('Questions/admin_add', null, array('inline' => false)); ?>
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?><br/>
@@ -11,7 +11,7 @@
 <div class="questions form">
 <?php echo $this->Form->create('Question'); ?>
 	<fieldset>
-		<legend><?php echo __('Admin Add Question'); ?></legend>
+		<legend><?php echo __('Add Question'); ?></legend>
 	<?php
 		echo $this->Form->input('grouping_id', array('selected' => $selected_grouping_id));
 		echo $this->Form->input('internal_name');
