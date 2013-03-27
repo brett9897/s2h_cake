@@ -23,6 +23,11 @@
             <?php echo h($surveyInstance['Client']['first_name']); ?>
             &nbsp;
         </dd>
+        <dt><?php echo __('Client Middle Name'); ?></dt>
+        <dd>
+            <?php echo h($surveyInstance['Client']['middle_name']); ?>
+            &nbsp;
+        </dd>
         <dt><?php echo __('Client Last Name'); ?></dt>
         <dd>
             <?php echo h($surveyInstance['Client']['last_name']); ?>
@@ -36,6 +41,16 @@
         <dt><?php echo __('Client DOB'); ?></dt>
         <dd>
             <?php echo h($surveyInstance['Client']['dob']); ?>
+            &nbsp;
+        </dd>
+        <dt><?php echo __('Client Nickname'); ?></dt>
+        <dd>
+            <?php echo h($surveyInstance['Client']['nickname']); ?>
+            &nbsp;
+        </dd>
+        <dt><?php echo __('Client Phone Number'); ?></dt>
+        <dd>
+            <?php echo h($surveyInstance['Client']['phone_number']); ?>
             &nbsp;
         </dd>
         <?php foreach ($groupings as $grouping): ?>
