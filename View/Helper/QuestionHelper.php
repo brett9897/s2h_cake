@@ -1,7 +1,7 @@
 <?php
 
 class QuestionHelper extends AppHelper {
-    
+
     public $helpers = array('Html', 'Form');
 
     public function giveMeInputString($question) {
@@ -100,8 +100,8 @@ class QuestionHelper extends AppHelper {
                     'label' => 'Other'
                         ));
                 break;
-                
-                //FIXME: change to datepickr later
+
+            //FIXME: change to datepickr later
             case "date":
                 $output .= $this->Form->input($internalName, array(
                     'type' => 'date',
@@ -143,7 +143,7 @@ class QuestionHelper extends AppHelper {
                 for ($i = 1; $i <= 12; $i++) {
                     $months[$i] = $i;
                 }
-                
+
                 for ($i = 1; $i <= 15; $i++) {
                     $years[$i] = $i;
                 }
@@ -156,22 +156,26 @@ class QuestionHelper extends AppHelper {
                     'legend' => false,
                     'div' => false
                         ));
-                
+
                 $output .= '&nbsp;&nbsp' . $this->Form->input($internalName . ' - YEARS', array(
-                    'type' => 'select',
-                    'options' => $years,
-                    'label' => 'YEARS ',
-                    'legend' => false,
-                    'div' => false
-                        )); 
-                
+                            'type' => 'select',
+                            'options' => $years,
+                            'label' => 'YEARS ',
+                            'legend' => false,
+                            'div' => false
+                        ));
+
                 $output .= '&nbsp;&nbsp;' . $this->Form->input($internalName . ' - REFUSED', array(
-                    'type' => 'checkbox',
-                    'label' => 'Refused',
-                    'div' => false,
-                    'style' => 'float: none;',
-                ));
+                            'type' => 'checkbox',
+                            'label' => 'Refused',
+                            'div' => false,
+                            'style' => 'float: none;',
+                        ));
                 break;
+                
+                //no response needed from user
+                case "noResponse":
+                    break;
         }
 
         return $output;

@@ -53,26 +53,30 @@
             <?php echo h($surveyInstance['Client']['phone_number']); ?>
             &nbsp;
         </dd>
+
         <?php foreach ($groupings as $grouping): ?>
             <?php if ($grouping['Grouping']['label'] != 'Personal Information'): ?>
-                <h2><?php echo $grouping['Grouping']['label']; ?></h2>
+                <h3><?php echo $grouping['Grouping']['label']; ?></h3> 
+                <br />
             <?php endif; ?>
+
             <?php foreach ($grouping['Question'] as $question): ?>
                 <dt><?php echo __($question['label']); ?></dt>
 
                 <?php foreach ($question['Answer'] as $answer): ?>
-                    <?php if ($answer['survey_instance_id'] == $surveyInstance['SurveyInstance']['id']): ?>
                     <dd>
-                        <?php if ($answer['survey_instance_id'] == $id): ?>
+                        <?php if ($answer['SurveyInstance']['id'] == $id): ?>
                             <?php echo h($answer['value']); ?>
-                            <br /><br />
+                            <br />
                         <?php endif; ?>
                     </dd>
-                    <?php endif; ?>
                 <?php endforeach; ?>
+
             <?php endforeach; ?>
             <br />
         <?php endforeach; ?>
     </dl>
+
+
 </div>
 
