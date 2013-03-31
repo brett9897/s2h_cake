@@ -54,7 +54,6 @@ class Survey extends AppModel {
 
         if( $this->save($new_survey['Survey']) )
         {
-            echo $this->id;
             $new_survey['Grouping'] = $old_survey['Grouping'];
             foreach( $new_survey['Grouping'] as &$grouping )
             {
@@ -78,6 +77,8 @@ class Survey extends AppModel {
                         {
                             $new_question = $question;
                             unset($new_question['id']);
+                            unset($new_question['created']);
+                            unset($new_question['modified']);
                             $new_question['survey_id'] = $this->id;
                             $new_question['grouping_id'] = $this->Grouping->id;
                             $new_survey['Question'][] = $new_question;
@@ -95,11 +96,15 @@ class Survey extends AppModel {
             }
 
             //now save questions
-            $this->Question->create();
-            if( !$this->Question->saveAll($new_survey['Question']) )
+            //can't do saveAll because it creates a nested transaction.
+            foreach( $new_survey['Question'] as $question )
             {
-                $dataSource->rollback();
-                return false;
+                $this->Question->create();
+                if( !$this->Question->save($question) )
+                {
+                    $dataSource->rollback();
+                    return false;
+                }
             }
         }
         else
@@ -112,6 +117,16 @@ class Survey extends AppModel {
         return true;
     }
 
+    public static function myNotEmpty($check) {
+        if (is_array($check)) {
+            extract(self::_defaults($check));
+        }
+
+        if (empty($check) && $check != '0') {
+            return false;
+        }
+        return preg_match('/[^\s]+/m', $check);
+    }
     /**
      * Validation rules
      *
