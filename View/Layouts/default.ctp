@@ -80,6 +80,7 @@
                         <li><input type="radio" id="radioReportsAdmin" name="radioReportsAdmin" /><label for="radioReportsAdmin">Reports</label></li>
                         <li><input type="radio" id="radioUsersAdmin" name="radioUsersAdmin" /><label for="radioUsersAdmin">Users</label></li>
                         <li><input type="radio" id="radioSurveyInstanceAdmin" name="radioSurveyInstanceAdmin" /><label for="radioSurveyInstanceAdmin">Fill Out Survey</label></li>
+                        <li><input type="radio" id="radioCSV" name="radioCSV" /><label for="radioCSV">Export to Excel</label></li>
                     <?php else: ?>
                         <li><input type="radio" id="radioSurvey" name="radioSurvey" /><label for="radioSurvey">Surveys</label></li>
                         <li><input type="radio" id="radioReports" name="radioReports" /><label for="radioReports">Reports</label></li>

@@ -46,5 +46,9 @@ jQuery(document).ready(function(){
     jQuery('#radioSurveyInstanceAdmin').click(function() {
         location.href = global.base_url + "/survey_instances/index";
     });
+    
+    jQuery('#radioCSV').click(function() {
+        location.href = global.base_url + "/survey_instances/export_xls";
+    });
     	    
 });

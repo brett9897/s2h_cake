@@ -1,12 +1,15 @@
 <?php echo $this->Html->script('ajaxupload-min.js', FALSE); ?>
 <?php echo $this->Html->css('classicTheme/style'); ?>
-<?php echo $this->Html->script("SurveyInstances/bindPhoto.js", FALSE); ?>
+<?php echo $this->Html->script("SurveyInstances/add.js", FALSE); ?>
 
 <style type="text/css">
     table tr td {
         border-bottom: none;
-        padding: 10px;
+        padding-right: 20px;
+        padding-bottom: 10px;
+        padding-top: 10px;
         width: 50%;
+        min-width: 300px;
     }
 
     input[type=radio] {
@@ -19,6 +22,7 @@
 
     tbody {
         width: 100%;
+        min-width: 750px;
     }
 
     .checkbox input[type="checkbox"] {
@@ -30,6 +34,8 @@
         content: '*';
         display:inline;
     }
+
+
 
 </style>
 
@@ -51,6 +57,12 @@
     <h2>Edit Survey</h2>
     <table>
         <tr>
+            <?php echo $this->Form->create('Client'); ?>
+
+            <!-- personal information from the client table -->
+            <td><h3>Personal Information</h3></td>
+        </tr>
+        <tr>
             <td> Your active Survey </td>
             <td>
                 <?php
@@ -69,7 +81,7 @@
             <td>
                 <?php
                 echo $this->Form->input('first_name', array(
-                    'label' => ''
+                    'label' => '',
                 ));
                 ?>
             </td>
@@ -89,7 +101,7 @@
             <td>
                 <?php
                 echo $this->Form->input('last_name', array(
-                    'label' => ''
+                    'label' => '',
                 ));
                 ?>
             </td>
@@ -109,19 +121,20 @@
             <td>
                 <?php
                 echo $this->Form->input('ssn', array(
-                    'label' => ''
+                    'label' => '',
                 ));
                 ?>
             </td>
         </tr>
         <tr>
-            <td>DOB</td>
+            <td><strong>DOB<strong><font color="red">*</font></td>
             <td>
                 <?php
                 echo $this->Form->input('dob', array(
                     'label' => '',
                     'minYear' => date('Y') - 150,
-                    'maxYear' => date('Y')
+                    'maxYear' => date('Y'),
+                    'empty' => true,
                 ));
                 ?>
             </td>
@@ -157,13 +170,14 @@
                             echo "<td>" . $question['label'] . "</td>";
                         endif;
                         echo "<td>" . $this->Question->giveMeInputString($question) . "</td>";
+                        echo "</tr>";
                     endif;
                 endforeach;
             endif;
         endforeach;
         ?>
     </table>
-    <br />
+    <br /><br />
 
     <!-------------------UPLOAD PHOTO ----------------------------------->
     <h2>Upload Photo</h2>
@@ -186,6 +200,19 @@
         'id' => 'photoName',
         'value' => 'none.png'
     ));
+
+    //hidden fields for creating new client or using existing one
+    echo $this->Form->input('whichClient', array(
+        'type' => 'hidden',
+        'id' => 'whichClient',
+        'value' => 'newClient'
+    ));
+    
+     echo $this->Form->input('oldClientID', array(
+        'type' => 'hidden',
+        'id' => 'oldClientID',
+        'value' => '0'
+    ));
     ?>
 
     <?php
@@ -193,7 +220,6 @@
         'onClick' => 'bindPhoto()'
     ));
     ?>
-    <?php echo $this->Form->end(); ?>
 
 </div>
 
