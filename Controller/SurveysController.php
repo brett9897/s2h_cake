@@ -158,7 +158,7 @@ class SurveysController extends AppController {
 			{
 				$this->request->data['Survey']['organization_id'] = $user['organization_id'];
 			}
-			var_dump($this->request->data);
+			
 			if ($this->Survey->save($this->request->data)) {
 				if( $this->request->data['Survey']['isActive'] == true )
 				{
