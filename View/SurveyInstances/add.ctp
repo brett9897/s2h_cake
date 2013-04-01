@@ -60,10 +60,10 @@
         var ssn = $('#ClientSsn').val();
         
         if (firstName != "" && lastName != "" && dobMonth != "" &&
-            dobDay != "" && dobYear != "" && ssn != "") { 
+            dobDay != "" && dobYear != "") { 
         
             var dob = dobYear + "-" + dobMonth + "-" + dobDay;
-        
+
             //setting up call
             var data = {
                 firstName : firstName, 
