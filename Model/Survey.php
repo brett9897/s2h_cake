@@ -106,6 +106,20 @@ class Survey extends AppModel {
                     return false;
                 }
             }
+
+            //now save vi criteria
+            foreach( $old_survey['ViCriterium'] as $vi )
+            {
+                unset($vi['id']);
+                $vi['survey_id'] = $this->id;
+                $this->ViCriterium->create();
+                if( !$this->ViCriterium->save($vi) )
+                {
+                    $dataSource->rollback();
+                    return false;
+                }
+            }
+
         }
         else
         {
@@ -206,6 +220,19 @@ class Survey extends AppModel {
         ),
         'SurveyInstance' => array(
             'className' => 'SurveyInstance',
+            'foreignKey' => 'survey_id',
+            'dependent' => false,
+            'conditions' => '',
+            'fields' => '',
+            'order' => '',
+            'limit' => '',
+            'offset' => '',
+            'exclusive' => '',
+            'finderQuery' => '',
+            'counterQuery' => ''
+        ),
+        'ViCriterium' => array(
+            'className' => 'ViCriterium',
             'foreignKey' => 'survey_id',
             'dependent' => false,
             'conditions' => '',

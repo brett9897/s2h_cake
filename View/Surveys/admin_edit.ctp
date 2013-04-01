@@ -38,7 +38,7 @@
 		<button onClick="send_to_clone(<?php echo $this->Form->value('Survey.id');?>)">Clone Survey</button>
 		<br/>
 		<br/>
-	<?php else: ?>
+	<?php endif; ?>
 		<div id="accordion">
 			<div id="personal_info" class="group">
 				<h3 class="fixed"><?php echo $groupings[0]['Grouping']['label']; ?></h3>
@@ -51,10 +51,9 @@
 			<div class="group">
 				<h3 class="movable"><?php echo $grouping['Grouping']['label']; ?></h3>
 				<div>
-					<?php echo $this->element('survey_edit_form', array('grouping' => $grouping)); ?>
+					<?php echo $this->element('survey_edit_form', array('grouping' => $grouping, 'has_instance' => $hasInstance)); ?>
 				</div>
 			</div>
 		<?php endforeach; ?>
 		</div>
-	<?php endif; ?>
 </div>

@@ -184,6 +184,8 @@ class SurveyInstancesController extends AppController {
                 //then we need to save all the answers
                 foreach ($groupings as $grouping) {
                     foreach ($grouping['Question'] as $question) {
+                        if( ! isset($this->request->data['Client'][$question['internal_name']]) ) continue;
+                        
                         $values = $this->request->data['Client'][$question['internal_name']];
 
                         if (gettype($values) != 'array') {
@@ -906,7 +908,7 @@ class SurveyInstancesController extends AppController {
                 $result['Client']['last_name'],
                 date('m/d/Y', strtotime(h($result['Client']['dob']))),
                 $result['Client']['ssn'],
-                intVal($result['SurveyInstance']['vi_score']),
+                floatVal($result['SurveyInstance']['vi_score']),
                 'DT_RowId' => 'client_' . $result['Client']['id'],
             );
             $output['aaData'][] = $row;

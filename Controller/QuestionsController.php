@@ -7,7 +7,7 @@ App::uses('AppController', 'Controller');
  */
 class QuestionsController extends AppController {
 
-	public $uses = array( 'Question', 'Grouping', 'Type', 'InternalValidation', 'Option' );
+	public $uses = array( 'Question', 'Grouping', 'Type', 'InternalValidation', 'Option', 'Survey' );
 	public $helpers = array('Binary');
 	public $components = array('RequestHandler');
 
@@ -252,6 +252,9 @@ class QuestionsController extends AppController {
 		$this->set('selected_grouping_id', $this->request->data['Question']['grouping_id']);
 		$this->set('validation_options', $validation_options);	
 		$this->set('survey_id', $this->request->data['Question']['survey_id']);
+
+		$this->Survey->id = $this->request->data['Question']['survey_id'];
+		$this->set('hasInstance', $this->Survey->hasInstance());
 	}
 
 /**

@@ -10,6 +10,7 @@ App::uses('AppController', 'Controller');
 class ClientsController extends AppController {
 
     public $components = array('Session', 'RequestHandler');            //takes care of sessions and requests that need a .json file extension but is not really .json
+    public $uses = array('Client', 'SurveyInstance');
 
     /**
      * index method
@@ -36,8 +37,10 @@ class ClientsController extends AppController {
         }
         $client = $this->Client->read(null, $id);
         $this->set('client', $client);
-        $photoName = $client['Client']['photoName'];
+        $photoName = ($client['Client']['photoName']) ? $client['Client']['photoName'] : 'none.png';
         $this->set('photoName', $photoName);
+        $vi_scores = $this->SurveyInstance->getMostRecentVIScorePerSurvey($id);
+        $this->set('vi_scores', $vi_scores);
     }
 
     /**

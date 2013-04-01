@@ -114,22 +114,114 @@ class SurveyInstance extends AppModel {
 
     public function getMostRecentSurveyInstanceForEachUser($survey_id, $type = 'all', $params = array())
     {
-        $this->recursive = 0;
-        $joins = array(
-            array(
-                'table' => 'survey_instances',
-                'alias' => 's2',
-                'type' => 'LEFT',
-                'conditions' => array(
-                    'SurveyInstance.id' => 's2.id',
-                    'SurveyInstance.created <' => 's2.created'
-                )
-            )
+        $query = array();
+        $query['fields'] = array('Client.id', 'Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
+        
+        if( $type === 'count' )
+        {
+            $query['fields'][] = 'COUNT(*) as count';
+        }
+
+        $query['tables'] = array('survey_instances AS SurveyInstance', 'surveys AS Survey', 'clients AS Client');
+        $query['subquery'] = 'INNER JOIN ( ' .
+                             '  SELECT survey_id, client_id, MAX(id) as id ' .
+                             '  FROM survey_instances ' .
+                             '  GROUP BY survey_id, client_id DESC ' .
+                             ') si ON si.id = SurveyInstance.id ';
+        $query['conditions'] = array(
+            'Survey.id' => 'si.survey_id',
+            'si.client_id' => 'Client.id',
+            'si.survey_id' => $survey_id
         );
 
-        $params[] = array('joins' => $joins);
-        $params['conditions']['SurveyInstance.survey_id'] = $survey_id;
-        return $this->find($type, $params);
+        $finalQuery = 'SELECT ' . implode(', ', $query['fields'] ). ' FROM ' . $query['tables'][0] . ' ' . $query['subquery'] . 
+                        ', ' . $query['tables'][1] . ', ' . $query['tables'][2];
+        $finalQuery .= ' WHERE ';
+
+        foreach( $query['conditions'] as $left_side => $right_side )
+        {
+            $finalQuery .= $left_side . ' = ' . $right_side . ' AND ';
+        }
+        $finalQuery = substr($finalQuery, 0, -4);
+
+        if( isset( $params['conditions'] ) )
+        {
+            $finalQuery .= ' AND ';
+            foreach( $params['conditions'] as $left_side => $right_side )
+            {
+                if(is_array($right_side))
+                {
+                    if( count($right_side) > 0 )
+                    {
+                        $finalQuery .= '(';
+                        foreach( $right_side as $left => $right )
+                        {
+                            $finalQuery .= $this->build_condition($left, $right) . " $left_side ";
+                        }
+                        $end = strlen($left_side) + 2;
+                        $finalQuery = substr($finalQuery, 0, -($end));
+                        $finalQuery .= ')';
+                    }
+                }
+                else
+                {
+                    $finalQuery .= $this->build_condition($left_side, $right_side);
+                }
+                $finalQuery .= ' AND ';
+                
+            }
+            $finalQuery = substr($finalQuery, 0, -4);
+        }
+
+        if( isset( $params['order'] ) )
+        {
+            $finalQuery .= 'ORDER BY ' . $params['order'][0] . ' ';
+        }
+
+        if( isset( $params['limit'] ) )
+        {
+            $finalQuery .= 'LIMIT ';
+            if( isset( $params['offset'] ) )
+            {
+                $finalQuery .= $params['offset'] . ',';
+            }
+            $finalQuery .= $params['limit'];
+        }
+
+        //debug($finalQuery);
+        $result = $this->query($finalQuery);
+        if( $type === 'count' )
+        {
+            $result = $result[0]['0']['count'];
+        }
+
+        //debug($result);
+        return $result;
     }
 
+    public function getMostRecentVIScorePerSurvey($client_id)
+    {
+        return $this->query('SELECT Survey.label, SurveyInstance.vi_score ' .
+                            'FROM survey_instances AS SurveyInstance ' .
+                            'INNER JOIN ( ' .
+                            '  SELECT survey_id, client_id, MAX(id) as id ' .
+                            '  FROM survey_instances ' .
+                            '  GROUP BY survey_id, client_id DESC ' . 
+                            ') si ON si.id = SurveyInstance.id, ' .
+                            'surveys as Survey ' .
+                            'WHERE Survey.id = si.survey_id AND si.client_id = ' . $client_id
+        );
+    }
+
+    private function build_condition($left, $right)
+    {
+        if( strpos($left, 'LIKE') !== false )
+        {
+            return $left . "'" . $right . "'";
+        }
+        else
+        {
+            return $left . ' = ' . $right;
+        }
+    }
 }

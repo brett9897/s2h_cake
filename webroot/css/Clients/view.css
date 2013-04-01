@@ -1,0 +1,44 @@
+.data-area 
+{
+	clear: both;
+	width: 90%;
+	line-height: 2em;
+	margin: 0em 0em;
+}
+
+.data-area div.clear:nth-child(2n+1)
+{
+	background: #f4f4f4;
+}
+
+.label
+{
+	float: left;
+	font-weight: bold;
+	padding-left: 4px;
+	width: 25%;
+	background: inherit;
+}
+
+.data 
+{
+	float: left;
+	text-align: left;
+	background: inherit;
+	width: 70%;
+}
+
+div.clear
+{
+	width: 100%;
+}
+
+/*dl {
+	line-height: 2em;
+	margin: 0em 0em;
+	width: 60%;
+}
+dl dd:nth-child(4n+2),
+dl dt:nth-child(4n+1) {
+	background: #f4f4f4;
+}*/

@@ -14,9 +14,9 @@
 		<legend><?php echo __('Edit Question'); ?></legend>
 	<?php
 		echo $this->Form->input('grouping_id', array('selected' => $selected_grouping_id));
-		echo $this->Form->input('internal_name');
-		echo $this->Form->input('label', array('label' => 'Question'));
-		echo $this->Form->input('type_id');
+		echo $this->Form->input('internal_name', array('disabled' => $hasInstance));
+		echo $this->Form->input('label', array('label' => 'Question', 'disabled' => $hasInstance));
+		echo $this->Form->input('type_id', array('disabled' => $hasInstance));
 	?>
 		<?php if( isset( $this->data['Option']['options'] ) && $this->data['Option']['options'] != '' ): ?>
 			<div id="added_options" class="input text required">

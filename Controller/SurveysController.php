@@ -149,7 +149,7 @@ class SurveysController extends AppController {
 
 		if( $this->Survey->hasInstance() )
 		{
-			$this->Session->setFlash(__('This survey has already been given to someone and can no longer be edited.'));
+			$this->Session->setFlash(__('This survey has already been given to someone so there is limited editing.'));
 			$hasInstance = true;
 		}
 
@@ -191,18 +191,16 @@ class SurveysController extends AppController {
 			$this->set(compact('organizations'));
 		}
 		
-		if( !$hasInstance )
-		{
-			$groupings = $this->Survey->Grouping->getByOrderNumber($id, 'ASC');
-			
-			//prepend the default questions to groupings[0] for personal information
-			$default_questions = $this->build_default_questions();
 
-			//need to fix ordering
-			$groupings[0]['Question'] = array_merge($default_questions, $groupings[0]['Question']);
+		$groupings = $this->Survey->Grouping->getByOrderNumber($id, 'ASC');
+		
+		//prepend the default questions to groupings[0] for personal information
+		$default_questions = $this->build_default_questions();
 
-			$this->set('groupings', $groupings);
-		}
+		//need to fix ordering
+		$groupings[0]['Question'] = array_merge($default_questions, $groupings[0]['Question']);
+
+		$this->set('groupings', $groupings);
 
 		$this->set('hasInstance', $hasInstance);
 	}
