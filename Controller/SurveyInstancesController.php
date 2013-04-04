@@ -91,7 +91,7 @@ class SurveyInstancesController extends AppController {
         $groupings = $this->Grouping->find('all', array(
             'joins' => array(
                 array(
-                    'table' => 'Survey_instances',
+                    'table' => 'survey_instances',
                     'alias' => 'SurveyInstance',
                     'type' => 'INNER',
                     'conditions' => array(
@@ -827,11 +827,11 @@ class SurveyInstancesController extends AppController {
     }
 
     public function dataTables() {
-        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
+        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score', 'How Many');
 
         $survey_id = $this->params['url']['survey_id'];
 
-        $params = array('recursive' => 0);
+        $params = array('recursive' => 0, 'custom' => true, 'columns' => $aColumns);
 
 //Paging
         if (isset($this->params['url']['iDisplayStart']) && $this->params['url']['iDisplayLength'] != '-1') {

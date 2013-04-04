@@ -11,6 +11,7 @@
             <th>DOB</th>
             <th>SSN</th>
             <th>VI Score</th>
+            <th>How Many</th>
         </thead>
     </table>
 </div>

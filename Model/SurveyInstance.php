@@ -11,6 +11,7 @@ App::uses('AppModel', 'Model');
  */
 class SurveyInstance extends AppModel {
 
+
     /**
      * Display field
      *
@@ -144,55 +145,85 @@ class SurveyInstance extends AppModel {
         }
         $finalQuery = substr($finalQuery, 0, -4);
 
-        if( isset( $params['conditions'] ) )
+        $result = null;
+        if( isset($params['custom']) && $params['custom'] === true )
         {
-            $finalQuery .= ' AND ';
-            foreach( $params['conditions'] as $left_side => $right_side )
+            $finalQuery .= ' ORDER BY Client.id';
+
+            $result = $this->query($finalQuery);
+
+            $customColumn = null;
+            foreach( $params['columns'] as $column )
             {
-                if(is_array($right_side))
+                if( strpos($column, '.') === false )
                 {
-                    if( count($right_side) > 0 )
-                    {
-                        $finalQuery .= '(';
-                        foreach( $right_side as $left => $right )
-                        {
-                            $finalQuery .= $this->build_condition($left, $right) . " $left_side ";
-                        }
-                        $end = strlen($left_side) + 2;
-                        $finalQuery = substr($finalQuery, 0, -($end));
-                        $finalQuery .= ')';
-                    }
+                    $customColumn = $column;
                 }
-                else
-                {
-                    $finalQuery .= $this->build_condition($left_side, $right_side);
-                }
+            }
+
+            debug($customColumn);
+            $this->Question = ClassRegistry::init('Question');
+            $cId = $this->Question->find('first', array('recursive' => -1, 'fields' => 'Question.id', 'conditions' => array( 'Question.internal_name' => $column, 'Question.survey_id' => $survey_id)));
+            debug($cId['Question']['id']);
+            //$cParams = array('recursive' => -1);
+            //$cConditions = array();
+            //$customData = $this->Answer->find('all', $cParams);
+            debug($result);
+        }
+        else
+        {
+
+            if( isset( $params['conditions'] ) )
+            {
                 $finalQuery .= ' AND ';
-                
+                foreach( $params['conditions'] as $left_side => $right_side )
+                {
+                    if(is_array($right_side))
+                    {
+                        if( count($right_side) > 0 )
+                        {
+                            $finalQuery .= '(';
+                            foreach( $right_side as $left => $right )
+                            {
+                                $finalQuery .= $this->build_condition($left, $right) . " $left_side ";
+                            }
+                            $end = strlen($left_side) + 2;
+                            $finalQuery = substr($finalQuery, 0, -($end));
+                            $finalQuery .= ')';
+                        }
+                    }
+                    else
+                    {
+                        $finalQuery .= $this->build_condition($left_side, $right_side);
+                    }
+                    $finalQuery .= ' AND ';
+                    
+                }
+                $finalQuery = substr($finalQuery, 0, -4);
             }
-            $finalQuery = substr($finalQuery, 0, -4);
-        }
 
-        if( isset( $params['order'] ) )
-        {
-            $finalQuery .= 'ORDER BY ' . $params['order'][0] . ' ';
-        }
-
-        if( isset( $params['limit'] ) )
-        {
-            $finalQuery .= 'LIMIT ';
-            if( isset( $params['offset'] ) )
+            if( isset( $params['order'] ) )
             {
-                $finalQuery .= $params['offset'] . ',';
+                $finalQuery .= 'ORDER BY ' . $params['order'][0] . ' ';
             }
-            $finalQuery .= $params['limit'];
-        }
 
-        //debug($finalQuery);
-        $result = $this->query($finalQuery);
-        if( $type === 'count' )
-        {
-            $result = $result[0]['0']['count'];
+            if( isset( $params['limit'] ) )
+            {
+                $finalQuery .= 'LIMIT ';
+                if( isset( $params['offset'] ) )
+                {
+                    $finalQuery .= $params['offset'] . ',';
+                }
+                $finalQuery .= $params['limit'];
+            }
+
+
+            //debug($finalQuery);
+            $result = $this->query($finalQuery);
+            if( $type === 'count' )
+            {
+                $result = $result[0]['0']['count'];
+            }
         }
 
         //debug($result);
