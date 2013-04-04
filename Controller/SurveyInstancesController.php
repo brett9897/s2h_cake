@@ -827,11 +827,11 @@ class SurveyInstancesController extends AppController {
     }
 
     public function dataTables() {
-        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score', 'How Many');
+        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.nickname', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score', 'How Many');
 
         $survey_id = $this->params['url']['survey_id'];
 
-        $params = array('recursive' => 0, 'custom' => true, 'columns' => $aColumns);
+        $params = array('recursive' => 0, 'custom' => true);
 
 //Paging
         if (isset($this->params['url']['iDisplayStart']) && $this->params['url']['iDisplayLength'] != '-1') {
@@ -885,12 +885,12 @@ class SurveyInstancesController extends AppController {
             $params['conditions']['SurveyInstance.user_id'] = $this->params['url']['user_id'];
         }
 
-        $raw_data = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'all', $params);
+        $raw_data = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'all', $aColumns, $params);
 
-        $total = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count');
+        $total = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count', $aColumns, array('custom' => true));
 
         if (isset($params['conditions'])) {
-            $filteredTotal = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count', array('conditions' => $params['conditions']));
+            $filteredTotal = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count', $aColumns, array( 'custom' => true, 'conditions' => $params['conditions']));
         } else {
             $filteredTotal = $total;
         }
@@ -903,14 +903,26 @@ class SurveyInstancesController extends AppController {
         );
 
         foreach ($raw_data as $result) {
-            $row = array(
-                $result['Client']['first_name'],
-                $result['Client']['last_name'],
-                date('m/d/Y', strtotime(h($result['Client']['dob']))),
-                $result['Client']['ssn'],
-                floatVal($result['SurveyInstance']['vi_score']),
-                'DT_RowId' => 'client_' . $result['Client']['id'],
-            );
+            $row = array();
+            foreach ($aColumns as $column)
+            {
+                if( ($pos = strpos($column, '.')) !== false )
+                {
+                    if( substr($column, $pos + 1) === 'dob' )
+                    {
+                        $row[] = date('m/d/Y', strtotime(h($result[substr($column, 0, $pos)]['dob'])));
+                    }
+                    else
+                    {
+                        $row[] = $result[substr($column, 0, $pos)][substr($column, $pos+1)];
+                    }
+                }
+                else
+                {
+                    $row[] = $result['Custom'][$column];
+                }
+            }
+            $row['DT_RowId'] = 'client_' . $result['Client']['id'];
             $output['aaData'][] = $row;
         }
         $this->set('output', $output);

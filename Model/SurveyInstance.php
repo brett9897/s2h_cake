@@ -113,10 +113,23 @@ class SurveyInstance extends AppModel {
         )
     );
 
-    public function getMostRecentSurveyInstanceForEachUser($survey_id, $type = 'all', $params = array())
+    public function getMostRecentSurveyInstanceForEachUser($survey_id, $type = 'all', $columns = array(), $params = array())
     {
         $query = array();
-        $query['fields'] = array('Client.id', 'Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
+        $query['fields'] = array('Client.id', 'SurveyInstance.id');
+        $customColumns = array();
+
+        foreach( $columns as $column )
+        {
+            if( ($pos = strpos($column, '.')) !== false )
+            {
+                $query['fields'][] = $column;
+            }
+            else
+            {
+                $customColumns[] = $column;
+            }
+        }
         
         if( $type === 'count' )
         {
@@ -152,23 +165,78 @@ class SurveyInstance extends AppModel {
 
             $result = $this->query($finalQuery);
 
-            $customColumn = null;
-            foreach( $params['columns'] as $column )
+            if( $type === 'count' )
             {
-                if( strpos($column, '.') === false )
+                return $result[0]['0']['count'];
+            }
+
+            foreach( $customColumns as $col )
+            {
+                $this->Question = ClassRegistry::init('Question');
+                $cId = $this->Question->find('first', array('recursive' => -1, 'fields' => 'Question.id', 'conditions' => array( 'Question.internal_name' => $col, 'Question.survey_id' => $survey_id)));
+                
+                $cParams = array('recursive' => -1);
+                $cConditions = array('Answer.question_id' => $cId['Question']['id']);
+                $cParams['conditions'] = $cConditions;
+                $cParams['Order'] = 'Answer.client_id';
+                $customData = $this->Answer->find('all', $cParams);
+                //debug( $customData );
+                $i = 0;
+                foreach($customData as $cData)
                 {
-                    $customColumn = $column;
+                    if( $result[$i]['SurveyInstance']['id'] == $cData['Answer']['survey_instance_id'] )
+                    {
+                        $result[$i]['Custom'] = array( $col => $cData['Answer']['value']);
+                    }
+                    $i++; 
                 }
             }
 
-            debug($customColumn);
-            $this->Question = ClassRegistry::init('Question');
-            $cId = $this->Question->find('first', array('recursive' => -1, 'fields' => 'Question.id', 'conditions' => array( 'Question.internal_name' => $column, 'Question.survey_id' => $survey_id)));
-            debug($cId['Question']['id']);
-            //$cParams = array('recursive' => -1);
-            //$cConditions = array();
-            //$customData = $this->Answer->find('all', $cParams);
-            debug($result);
+            //searching
+            if( isset( $params['conditions']) )
+            {
+                $result = $this->search($result, $params['conditions']);
+            }
+
+            //sorting
+            if( isset( $params['order']) )
+            {
+                $sCol = array();
+                if( ($p = strpos($params['order'][0], 'asc')) !== false )
+                {
+                    $sCol[] = trim(substr($params['order'][0], 0, $p));
+                    $sCol[] = trim(substr($params['order'][0], $p));
+                }
+                else if( ($p = strpos($params['order'][0], 'desc')) !== false )
+                {
+                    $sCol[] = trim(substr($params['order'][0], 0, $p));
+                    $sCol[] = trim(substr($params['order'][0], $p));
+                }
+                else
+                {
+                    $sCol[] = trim($params['order'][0]);
+                    $sCol[] = 'desc';
+                }
+            
+                if( ($pos = strpos($sCol[0], '.')) !== false )
+                {
+                    $var1 = substr($sCol[0], 0, $pos);
+                    $var2 = substr($sCol[0], $pos+1);
+                }
+                else
+                {
+                    $var1 = 'Custom';
+                    $var2 = $sCol[0];
+                }
+
+                usort($result, $this->build_sorter($var1,$var2, $sCol[1]));
+            }
+
+            //paging
+            if( isset( $params['limit'] ) )
+            {
+                $result = array_slice($result, $params['offset'], $params['limit']);
+            }
         }
         else
         {
@@ -228,6 +296,93 @@ class SurveyInstance extends AppModel {
 
         //debug($result);
         return $result;
+    }
+
+
+    private function build_sorter($key1, $key2, $dir)
+    {
+        return function($a, $b) use ($key1, $key2, $dir)
+        {
+            $x = null;
+            $y = null;
+
+            if( $dir === 'asc' )
+            {
+                $x = $a[$key1][$key2];
+                $y = $b[$key1][$key2];
+            }
+            else
+            {
+                $x = $b[$key1][$key2];
+                $y = $a[$key1][$key2];
+            }
+
+            if( is_numeric($a[$key1][$key2]) )
+            {
+                return floatval($x) > floatval($y);
+            }
+            else
+            {
+                return strcasecmp($x, $y);
+            }
+        };
+    }
+
+    private function search( $array, $conditions )
+    {
+        $retArray = $array;
+        foreach( $conditions as $left_side => $right_side )
+        {
+            if( is_array($right_side) )
+            {
+                if( $left_side === 'OR' )
+                {
+                    $retArray = $this->search_OR($retArray, $right_side);
+                }
+                else
+                {
+                    //$retArray = $this->search_AND($retArray, $right_side);
+                }
+            }
+        }
+        return $retArray;
+    }
+
+    private function search_OR($array, $conditions)
+    {
+        $retArray = array();
+        foreach( $conditions as $left_side => $right_side )
+        {
+            if( ($pos = strpos($left_side, 'LIKE')) !== false )
+            {
+                $el = trim(substr($left_side, 0, $pos));
+
+                $els = array();
+                if( strpos($el, '.') !== false )
+                {
+                    $els = explode('.', $el);
+                }
+                else
+                {
+                    $els[] = 'Custom';
+                    $els[] = $el;
+                }
+
+                foreach( $array as $row )
+                {
+                    $search = str_replace('%', '.*', $right_side);
+                    $pattern = '/^' . $search . '$/i';
+                    if( preg_match( $pattern, $row[$els[0]][$els[1]]) )
+                    {
+                        if( ! in_array($row, $retArray) )
+                        {
+                            $retArray[] = $row;
+                        }
+                    }
+                }
+            }
+        }
+        return $retArray;
     }
 
     public function getMostRecentVIScorePerSurvey($client_id)
