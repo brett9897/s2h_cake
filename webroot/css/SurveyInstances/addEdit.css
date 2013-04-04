@@ -1,0 +1,48 @@
+   
+.ui-datepicker tbody, .ui-datepicker td, .ui-datepicker td a {
+    border-bottom: medium none;
+    padding-bottom: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    width: 20px;
+    min-width: 0px;
+}
+
+.ui-datepicker th {
+    min-width: 0px;
+    width: 19px;
+}
+
+table tr td {
+    border-bottom: none;
+    padding-right: 20px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    width: 50%;
+    min-width: 300px;
+}
+
+input[type=radio] {
+    float: none;
+    width: auto;
+    margin: 6px;
+    padding: 0;
+    line-height: 26px;
+}
+
+tbody {
+    width: 100%;
+    min-width: 750px;
+}
+
+.checkbox input[type="checkbox"] {
+    margin-bottom: 0px;
+} 
+
+form .required label {
+    color: #e32;
+    content: '*';
+    display:inline;
+}
+
+

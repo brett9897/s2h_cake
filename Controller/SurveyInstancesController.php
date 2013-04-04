@@ -116,7 +116,6 @@ class SurveyInstancesController extends AppController {
      */
     public function add() {
         /*         * *************************** RETRIEVING DATA *********************** */
-
         $current_user = $this->Auth->user();
         $this->Survey->recursive = 3;
         $activeSurvey = $this->Survey->find('first', array(
@@ -153,6 +152,7 @@ class SurveyInstancesController extends AppController {
 
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
+
             //first, we need to save data into the client table
             $this->request->data['Client']['organization_id'] = $organization_id;
 
@@ -184,8 +184,9 @@ class SurveyInstancesController extends AppController {
                 //then we need to save all the answers
                 foreach ($groupings as $grouping) {
                     foreach ($grouping['Question'] as $question) {
-                        if( ! isset($this->request->data['Client'][$question['internal_name']]) ) continue;
-                        
+                        if (!isset($this->request->data['Client'][$question['internal_name']]))
+                            continue;
+
                         $values = $this->request->data['Client'][$question['internal_name']];
 
                         if (gettype($values) != 'array') {
@@ -275,53 +276,89 @@ class SurveyInstancesController extends AppController {
 
                 //suffix logic
                 foreach ($this->request->data['Client'] as $key => $value) {
-                    $suffix = substr($key, strpos($key, '- '));
-                    if (empty($suffix))
-                        continue;
+                    $values = explode(" - ", $key);
 
-                    switch ($suffix) {
+                    if (count($values) > 1) {
+                        $suffix = end($values);
+                        switch ($suffix) {
 
-                        //months-years
-                        case ("- YEARS"):
-                            if (!empty($value)) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $months = $this->request->data['Client'][$fixedKey . ' - MONTHS'];
-                                $assocQuestion = $this->Question->find('first', array(
-                                    'conditions' => array(
-                                        'internal_name' => $fixedKey
-                                    )
-                                        ));
-                                $value = $value . ' years, ' . $months . ' months';
-                                $this->Answer->create();
-                                $answerToSave = array(
-                                    'question_id' => $assocQuestion['Question']['id'],
-                                    'client_id' => $this->Client->id,
-                                    'survey_instance_id' => $this->SurveyInstance->id,
-                                    'value' => $value,
-                                    'isDeleted' => 0,
-                                );
-                                $this->Answer->save($answerToSave);
-                            }
-                            break;
-
-                        //refused
-                        case ("- REFUSED"):
-                            if (value == 1) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $assocAnswer = $this->Answer->find('first', array(
-                                    'conditions' => array(
-                                        'Question.internal_name' => $fixedKey
-                                    )
-                                        ));
-
-                                //overwriting question if exists with 'REFUSED'
-                                if (!empty($assocAnswer)) {
-                                    $this->Answer->id = $assocAnswer['Answer']['id'];
-                                    $this->Answer->saveField('value', 'REFUSED');
+                            //months-years
+                            case ("YEARS"):
+                                if (!empty($value)) {
+                                    $fixedKey = str_replace(' - YEARS', '', $key);
+                                    $months = $this->request->data['Client'][$fixedKey . ' - MONTHS'];
+                                    $assocQuestion = $this->Question->find('first', array(
+                                        'conditions' => array(
+                                            'internal_name' => $fixedKey
+                                        )
+                                            ));
+                                    $value = $value . ' years, ' . $months . ' months';
+                                    $this->Answer->create();
+                                    $answerToSave = array(
+                                        'question_id' => $assocQuestion['Question']['id'],
+                                        'client_id' => $this->Client->id,
+                                        'survey_instance_id' => $this->SurveyInstance->id,
+                                        'value' => $value,
+                                        'isDeleted' => 0,
+                                    );
+                                    $this->Answer->save($answerToSave);
                                 }
+                                break;
 
-                                //else creating the answer
-                                else {
+                            //refused
+                            case ("REFUSED"):
+                                if ($value == 1 || $value == "1") {
+                                    $fixedKey = str_replace(' - REFUSED', '', $key);
+                                    $assocAnswer = $this->Answer->find('first', array(
+                                        'conditions' => array(
+                                            'Question.internal_name' => $fixedKey
+                                        )
+                                            ));
+
+                                    //overwriting question if exists with 'REFUSED'
+                                    if (!empty($assocAnswer)) {
+                                        $this->Answer->id = $assocAnswer['Answer']['id'];
+                                        $this->Answer->saveField('value', 'REFUSED');
+                                    }
+
+                                    //else creating the answer
+                                    else {
+                                        $assocQuestion = $this->Question->find('first', array(
+                                            'conditions' => array(
+                                                'internal_name' => $fixedKey
+                                            )
+                                                ));
+                                        $this->Answer->create();
+                                        $answerToSave = array(
+                                            'question_id' => $assocQuestion['Question']['id'],
+                                            'client_id' => $this->Client->id,
+                                            'survey_instance_id' => $this->SurveyInstance->id,
+                                            'value' => 'REFUSED',
+                                            'isDeleted' => 0,
+                                        );
+                                        $this->Answer->save($answerToSave);
+                                    }
+                                }
+                                break;
+
+                            //other
+                            case ("OTHER"):
+                                if (!empty($value)) {
+                                    $fixedKey = str_replace(' - OTHER', '', $key);
+                                    $assocAnswer = $this->Answer->find('first', array(
+                                        'conditions' => array(
+                                            'Question.internal_name' => $fixedKey
+                                        )
+                                            ));
+                                    $this->Answer->id = $assocAnswer['Answer']['id'];
+                                    $this->Answer->saveField('value', $value);
+                                }
+                                break;
+
+                            //checkbox with other
+                            case("checkbox other"):
+                                if (!empty($value)) {
+                                    $fixedKey = str_replace(' - checkbox other', '', $key);
                                     $assocQuestion = $this->Question->find('first', array(
                                         'conditions' => array(
                                             'internal_name' => $fixedKey
@@ -332,48 +369,13 @@ class SurveyInstancesController extends AppController {
                                         'question_id' => $assocQuestion['Question']['id'],
                                         'client_id' => $this->Client->id,
                                         'survey_instance_id' => $this->SurveyInstance->id,
-                                        'value' => 'REFUSED',
+                                        'value' => $value,
                                         'isDeleted' => 0,
                                     );
                                     $this->Answer->save($answerToSave);
                                 }
-                            }
-                            break;
-
-                        //other
-                        case ("- OTHER"):
-                            if (!empty($value)) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $assocAnswer = $this->Answer->find('first', array(
-                                    'conditions' => array(
-                                        'Question.internal_name' => $fixedKey
-                                    )
-                                        ));
-                                $this->Answer->id = $assocAnswer['Answer']['id'];
-                                $this->Answer->saveField('value', $value);
-                            }
-                            break;
-
-                        //checkbox with other
-                        case("- checkbox other"):
-                            if (!empty($value)) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $assocQuestion = $this->Question->find('first', array(
-                                    'conditions' => array(
-                                        'internal_name' => $fixedKey
-                                    )
-                                        ));
-                                $this->Answer->create();
-                                $answerToSave = array(
-                                    'question_id' => $assocQuestion['Question']['id'],
-                                    'client_id' => $this->Client->id,
-                                    'survey_instance_id' => $this->SurveyInstance->id,
-                                    'value' => $value,
-                                    'isDeleted' => 0,
-                                );
-                                $this->Answer->save($answerToSave);
-                            }
-                            break;
+                                break;
+                        }
                     }
                 }
 
@@ -433,7 +435,6 @@ class SurveyInstancesController extends AppController {
         $organization_id = $current_user['organization_id'];
         $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
         $this->set('organization_id', $organization_id);
-        $this->set('remotePath', preg_quote("'" . APP . 'webroot' . DS . 'img' . "'"));
 
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
@@ -550,53 +551,90 @@ class SurveyInstancesController extends AppController {
 
                 //suffix logic
                 foreach ($this->request->data['Client'] as $key => $value) {
-                    $suffix = substr($key, strpos($key, '- '));
-                    if (empty($suffix))
-                        continue;
+                    $values = explode(" - ", $key);
 
-                    switch ($suffix) {
+                    if (count($values) > 1) {
+                        $suffix = end($values);
 
-                        //months-years
-                        case ("- YEARS"):
-                            if (!empty($value)) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $months = $this->request->data['Client'][$fixedKey . ' - MONTHS'];
-                                $assocQuestion = $this->Question->find('first', array(
-                                    'conditions' => array(
-                                        'internal_name' => $fixedKey
-                                    )
-                                        ));
-                                $value = $value . ' years, ' . $months . ' months';
+                        switch ($suffix) {
 
-                                $answerToSave = array(
-                                    'question_id' => $assocQuestion['Question']['id'],
-                                    'client_id' => $this->Client->id,
-                                    'survey_instance_id' => $id,
-                                    'value' => $value,
-                                    'isDeleted' => 0,
-                                );
-                                $this->Answer->save($answerToSave);
-                            }
-                            break;
+                            //months-years
+                            case ("YEARS"):
+                                if (!empty($value)) {
+                                    $fixedKey = str_replace(' - YEARS', '', $key);
+                                    $months = $this->request->data['Client'][$fixedKey . ' - MONTHS'];
+                                    $assocQuestion = $this->Question->find('first', array(
+                                        'conditions' => array(
+                                            'internal_name' => $fixedKey
+                                        )
+                                            ));
+                                    $value = $value . ' years, ' . $months . ' months';
 
-                        //refused
-                        case ("- REFUSED"):
-                            if (value == 1) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $assocAnswer = $this->Answer->find('first', array(
-                                    'conditions' => array(
-                                        'Question.internal_name' => $fixedKey
-                                    )
-                                        ));
-
-                                //overwriting question if exists with 'REFUSED'
-                                if (!empty($assocAnswer)) {
-                                    $this->Answer->id = $assocAnswer['Answer']['id'];
-                                    $this->Answer->saveField('value', 'REFUSED');
+                                    $answerToSave = array(
+                                        'question_id' => $assocQuestion['Question']['id'],
+                                        'client_id' => $this->Client->id,
+                                        'survey_instance_id' => $id,
+                                        'value' => $value,
+                                        'isDeleted' => 0,
+                                    );
+                                    $this->Answer->save($answerToSave);
                                 }
+                                break;
 
-                                //else creating the answer
-                                else {
+                            //refused
+                            case ("REFUSED"):
+                                if (value == 1) {
+                                    $fixedKey = str_replace(' - REFUSED', '', $key);
+                                    $assocAnswer = $this->Answer->find('first', array(
+                                        'conditions' => array(
+                                            'Question.internal_name' => $fixedKey
+                                        )
+                                            ));
+
+                                    //overwriting question if exists with 'REFUSED'
+                                    if (!empty($assocAnswer)) {
+                                        $this->Answer->id = $assocAnswer['Answer']['id'];
+                                        $this->Answer->saveField('value', 'REFUSED');
+                                    }
+
+                                    //else creating the answer
+                                    else {
+                                        $assocQuestion = $this->Question->find('first', array(
+                                            'conditions' => array(
+                                                'internal_name' => $fixedKey
+                                            )
+                                                ));
+
+                                        $answerToSave = array(
+                                            'question_id' => $assocQuestion['Question']['id'],
+                                            'client_id' => $this->Client->id,
+                                            'survey_instance_id' => $id,
+                                            'value' => 'REFUSED',
+                                            'isDeleted' => 0,
+                                        );
+                                        $this->Answer->save($answerToSave);
+                                    }
+                                }
+                                break;
+
+                            //other
+                            case ("OTHER"):
+                                if (!empty($value)) {
+                                    $fixedKey = str_replace(' - OTHER', '', $key);
+                                    $assocAnswer = $this->Answer->find('first', array(
+                                        'conditions' => array(
+                                            'Question.internal_name' => $fixedKey
+                                        )
+                                            ));
+                                    $this->Answer->id = $assocAnswer['Answer']['id'];
+                                    $this->Answer->saveField('value', $value);
+                                }
+                                break;
+
+                            //checkbox with other
+                            case("checkbox other"):
+                                if (!empty($value)) {
+                                    $fixedKey = str_replace(' - checkbox other', '', $key);
                                     $assocQuestion = $this->Question->find('first', array(
                                         'conditions' => array(
                                             'internal_name' => $fixedKey
@@ -607,48 +645,13 @@ class SurveyInstancesController extends AppController {
                                         'question_id' => $assocQuestion['Question']['id'],
                                         'client_id' => $this->Client->id,
                                         'survey_instance_id' => $id,
-                                        'value' => 'REFUSED',
+                                        'value' => $value,
                                         'isDeleted' => 0,
                                     );
                                     $this->Answer->save($answerToSave);
                                 }
-                            }
-                            break;
-
-                        //other
-                        case ("- OTHER"):
-                            if (!empty($value)) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $assocAnswer = $this->Answer->find('first', array(
-                                    'conditions' => array(
-                                        'Question.internal_name' => $fixedKey
-                                    )
-                                        ));
-                                $this->Answer->id = $assocAnswer['Answer']['id'];
-                                $this->Answer->saveField('value', $value);
-                            }
-                            break;
-
-                        //checkbox with other
-                        case("- checkbox other"):
-                            if (!empty($value)) {
-                                $fixedKey = str_replace($suffix, '', $key);
-                                $assocQuestion = $this->Question->find('first', array(
-                                    'conditions' => array(
-                                        'internal_name' => $fixedKey
-                                    )
-                                        ));
-
-                                $answerToSave = array(
-                                    'question_id' => $assocQuestion['Question']['id'],
-                                    'client_id' => $this->Client->id,
-                                    'survey_instance_id' => $id,
-                                    'value' => $value,
-                                    'isDeleted' => 0,
-                                );
-                                $this->Answer->save($answerToSave);
-                            }
-                            break;
+                                break;
+                        }
                     }
                 }
 
@@ -999,11 +1002,12 @@ class SurveyInstancesController extends AppController {
 
         return date('Y') - $y;
     }
-    
+
     public function export_xls() {
         $clientData = $this->Client->find('all');
         $this->set('rows', $clientData);
         $this->render('export_xls', 'export_xls');
     }
+
 }
 
