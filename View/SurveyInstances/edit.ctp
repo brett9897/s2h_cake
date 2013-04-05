@@ -1,43 +1,7 @@
 <?php echo $this->Html->script('ajaxupload-min.js', FALSE); ?>
 <?php echo $this->Html->css('classicTheme/style'); ?>
 <?php echo $this->Html->script("SurveyInstances/add.js", FALSE); ?>
-
-<style type="text/css">
-    table tr td {
-        border-bottom: none;
-        padding-right: 20px;
-        padding-bottom: 10px;
-        padding-top: 10px;
-        width: 50%;
-        min-width: 300px;
-    }
-
-    input[type=radio] {
-        float: none;
-        width: auto;
-        margin: 6px;
-        padding: 0;
-        line-height: 26px;
-    }
-
-    tbody {
-        width: 100%;
-        min-width: 750px;
-    }
-
-    .checkbox input[type="checkbox"] {
-        margin-bottom: 0px;
-    }
-
-    form .required label {
-        color: #e32;
-        content: '*';
-        display:inline;
-    }
-
-
-
-</style>
+<?php echo $this->Html->css("SurveyInstances/addEdit"); ?>
 
 <script>
     $(function() {
@@ -178,20 +142,6 @@
         ?>
     </table>
     <br /><br />
-
-    <!-------------------UPLOAD PHOTO ----------------------------------->
-    <h2>Upload Photo</h2>
-    <div class="white-background black-text">
-        <div id="image_upload" style="width:500px">
-            <script type="text/javascript">
-                $('#image_upload').ajaxupload({
-                    url: global.base_url + '/webroot/upload.php',
-                    remotePath:<?php echo $remotePath; ?>,
-                    editFilename: true
-                });
-            </script>
-        </div>
-    </div>
 
     <?php
     //hidden field to map photo to client

@@ -1,47 +1,11 @@
 <?php echo $this->Html->script('ajaxupload-min.js', FALSE); ?>
 <?php echo $this->Html->css('classicTheme/style'); ?>
 <?php echo $this->Html->script("SurveyInstances/add.js", FALSE); ?>
-
-<style type="text/css">
-    table tr td {
-        border-bottom: none;
-        padding-right: 20px;
-        padding-bottom: 10px;
-        padding-top: 10px;
-        width: 50%;
-        min-width: 300px;
-    }
-
-    input[type=radio] {
-        float: none;
-        width: auto;
-        margin: 6px;
-        padding: 0;
-        line-height: 26px;
-    }
-
-    tbody {
-        width: 100%;
-        min-width: 750px;
-    }
-
-    .checkbox input[type="checkbox"] {
-        margin-bottom: 0px;
-    }
-
-    form .required label {
-        color: #e32;
-        content: '*';
-        display:inline;
-    }
-
-
-
-</style>
+<?php echo $this->Html->css("SurveyInstances/addEdit"); ?>
 
 <script>
     $(function() {
-        $("#datepicker").datepicker({
+        $(".datepicker").datepicker({
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
@@ -75,10 +39,10 @@
             $.post(url, data, function(response) {
                 if (response != 0) {
                     var userResponse = confirm("A client having the same first and last names, dob and ssn already exists.  Do you want to save this survey data to that client?");
-                            if (userResponse == true) {
-                                  $('#whichClient').val("oldClient"); 
-                                  $('#oldClientID').val(response);
-                              }
+                    if (userResponse == true) {
+                        $('#whichClient').val("oldClient"); 
+                        $('#oldClientID').val(response);
+                    }
                 }
             })
         }
@@ -166,99 +130,98 @@
         </tr>
         <tr>
             <td><strong>DOB<strong><font color="red">*</font></td>
-            <td>
-                <?php
-                echo $this->Form->input('dob', array(
-                    'label' => '',
-                    'minYear' => date('Y') - 150,
-                    'maxYear' => date('Y'),
-                    'empty' => true,
-                    'onBlur' => 'checkIfClientExists()'
-                ));
-                ?>
-            </td>
-        </tr>
-        <tr>
-            <td>Phone Number</td>
-            <td>
-                <?php
-                echo $this->Form->input('phone_number', array(
-                    'label' => ''
-                ));
-                ?>
-            </td>
-        </tr>
+                        <td>
+                            <?php
+                            echo $this->Form->input('dob', array(
+                                'label' => '',
+                                'class' => 'datepicker',
+                                'name' => 'dateDOB',
+                                'onBlur' => 'checkIfClientExists()'
+                            ));
+                            ?>
+                        </td>
+                        </tr>
+                        <tr>
+                            <td>Phone Number</td>
+                            <td>
+                                <?php
+                                echo $this->Form->input('phone_number', array(
+                                    'label' => ''
+                                ));
+                                ?>
+                            </td>
+                        </tr>
 
-        <!-- iterating through all the groupings -->
-        <?php
-        foreach ($groupings as $grouping):
-            if ($grouping['is_used']):
-                //printing out grouping label
-                if ($grouping['label'] != 'Personal Information'):
-                    echo "<tr><td><h3>" . $grouping['label'] . "</h3></td></tr>";
-                endif;
-                foreach ($grouping['Question'] as $question):
-                    if ($question['is_used']):
-                        echo "<tr>";
+                        <!-- iterating through all the groupings -->
+                        <?php
+                        foreach ($groupings as $grouping):
+                            if ($grouping['is_used']):
+                                //printing out grouping label
+                                if ($grouping['label'] != 'Personal Information'):
+                                    echo "<tr><td><h3>" . $grouping['label'] . "</h3></td></tr>";
+                                endif;
+                                foreach ($grouping['Question'] as $question):
+                                    if ($question['is_used']):
+                                        echo "<tr>";
 
-                        //I've broken apart the label from the question in columns to make
-                        //things look nicer, which means that I can just use straight up HTML here
-                        if ($question['is_required']):
-                            echo '<td><strong>' . $question['label'] . "<font color='red'>*</font></strong></td>";
-                        else:
-                            echo "<td>" . $question['label'] . "</td>";
-                        endif;
-                        echo "<td>" . $this->Question->giveMeInputString($question) . "</td>";
-                        echo "</tr>";
-                    endif;
-                endforeach;
-            endif;
-        endforeach;
-        ?>
-    </table>
-    <br /><br />
+                                        //I've broken apart the label from the question in columns to make
+                                        //things look nicer, which means that I can just use straight up HTML here
+                                        if ($question['is_required']):
+                                            echo '<td><strong>' . $question['label'] . "<font color='red'>*</font></strong></td>";
+                                        else:
+                                            echo "<td>" . $question['label'] . "</td>";
+                                        endif;
+                                        echo "<td>" . $this->Question->giveMeInputString($question) . "</td>";
+                                        echo "</tr>";
+                                    endif;
+                                endforeach;
+                            endif;
+                        endforeach;
+                        ?>
+                        </table>
+                        <br /><br />
 
-    <!-------------------UPLOAD PHOTO ----------------------------------->
-    <h2>Upload Photo</h2>
-    <div class="white-background black-text">
-        <div id="image_upload" style="width:500px">
-            <script type="text/javascript">
-                $('#image_upload').ajaxupload({
-                    url: global.base_url + '/webroot/upload.php',
-                    remotePath:<?php echo $remotePath; ?>,
-                    editFilename: true
-                });
-            </script>
-        </div>
-    </div>
+                        <!-------------------UPLOAD PHOTO ----------------------------------->
+                        <h2>Upload Photo</h2>
+                        <div class="white-background black-text">
+                            <div id="image_upload" style="width:500px">
+                                <script type="text/javascript">
+                                    $('#image_upload').ajaxupload({
+                                        url: global.base_url + '/webroot/upload.php',
+                                        remotePath:<?php echo $remotePath; ?>,
+                                        editFilename: true
+                                    });
+                                </script>
+                            </div>
+                        </div>
 
-    <?php
-    //hidden field to map photo to client
-    echo $this->Form->input('photoName', array(
-        'type' => 'hidden',
-        'id' => 'photoName',
-        'value' => 'none.png'
-    ));
+                        <?php
+                        //hidden field to map photo to client
+                        echo $this->Form->input('photoName', array(
+                            'type' => 'hidden',
+                            'id' => 'photoName',
+                            'value' => 'none.png'
+                        ));
 
-    //hidden fields for creating new client or using existing one
-    echo $this->Form->input('whichClient', array(
-        'type' => 'hidden',
-        'id' => 'whichClient',
-        'value' => 'newClient'
-    ));
-    
-     echo $this->Form->input('oldClientID', array(
-        'type' => 'hidden',
-        'id' => 'oldClientID',
-        'value' => '0'
-    ));
-    ?>
+                        //hidden fields for creating new client or using existing one
+                        echo $this->Form->input('whichClient', array(
+                            'type' => 'hidden',
+                            'id' => 'whichClient',
+                            'value' => 'newClient'
+                        ));
 
-    <?php
-    echo $this->Form->submit('Submit', array(
-        'onClick' => 'bindPhoto()'
-    ));
-    ?>
+                        echo $this->Form->input('oldClientID', array(
+                            'type' => 'hidden',
+                            'id' => 'oldClientID',
+                            'value' => '0'
+                        ));
+                        ?>
 
-</div>
+                        <?php
+                        echo $this->Form->submit('Submit', array(
+                            'onClick' => 'bindPhoto()'
+                        ));
+                        ?>
+
+                        </div>
 
