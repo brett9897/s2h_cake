@@ -830,7 +830,7 @@ class SurveyInstancesController extends AppController {
     }
 
     public function dataTables() {
-        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.nickname', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score', 'How Many');
+        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
 
         $survey_id = $this->params['url']['survey_id'];
 

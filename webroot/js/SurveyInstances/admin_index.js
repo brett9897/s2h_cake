@@ -12,11 +12,9 @@ $(document).ready(function(){
 		"aoColumns": [
 		              	{"bSortable": true, "bSearchable": true},
 		              	{"bSortable": true, "bSearchable": true},
-		              	{"bSortable": true, "bSearchable": true},
 		              	{"bSortable": false, "bSearchable": false},
 		              	{"bSortable": false, "bSearchable": false},
 		              	{"bSortable": true, "bSearchable": false},
-		              	{"bSortable": true, "bSearchable": true}
 		             ],
 		"aaSorting": [[1, 'asc']]
 	}).fnSetFilteringDelay(1000);
