@@ -11,3 +11,4 @@ nbproject/*
 /nbproject/private/
 *.orig
 *.yml
+*.lock
