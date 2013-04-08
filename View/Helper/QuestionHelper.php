@@ -101,7 +101,6 @@ class QuestionHelper extends AppHelper {
                         ));
                 break;
 
-            //FIXME: change to datepickr later
             case "date":
                 $output .= $this->Form->input($internalName, array(
                     'class' => 'datepicker',
@@ -164,13 +163,6 @@ class QuestionHelper extends AppHelper {
                             'label' => 'YEARS ',
                             'legend' => false,
                             'div' => false
-                        ));
-
-                $output .= '&nbsp;&nbsp;' . $this->Form->input($internalName . ' - REFUSED', array(
-                            'type' => 'checkbox',
-                            'label' => 'Refused',
-                            'div' => false,
-                            'style' => 'float: none;',
                         ));
                 break;
                 

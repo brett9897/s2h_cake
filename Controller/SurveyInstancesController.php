@@ -673,6 +673,7 @@ class SurveyInstancesController extends AppController {
                 $this->Session->setFlash("The Client Could not Be Saved");
             }
         } else {
+
             /*             * ********************** AUTOPOPULATING DATA ************************ */
 
             $this->request->data['Client']['first_name'] = $client['Client']['first_name'];
@@ -683,6 +684,7 @@ class SurveyInstancesController extends AppController {
             $this->request->data['Client']['ssn'] = $client['Client']['ssn'];
             $this->request->data['Client']['dob'] = $client['Client']['dob'];
             $this->request->data['Client']['phone_number'] = $client['Client']['phone_number'];
+            $this->Option->recursive = -1;
 
             foreach ($groupings as $grouping) {
                 foreach ($grouping['Question'] as $question) {
@@ -691,7 +693,34 @@ class SurveyInstancesController extends AppController {
                             'question_id' => $question['id']
                         )
                             ));
-                    $this->request->data['Client'][$question['internal_name']] = $answer['Answer']['value'];
+
+                    $autopopulateQ = $question['internal_name'];
+
+                    //putting "other" value in the right place
+                    if ($question['Type']['label'] == 'selectWithOther' || $question['Type']['label'] == "checkboxWithOther") {
+                        $options = $this->Option->find('all', array(
+                            'conditions' => array(
+                                'Option.question_id' => $question['id']
+                            )
+                                ));
+
+                        $sentinel = true;
+                        foreach ($options as $option) {
+                            if ($option['Option']['label'] == $answer['Answer']['value']) {
+                                $sentinel = false;
+                                break;
+                            }
+                        }
+
+                        if ($sentinel) {
+                            if ($question['Type']['label'] == 'selectWithOther')
+                                $autopopulateQ = $autopopulateQ . " - OTHER";
+                            else
+                                $autopopulateQ = $autopopulateQ . " - checkbox other";
+                        }
+                    }
+
+                    $this->request->data['Client'][$autopopulateQ] = $answer['Answer']['value'];
                 }
             }
         }
@@ -893,7 +922,7 @@ class SurveyInstancesController extends AppController {
         $total = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count', $aColumns, array('custom' => true));
 
         if (isset($params['conditions'])) {
-            $filteredTotal = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count', $aColumns, array( 'custom' => true, 'conditions' => $params['conditions']));
+            $filteredTotal = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'count', $aColumns, array('custom' => true, 'conditions' => $params['conditions']));
         } else {
             $filteredTotal = $total;
         }
@@ -907,21 +936,14 @@ class SurveyInstancesController extends AppController {
 
         foreach ($raw_data as $result) {
             $row = array();
-            foreach ($aColumns as $column)
-            {
-                if( ($pos = strpos($column, '.')) !== false )
-                {
-                    if( substr($column, $pos + 1) === 'dob' )
-                    {
+            foreach ($aColumns as $column) {
+                if (($pos = strpos($column, '.')) !== false) {
+                    if (substr($column, $pos + 1) === 'dob') {
                         $row[] = date('m/d/Y', strtotime(h($result[substr($column, 0, $pos)]['dob'])));
+                    } else {
+                        $row[] = $result[substr($column, 0, $pos)][substr($column, $pos + 1)];
                     }
-                    else
-                    {
-                        $row[] = $result[substr($column, 0, $pos)][substr($column, $pos+1)];
-                    }
-                }
-                else
-                {
+                } else {
                     $row[] = $result['Custom'][$column];
                 }
             }

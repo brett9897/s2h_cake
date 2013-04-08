@@ -5,7 +5,7 @@
 
 <script>
     $(function() {
-        $("#datepicker").datepicker({
+        $(".datepicker").datepicker({
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
@@ -92,16 +92,16 @@
         </tr>
         <tr>
             <td><strong>DOB<strong><font color="red">*</font></td>
-            <td>
-                <?php
-                echo $this->Form->input('dob', array(
-                    'label' => '',
-                    'minYear' => date('Y') - 150,
-                    'maxYear' => date('Y'),
-                    'empty' => true,
-                ));
-                ?>
-            </td>
+                        <td>
+                            <?php
+                            echo $this->Form->input('dob', array(
+                                'label' => '',
+                                'class' => 'datepicker',
+                                'name' => 'dateDOB',
+                                'onBlur' => 'checkIfClientExists()'
+                            ));
+                            ?>
+                        </td>
         </tr>
         <tr>
             <td>Phone Number</td>
