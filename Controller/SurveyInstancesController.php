@@ -209,6 +209,11 @@ class SurveyInstancesController extends AppController {
                         $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
 
                         //Brett -- for each loops won't execute even once if condition is empty
+                        /**
+                         *Lee -- yeah...I'm not quite sure what I was thinking when I wrote that.  Something is still wrong here.
+                         *       It shouldn't save the answer twice just because there are multiple criteria for that question.
+                         *       I hope you don't mind but I am going to have to rewrite this.  At least it revealed a bug in my reports logic.
+                         */
                         if (count($criteria) > 0) {
                             foreach ($criteria as $criterion) {
                                 $found = false;
@@ -466,6 +471,7 @@ class SurveyInstancesController extends AppController {
             $this->request->data['Client']['organization_id'] = $client['Client']['organization_id'];
             $this->request->data['Client']['id'] = $this->Client->id;
             $this->request->data['Client']['dob'] = date("Y-m-d", strtotime($this->request->data['dateDOB']));
+            debug($this->request->data);
             if ($this->Client->save($this->request->data)) {
 
                 //used to calculate vi_score as we go along
@@ -489,6 +495,12 @@ class SurveyInstancesController extends AppController {
                         $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
 
                         //Brett -- for each loops won't execute even once if condition is empty
+                        /**
+                         *Lee -- yeah...I'm not quite sure what I was thinking when I wrote that.  Something is still wrong here.
+                         *       It shouldn't save the answer twice just because there are multiple criteria for that question.
+                         *       I hope you don't mind but I am going to have to rewrite this.  At least it revealed a bug in my reports logic.
+                         */
+
                         if (count($criteria) > 0) {
                             foreach ($criteria as $criterion) {
                                 $found = false;
@@ -500,40 +512,33 @@ class SurveyInstancesController extends AppController {
                                         $criterion_values = explode(',', $criterion['ViCriterium']['values']);
                                     }
 
-                                    if (!$found) {
-                                        foreach ($criterion_values as $c_value) {
-                                            switch ($criterion['ViCriterium']['relational_operator']) {
-                                                case '<':
-                                                    if ($value < $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '>':
-                                                    if ($value > $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '=':
-                                                    if ($value == $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '<=':
-                                                    if ($value <= $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '>=':
-                                                    if ($value >= $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                            }
+                                    foreach ($criterion_values as $c_value) {
+                                        switch ($criterion['ViCriterium']['relational_operator']) {
+                                            case '<':
+                                                if ($value < $c_value) {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                }
+                                                break;
+                                            case '>':
+                                                if ($value > $c_value) {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                }
+                                                break;
+                                            case '=':
+                                                if ($value == $c_value) {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                }
+                                                break;
+                                            case '<=':
+                                                if ($value <= $c_value) {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                }
+                                                break;
+                                            case '>=':
+                                                if ($value >= $c_value) {
+                                                    $vi_score += $criterion['ViCriterium']['weight'];
+                                                }
+                                                break;
                                         }
                                     }
 
@@ -873,8 +878,7 @@ class SurveyInstancesController extends AppController {
     }
 
     public function dataTables() {
-        $aColumns = array('Client.first_name', 'Client.last_name', 'Client.dob', 'Client.ssn', 'SurveyInstance.vi_score');
-
+        $aColumns = explode(',',$this->params['url']['aColumns']);
         $survey_id = $this->params['url']['survey_id'];
 
         $params = array('recursive' => 0, 'custom' => true);
@@ -902,26 +906,11 @@ class SurveyInstancesController extends AppController {
             $comma = strpos($this->params['url']['sSearch'], ',');
             $space = strpos($this->params['url']['sSearch'], ' ');
 
-            if ($comma === false && $space === false) {
-                $conditions = array('OR' => array());
-                for ($i = 0; $i < count($aColumns); $i++) {
-                    if (isset($this->params['url']['bSearchable_' . $i]) && $this->params['url']['bSearchable_' . $i] == "true") {
-                        $conditions['OR'][$aColumns[$i] . ' LIKE '] = $this->params['url']['sSearch'] . '%';
-                    }
+            $conditions = array('OR' => array());
+            for ($i = 0; $i < count($aColumns); $i++) {
+                if (isset($this->params['url']['bSearchable_' . $i]) && $this->params['url']['bSearchable_' . $i] == "true") {
+                    $conditions['OR'][$aColumns[$i] . ' LIKE '] = $this->params['url']['sSearch'] . '%';
                 }
-            } else {
-                if ($comma !== false) {
-                    $firstName = trim(substr($this->params['url']['sSearch'], $comma + 1));
-                    $lastName = trim(substr($this->params['url']['sSearch'], 0, $comma));
-                } else {
-                    $firstName = trim(substr($this->params['url']['sSearch'], 0, $space));
-                    $lastName = trim(substr($this->params['url']['sSearch'], $space + 1));
-                }
-
-                $conditions = array(
-                    $aColumns[0] . ' LIKE ' => $firstName . '%',
-                    $aColumns[1] . ' LIKE ' => $lastName . '%'
-                );
             }
 
             $params['conditions'] = $conditions;

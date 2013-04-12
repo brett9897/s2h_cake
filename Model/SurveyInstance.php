@@ -168,17 +168,36 @@ class SurveyInstance extends AppModel {
                 $cParams = array('recursive' => -1);
                 $cConditions = array('Answer.question_id' => $cId['Question']['id']);
                 $cParams['conditions'] = $cConditions;
-                $cParams['Order'] = 'Answer.client_id';
+                $cParams['order'] = array('Answer.client_id ASC');
                 $customData = $this->Answer->find('all', $cParams);
-                //debug( $customData );
-                $i = 0;
-                foreach($customData as $cData)
+
+                //probably a better way to do this but I am tired.  If there are multiple answers for a given question it needs to still be recorded in the output.
+                for( $j = 0, $i = 0; $j < count($customData) && $i < count($customData); $j++, $i++)
                 {
-                    if( $result[$i]['SurveyInstance']['id'] == $cData['Answer']['survey_instance_id'] )
+                    $match = false;
+                    if( $result[$i]['SurveyInstance']['id'] == $customData[$j]['Answer']['survey_instance_id'] )
                     {
-                        $result[$i]['Custom'] = array( $col => $cData['Answer']['value']);
+                        if( isset($result[$i]['Custom']) )
+                        {
+                            if( isset($result[$i]['Custom'][$col]) )
+                            {
+                                $result[$i]['Custom'][$col] .= ', ' . $customData[$j]['Answer']['value'];
+                            }
+                            else
+                            {
+                                $result[$i]['Custom'][$col] = $customData[$j]['Answer']['value'];
+                            }
+                        }
+                        else
+                        {
+                            $result[$i]['Custom'] = array( $col => $customData[$j]['Answer']['value']);
+                        }
+                        $match = true;
                     }
-                    $i++; 
+                    if($match === true) 
+                        $i--;
+                    else
+                        $j--;
                 }
             }
 
@@ -312,9 +331,13 @@ class SurveyInstance extends AppModel {
                 $y = $a[$key1][$key2];
             
             }
-            if( is_numeric($a[$key1][$key2]) )
+            if( is_numeric($x) )
             {
                 return floatval($x) > floatval($y);
+            }
+            elseif( strtotime($x) !== false )
+            {
+                return strtotime($x) > strtotime($y);
             }
             else
             {
@@ -343,9 +366,6 @@ class SurveyInstance extends AppModel {
             }
             else //this is an implicit and
             {
-                //debug($left_side);
-                //debug($right_side);
-                //debug($retArray);
                 $retArray = $this->search_LIKE($retArray, $retArray, $left_side, $right_side, self::SEARCH_AND);
             }
         }
@@ -383,11 +403,12 @@ class SurveyInstance extends AppModel {
         foreach( $full_array as $row )
         {
             $search = str_replace('%', '.*', $right_side);
+            $search = str_replace('/', '\/', $search);
             $pattern = '/^' . $search . '$/i';
-
             if( $cond === self::SEARCH_OR )
             {
-                if( preg_match( $pattern, $row[$els[0]][$els[1]]) )
+                if( preg_match( $pattern, $row[$els[0]][$els[1]]) || 
+                    (($d = strtotime($row[$els[0]][$els[1]])) !== false && preg_match( $pattern, date('m/d/Y', $d) )))
                 {
                     if( ! in_array($row, $ret_array) )
                     {

@@ -144,8 +144,11 @@ class Survey extends AppModel {
 
     public function getInternalNamesList()
     {
-        $conditions = array('Question.survey_id' => $this->id);
-        $params = array('recursive' => -1, 'conditions' => $conditions);
+        $conditions = array(
+            'Question.survey_id' => $this->id,
+            'Type.label NOT' => 'noResponse' 
+        );
+        $params = array('recursive' => 0, 'conditions' => $conditions, 'order' => array('Question.internal_name ASC'));
 
         return $this->Question->find('list', $params);
     }
