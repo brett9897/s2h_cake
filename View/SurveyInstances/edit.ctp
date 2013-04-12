@@ -98,7 +98,8 @@
                                 'label' => '',
                                 'class' => 'datepicker',
                                 'name' => 'dateDOB',
-                                'onBlur' => 'checkIfClientExists()'
+                                'onBlur' => 'checkIfClientExists()',
+                                'type' => 'text'
                             ));
                             ?>
                         </td>
