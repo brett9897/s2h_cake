@@ -101,7 +101,12 @@ class SurveyInstancesController extends AppController {
             ),
             'conditions' => array(
                 'SurveyInstance.id' => $id
-                )));
+            ),
+            'order' => array(
+                'Grouping.ordering'
+            ),
+
+            ));
 
         //      var_dump($groupings);
         $this->set('groupings', $groupings);
