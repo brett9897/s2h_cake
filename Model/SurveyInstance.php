@@ -130,11 +130,6 @@ class SurveyInstance extends AppModel {
                 $customColumns[] = $column;
             }
         }
-        
-        if( $type === 'count' )
-        {
-            $query['fields'][] = 'COUNT(*) as count';
-        }
 
         $query['tables'] = array('survey_instances AS SurveyInstance', 'surveys AS Survey', 'clients AS Client');
         $query['subquery'] = 'INNER JOIN ( ' .
@@ -164,11 +159,6 @@ class SurveyInstance extends AppModel {
             $finalQuery .= ' ORDER BY Client.id';
 
             $result = $this->query($finalQuery);
-
-            if( $type === 'count' )
-            {
-                return $result[0]['0']['count'];
-            }
 
             foreach( $customColumns as $col )
             {
@@ -237,6 +227,11 @@ class SurveyInstance extends AppModel {
             {
                 $result = array_slice($result, $params['offset'], $params['limit']);
             }
+
+            if( $type === 'count' )
+            {
+                $result = count($result);
+            }
         }
         else
         {
@@ -290,7 +285,7 @@ class SurveyInstance extends AppModel {
             $result = $this->query($finalQuery);
             if( $type === 'count' )
             {
-                $result = $result[0]['0']['count'];
+                $result = count($result);
             }
         }
 
@@ -315,8 +310,8 @@ class SurveyInstance extends AppModel {
             {
                 $x = $b[$key1][$key2];
                 $y = $a[$key1][$key2];
+            
             }
-
             if( is_numeric($a[$key1][$key2]) )
             {
                 return floatval($x) > floatval($y);
@@ -328,6 +323,8 @@ class SurveyInstance extends AppModel {
         };
     }
 
+    const SEARCH_OR = 0;
+    const SEARCH_AND = 1;
     private function search( $array, $conditions )
     {
         $retArray = $array;
@@ -344,6 +341,13 @@ class SurveyInstance extends AppModel {
                     //$retArray = $this->search_AND($retArray, $right_side);
                 }
             }
+            else //this is an implicit and
+            {
+                //debug($left_side);
+                //debug($right_side);
+                //debug($retArray);
+                $retArray = $this->search_LIKE($retArray, $retArray, $left_side, $right_side, self::SEARCH_AND);
+            }
         }
         return $retArray;
     }
@@ -353,36 +357,58 @@ class SurveyInstance extends AppModel {
         $retArray = array();
         foreach( $conditions as $left_side => $right_side )
         {
-            if( ($pos = strpos($left_side, 'LIKE')) !== false )
+            if( strpos($left_side, 'LIKE') !== false )
             {
-                $el = trim(substr($left_side, 0, $pos));
-
-                $els = array();
-                if( strpos($el, '.') !== false )
-                {
-                    $els = explode('.', $el);
-                }
-                else
-                {
-                    $els[] = 'Custom';
-                    $els[] = $el;
-                }
-
-                foreach( $array as $row )
-                {
-                    $search = str_replace('%', '.*', $right_side);
-                    $pattern = '/^' . $search . '$/i';
-                    if( preg_match( $pattern, $row[$els[0]][$els[1]]) )
-                    {
-                        if( ! in_array($row, $retArray) )
-                        {
-                            $retArray[] = $row;
-                        }
-                    }
-                }
+                $retArray = $this->search_LIKE($retArray, $array, $left_side, $right_side, self::SEARCH_OR);
             }
         }
         return $retArray;
+    }
+
+    private function search_LIKE($ret_array, $full_array, $left_side, $right_side, $cond = self::SEARCH_OR)
+    {
+        $el = trim(substr($left_side, 0, strpos($left_side, 'LIKE')));
+
+        $els = array();
+        if( strpos($el, '.') !== false )
+        {
+            $els = explode('.', $el);
+        }
+        else
+        {
+            $els[] = 'Custom';
+            $els[] = $el;
+        }
+
+        foreach( $full_array as $row )
+        {
+            $search = str_replace('%', '.*', $right_side);
+            $pattern = '/^' . $search . '$/i';
+
+            if( $cond === self::SEARCH_OR )
+            {
+                if( preg_match( $pattern, $row[$els[0]][$els[1]]) )
+                {
+                    if( ! in_array($row, $ret_array) )
+                    {
+                        $ret_array[] = $row;
+                    }
+                }
+            }
+            else
+            {
+                if( !preg_match( $pattern, $row[$els[0]][$els[1]]) )
+                {
+                    if( ($key = array_search($row, $ret_array)) !== false )
+                    {
+                        unset($ret_array[$key]);
+                    }
+                }
+            }
+
+        }
+
+        return $ret_array;
     }
 
     public function getMostRecentVIScorePerSurvey($client_id)
