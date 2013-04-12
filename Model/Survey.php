@@ -141,6 +141,15 @@ class Survey extends AppModel {
         }
         return preg_match('/[^\s]+/m', $check);
     }
+
+    public function getInternalNamesList()
+    {
+        $conditions = array('Question.survey_id' => $this->id);
+        $params = array('recursive' => -1, 'conditions' => $conditions);
+
+        return $this->Question->find('list', $params);
+    }
+
     /**
      * Validation rules
      *

@@ -1,0 +1,50 @@
+#selectable .ui-selecting 
+{ 
+	background: #FECA40; 
+}
+#selectable .ui-selected 
+{ 
+	background: #F39814;
+	color: white;
+}
+
+#selectable 
+{ 
+	list-style-type: none; 
+	margin: 0; 
+	padding: 0; 
+	width: 800px; 
+}
+
+#selectable li 
+{
+	margin: 3px;
+	padding: 5px;
+	float: left;
+	/*width: 200px;*/
+	height: 30px;
+	font-size: 1.5em;
+	text-align: center;
+	cursor: pointer;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+}
+
+#custom_report_button
+{
+	padding: 20px;
+}
+
+#custom-report-options thead, #custom-report-options tbody
+{
+	width: 450px;
+}
+
+#custom-report-options thead th, #custom-report-options tbody td 
+{
+	max-width: 150px;
+	overflow: hidden;
+	width: 150px;
+	padding: 4px;
+	margin: 0;
+}

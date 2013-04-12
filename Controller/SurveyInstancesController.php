@@ -980,6 +980,12 @@ class SurveyInstancesController extends AppController {
             $this->set(compact('surveys'));
             $this->render("select_survey");
         }
+        else
+        {
+            $this->SurveyInstance->Survey->id = $survey_id;
+            $internal_names = $this->SurveyInstance->Survey->getInternalNamesList();
+            $this->set(compact('internal_names'));
+        }
     }
 
     public function checkIfClientExists() {
