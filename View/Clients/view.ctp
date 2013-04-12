@@ -23,9 +23,23 @@
                 </div>
             </div>
             <div class="clear">
+                <div class="label"><?php echo __('Middle Name'); ?></div>
+                <div class="data">
+                    <?php echo h($client['Client']['middle_name']); ?>
+                    &nbsp;
+                </div>
+            </div>
+            <div class="clear">
                 <div class="label"><?php echo __('Last Name'); ?></div>
                 <div class="data">
                     <?php echo h($client['Client']['last_name']); ?>
+                    &nbsp;
+                </div>
+            </div>
+            <div class="clear">
+                <div class="label"><?php echo __('Nickname'); ?></div>
+                <div class="data">
+                    <?php echo h($client['Client']['nickname']); ?>
                     &nbsp;
                 </div>
             </div>
@@ -40,6 +54,13 @@
                 <div class="label"><?php echo __('Dob'); ?></div>
                 <div class="data">
                     <?php echo h($client['Client']['dob']); ?>
+                    &nbsp;
+                </div>
+            </div>
+            <div class="clear">
+                <div class="label"><?php echo __('Phone Number'); ?></div>
+                <div class="data">
+                    <?php echo h($client['Client']['phone_number']); ?>
                     &nbsp;
                 </div>
             </div>

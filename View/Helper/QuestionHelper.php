@@ -104,7 +104,7 @@ class QuestionHelper extends AppHelper {
             case "date":
                 $output .= $this->Form->input($internalName, array(
                     'class' => 'datepicker',
-                    'name' => 'date' . $internalName,
+                    //'name' => 'date' . $internalName,
                     'label' => ''
                         ));
                 break;

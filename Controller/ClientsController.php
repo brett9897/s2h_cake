@@ -36,6 +36,7 @@ class ClientsController extends AppController {
             throw new NotFoundException(__('Invalid client'));
         }
         $client = $this->Client->read(null, $id);
+        $client['Client']['dob'] = date("m/d/Y", strtotime($client['Client']['dob']));
         $this->set('client', $client);
         $photoName = ($client['Client']['photoName']) ? $client['Client']['photoName'] : 'none.png';
         $this->set('photoName', $photoName);

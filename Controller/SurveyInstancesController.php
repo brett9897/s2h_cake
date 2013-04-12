@@ -105,6 +105,8 @@ class SurveyInstancesController extends AppController {
 
         //      var_dump($groupings);
         $this->set('groupings', $groupings);
+
+        $surveyInstance['Client']['dob'] = date("m/d/Y", strtotime($surveyInstance['Client']['dob']));
         $this->Set('surveyInstance', $surveyInstance);
         $this->set('id', $id);
     }
@@ -155,6 +157,9 @@ class SurveyInstancesController extends AppController {
 
             //first, we need to save data into the client table
             $this->request->data['Client']['organization_id'] = $organization_id;
+
+            //need to update date to be in the correct format for saving
+            $this->request->data['Client']['dob'] = date("Y-m-d", strtotime($this->request->data['dateDOB']));
 
             //checking to see if the user wishes to save the data to a new client or to an existing one
             if ($this->request->data['Client']['whichClient'] == 'newClient') {
@@ -216,19 +221,19 @@ class SurveyInstancesController extends AppController {
                                                 case '<':
                                                     if ($value < $c_value) {
                                                         $vi_score += $criterion['ViCriterium']['weight'];
-                                                        $found = true;
+                                                        //$found = true;
                                                     }
                                                     break;
                                                 case '>':
                                                     if ($value > $c_value) {
                                                         $vi_score += $criterion['ViCriterium']['weight'];
-                                                        $found = true;
+                                                        //$found = true;
                                                     }
                                                     break;
                                                 case '=':
                                                     if ($value == $c_value) {
                                                         $vi_score += $criterion['ViCriterium']['weight'];
-                                                        $found = true;
+                                                        //$found = true;
                                                     }
                                                     break;
                                                 case '<=':
@@ -455,6 +460,7 @@ class SurveyInstancesController extends AppController {
             $this->Client->id = $client['Client']['id'];
             $this->request->data['Client']['organization_id'] = $client['Client']['organization_id'];
             $this->request->data['Client']['id'] = $this->Client->id;
+            $this->request->data['Client']['dob'] = date("Y-m-d", strtotime($this->request->data['dateDOB']));
             if ($this->Client->save($this->request->data)) {
 
                 //used to calculate vi_score as we go along
@@ -463,6 +469,9 @@ class SurveyInstancesController extends AppController {
                 //then we need to save all the answers
                 foreach ($groupings as $grouping) {
                     foreach ($grouping['Question'] as $question) {
+                        if (!isset($this->request->data['Client'][$question['internal_name']]))
+                            continue;
+
                         $values = $this->request->data['Client'][$question['internal_name']];
 
                         if (gettype($values) != 'array') {
@@ -492,19 +501,19 @@ class SurveyInstancesController extends AppController {
                                                 case '<':
                                                     if ($value < $c_value) {
                                                         $vi_score += $criterion['ViCriterium']['weight'];
-                                                        $found = true;
+                                                        //$found = true;
                                                     }
                                                     break;
                                                 case '>':
                                                     if ($value > $c_value) {
                                                         $vi_score += $criterion['ViCriterium']['weight'];
-                                                        $found = true;
+                                                        //$found = true;
                                                     }
                                                     break;
                                                 case '=':
                                                     if ($value == $c_value) {
                                                         $vi_score += $criterion['ViCriterium']['weight'];
-                                                        $found = true;
+                                                        //$found = true;
                                                     }
                                                     break;
                                                 case '<=':
@@ -682,7 +691,7 @@ class SurveyInstancesController extends AppController {
             $this->request->data['Client']['nickname'] = $client['Client']['nickname'];
             $this->request->data['Client']['photoName'] = $client['Client']['photoName'];
             $this->request->data['Client']['ssn'] = $client['Client']['ssn'];
-            $this->request->data['Client']['dob'] = $client['Client']['dob'];
+            $this->request->data['Client']['dob'] = date("m/d/Y", strtotime($client['Client']['dob']));
             $this->request->data['Client']['phone_number'] = $client['Client']['phone_number'];
             $this->Option->recursive = -1;
 

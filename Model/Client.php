@@ -71,13 +71,13 @@ class Client extends AppModel {
                 'allowEmpty' => true
             ),
         ),
-        'phone_number' => array(
+        /*'phone_number' => array(
             'phone' => array(
                 'rule' => array('phone', null, 'us'),
                 'allowEmpty' => true,
                 'message' => 'Must enter a valid phone number'
             )
-        )
+        )*/
     );
 
     //The Associations below have been created with all possible keys, those that are not needed can be removed
