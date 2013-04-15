@@ -84,7 +84,6 @@ $ ->
 
 			for column in $('#selectable > li.ui-selected')
 				id = $(column).find('.element').attr('id')
-				console.log(id)
 				options_body.append("<tr><td id='#{id}' class='col_val'>#{$(column).text().trim()}</td>#{options_html}</tr>")
 
 		get_custom_data = ->

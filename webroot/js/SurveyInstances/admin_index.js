@@ -123,7 +123,6 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           column = _ref[_i];
           id = $(column).find('.element').attr('id');
-          console.log(id);
           _results.push(options_body.append("<tr><td id='" + id + "' class='col_val'>" + ($(column).text().trim()) + "</td>" + options_html + "</tr>"));
         }
         return _results;
