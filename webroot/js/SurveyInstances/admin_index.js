@@ -81,9 +81,11 @@
         },
         buttons: {
           Ok: function() {
-            setFields();
-            $(this).dialog('close');
-            return $('#custom-report-options').dialog('open');
+            if ($('#selectable > li.ui-selected').length !== 0) {
+              setFields();
+              $(this).dialog('close');
+              return $('#custom-report-options').dialog('open');
+            }
           }
         }
       });

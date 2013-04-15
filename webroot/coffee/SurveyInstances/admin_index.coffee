@@ -52,9 +52,10 @@ $ ->
 				direction: 'right'
 			buttons:
 				Ok: ->
-					setFields()
-					$(@).dialog('close')
-					$('#custom-report-options').dialog('open')
+					if $('#selectable > li.ui-selected').length != 0
+						setFields()
+						$(@).dialog('close')
+						$('#custom-report-options').dialog('open')
 
 		$('#custom-report-options').dialog
 			autoOpen: false
