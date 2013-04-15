@@ -400,7 +400,7 @@ class SurveyInstancesController extends AppController {
             'conditions' => array(
                 'Client.id' => $surveyInstance['SurveyInstance']['client_id']
             )
-                ));
+        ));
         $current_user = $this->Auth->user();
         $this->Survey->recursive = 3;
         $activeSurvey = $this->Survey->find('first', array(
@@ -408,7 +408,7 @@ class SurveyInstancesController extends AppController {
                 'isActive' => 1,
                 'Survey.organization_id' => $current_user['organization_id']
             )
-                ));
+        ));
 
         if (empty($activeSurvey)) {
             $this->Session->setFlash("No Active Surveys Exist For Your Organization");
@@ -466,17 +466,27 @@ class SurveyInstancesController extends AppController {
                         //figure out if there is a vi_criterion for this question
                         $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
 
-                        //this is a much more coherent way of doing it and it removed all known bugs that we have had.
+                        //this is a much more coherent way of doing it. 
                         foreach ($values as $value) {
-                            $this->Answer->create();
-                            $answerToSave = array(
+                            //highly inefficient but I need the primary key so that it is updated instead of a new answer created.
+                            $resp = $this->Answer->find('first', array(
+                                'recursive' => -1, 
+                                'conditions' => array(
+                                    'question_id' => $question['id'], 
+                                    'client_id' => $this->Client->id,
+                                    'survey_instance_id' => $this->SurveyInstance->id
+                                )
+                            ));
+
+                            $resp['Answer']['value'] = $value;
+                            /*$answerToSave = array(
                                 'question_id' => $question['id'],
                                 'client_id' => $this->Client->id,
                                 'survey_instance_id' => $this->SurveyInstance->id,
                                 'value' => $value,
                                 'isDeleted' => 0,
-                            );
-                            $this->Answer->save($answerToSave);
+                            );*/
+                            $this->Answer->save($resp);
 
                             foreach ($criteria as $criterion) {
                                 
@@ -660,9 +670,10 @@ class SurveyInstancesController extends AppController {
                 foreach ($grouping['Question'] as $question) {
                     $answer = $this->Answer->find('first', array(
                         'conditions' => array(
-                            'question_id' => $question['id']
+                            'question_id' => $question['id'],
+                            'Answer.client_id' => $client['Client']['id']
                         )
-                            ));
+                    ));
 
                     $autopopulateQ = $question['internal_name'];
 
@@ -672,7 +683,7 @@ class SurveyInstancesController extends AppController {
                             'conditions' => array(
                                 'Option.question_id' => $question['id']
                             )
-                                ));
+                        ));
 
                         $sentinel = true;
                         foreach ($options as $option) {
