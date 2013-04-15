@@ -91,3 +91,7 @@
 		</tbody>
 	</table>
 </div>
+
+<div id="charts_div">
+	<?php $this->GoogleChart->createJsChart($chart); ?>
+</div>

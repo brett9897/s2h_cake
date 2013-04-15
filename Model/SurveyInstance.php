@@ -299,7 +299,6 @@ class SurveyInstance extends AppModel {
                 $finalQuery .= $params['limit'];
             }
 
-
             //debug($finalQuery);
             $result = $this->query($finalQuery);
             if( $type === 'count' )

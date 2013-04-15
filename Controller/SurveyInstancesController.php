@@ -1,6 +1,7 @@
 <?php
-
+CakePlugin::load('GoogleChart');
 App::uses('AppController', 'Controller');
+App::uses('GoogleChart', 'GoogleChart.Lib');
 
 /**
  * SurveyInstances Controller
@@ -10,7 +11,7 @@ App::uses('AppController', 'Controller');
 class SurveyInstancesController extends AppController {
 
     public $uses = array('Grouping', 'Survey', 'SurveyInstance', 'Client', 'Question', 'Type', 'Organization', 'Answer', 'Option', 'ViCriterium');
-    public $helpers = array('Question', 'Html');
+    public $helpers = array('Question', 'Html', 'Js', 'GoogleChart.GoogleChart');
     public $components = array('RequestHandler');
 
     public function beforeFilter() {
@@ -936,6 +937,62 @@ class SurveyInstancesController extends AppController {
             $this->SurveyInstance->Survey->id = $survey_id;
             $internal_names = $this->SurveyInstance->Survey->getInternalNamesList();
             $this->set(compact('internal_names'));
+
+            //Create google chart for vi score
+            $resp = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'all', array('SurveyInstance.vi_score'));
+
+            //group all results and get max score
+            $vi_score_count = array();
+            $max_score = 0;
+            foreach( $resp as $r )
+            {
+                $vi_score = $r['SurveyInstance']['vi_score'];
+                if( isset($vi_score_count[$vi_score]) )
+                {
+                    $vi_score_count[$vi_score]++;
+                }
+                else
+                {
+                    $vi_score_count[$vi_score] = 1;
+                }
+
+                if( $vi_score > $max_score ) $max_score = $vi_score;
+            }
+
+            $max_count = 0;
+            foreach( $vi_score_count as $count )
+            {
+                if( $count > $max_count ) $max_count = $count;
+            }
+
+            $chart = new GoogleChart();
+            $chart->type("ColumnChart");
+            $chart->options(array(
+                'title' => 'Total VI Scores',
+                'width' => '750',
+                'vAxis' => array(
+                    'viewWindow' => array(
+                        'min' => 0,
+                        'max' => $max_count + 1)),
+            ));
+            $chart->columns(array(
+                'score' => array(
+                    'type' => 'number',
+                    'label' => 'VI Score'
+                ),
+                'counts' => array(
+                    'type' => 'number',
+                    'label' => 'Total'
+                )
+            ));
+
+            foreach( $vi_score_count as $score => $count )
+            {
+                $chart->addRow(array('score' => floatval($score), 'counts' => intVal($count)));
+            }
+
+            $chart->div('charts_div');
+            $this->set(compact('chart'));
         }
     }
 
