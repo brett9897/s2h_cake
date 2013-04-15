@@ -208,82 +208,54 @@ class SurveyInstancesController extends AppController {
                         //figure out if there is a vi_criterion for this question
                         $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
 
-                        //Brett -- for each loops won't execute even once if condition is empty
-                        /**
-                         *Lee -- yeah...I'm not quite sure what I was thinking when I wrote that.  Something is still wrong here.
-                         *       It shouldn't save the answer twice just because there are multiple criteria for that question.
-                         *       I hope you don't mind but I am going to have to rewrite this.  At least it revealed a bug in my reports logic.
-                         */
-                        if (count($criteria) > 0) {
+                        //this is a much more coherent way of doing it and it removed all known bugs that we have had.
+                        foreach ($values as $value) {
+                            $this->Answer->create();
+                            $answerToSave = array(
+                                'question_id' => $question['id'],
+                                'client_id' => $this->Client->id,
+                                'survey_instance_id' => $this->SurveyInstance->id,
+                                'value' => $value,
+                                'isDeleted' => 0,
+                            );
+                            $this->Answer->save($answerToSave);
+
                             foreach ($criteria as $criterion) {
-                                $found = false;
-                                foreach ($values as $value) {
-//                                if (count($criterion) > 0) {
-                                    if (strpos($criterion['ViCriterium']['values'], ',') === false) {
-                                        $criterion_values = array($criterion['ViCriterium']['values']);
-                                    } else {
-                                        $criterion_values = explode(',', $criterion['ViCriterium']['values']);
-                                    }
-
-                                    if (!$found) {
-                                        foreach ($criterion_values as $c_value) {
-                                            switch ($criterion['ViCriterium']['relational_operator']) {
-                                                case '<':
-                                                    if ($value < $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '>':
-                                                    if ($value > $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '=':
-                                                    if ($value == $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '<=':
-                                                    if ($value <= $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                                case '>=':
-                                                    if ($value >= $c_value) {
-                                                        $vi_score += $criterion['ViCriterium']['weight'];
-                                                        //$found = true;
-                                                    }
-                                                    break;
-                                            }
-                                        }
-                                    }
-
-                                    $this->Answer->create();
-                                    $answerToSave = array(
-                                        'question_id' => $question['id'],
-                                        'client_id' => $this->Client->id,
-                                        'survey_instance_id' => $this->SurveyInstance->id,
-                                        'value' => $value,
-                                        'isDeleted' => 0,
-                                    );
-                                    $this->Answer->save($answerToSave);
+                                
+                                if (strpos($criterion['ViCriterium']['values'], ',') === false) {
+                                    $criterion_values = array($criterion['ViCriterium']['values']);
+                                } else {
+                                    $criterion_values = explode(',', $criterion['ViCriterium']['values']);
                                 }
-                            }
-                        } else {
-                            foreach ($values as $value) {
-                                $this->Answer->create();
-                                $answerToSave = array(
-                                    'question_id' => $question['id'],
-                                    'client_id' => $this->Client->id,
-                                    'survey_instance_id' => $this->SurveyInstance->id,
-                                    'value' => $value,
-                                    'isDeleted' => 0,
-                                );
-                                $this->Answer->save($answerToSave);
+                                foreach ($criterion_values as $c_value) {
+                                    switch ($criterion['ViCriterium']['relational_operator']) {
+                                        case '<':
+                                            if ($value < $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '>':
+                                            if ($value > $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '=':
+                                            if ($value == $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '<=':
+                                            if ($value <= $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '>=':
+                                            if ($value >= $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                    }
+                                }
                             }
                         }
                     }
@@ -494,75 +466,54 @@ class SurveyInstancesController extends AppController {
                         //figure out if there is a vi_criterion for this question
                         $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
 
-                        //Brett -- for each loops won't execute even once if condition is empty
-                        /**
-                         *Lee -- yeah...I'm not quite sure what I was thinking when I wrote that.  Something is still wrong here.
-                         *       It shouldn't save the answer twice just because there are multiple criteria for that question.
-                         *       I hope you don't mind but I am going to have to rewrite this.  At least it revealed a bug in my reports logic.
-                         */
+                        //this is a much more coherent way of doing it and it removed all known bugs that we have had.
+                        foreach ($values as $value) {
+                            $this->Answer->create();
+                            $answerToSave = array(
+                                'question_id' => $question['id'],
+                                'client_id' => $this->Client->id,
+                                'survey_instance_id' => $this->SurveyInstance->id,
+                                'value' => $value,
+                                'isDeleted' => 0,
+                            );
+                            $this->Answer->save($answerToSave);
 
-                        if (count($criteria) > 0) {
                             foreach ($criteria as $criterion) {
-                                $found = false;
-                                foreach ($values as $value) {
-//                                if (count($criterion) > 0) {
-                                    if (strpos($criterion['ViCriterium']['values'], ',') === false) {
-                                        $criterion_values = array($criterion['ViCriterium']['values']);
-                                    } else {
-                                        $criterion_values = explode(',', $criterion['ViCriterium']['values']);
-                                    }
-
-                                    foreach ($criterion_values as $c_value) {
-                                        switch ($criterion['ViCriterium']['relational_operator']) {
-                                            case '<':
-                                                if ($value < $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                }
-                                                break;
-                                            case '>':
-                                                if ($value > $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                }
-                                                break;
-                                            case '=':
-                                                if ($value == $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                }
-                                                break;
-                                            case '<=':
-                                                if ($value <= $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                }
-                                                break;
-                                            case '>=':
-                                                if ($value >= $c_value) {
-                                                    $vi_score += $criterion['ViCriterium']['weight'];
-                                                }
-                                                break;
-                                        }
-                                    }
-
-                                    $answerToSave = array(
-                                        'question_id' => $question['id'],
-                                        'client_id' => $this->Client->id,
-                                        'survey_instance_id' => $id,
-                                        'value' => $value,
-                                        'isDeleted' => 0,
-                                    );
-                                    $this->Answer->save($answerToSave);
+                                
+                                if (strpos($criterion['ViCriterium']['values'], ',') === false) {
+                                    $criterion_values = array($criterion['ViCriterium']['values']);
+                                } else {
+                                    $criterion_values = explode(',', $criterion['ViCriterium']['values']);
                                 }
-                            }
-                        } else {
-                            foreach ($values as $value) {
-
-                                $answerToSave = array(
-                                    'question_id' => $question['id'],
-                                    'client_id' => $this->Client->id,
-                                    'survey_instance_id' => $id,
-                                    'value' => $value,
-                                    'isDeleted' => 0,
-                                );
-                                $this->Answer->save($answerToSave);
+                                foreach ($criterion_values as $c_value) {
+                                    switch ($criterion['ViCriterium']['relational_operator']) {
+                                        case '<':
+                                            if ($value < $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '>':
+                                            if ($value > $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '=':
+                                            if ($value == $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '<=':
+                                            if ($value <= $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                        case '>=':
+                                            if ($value >= $c_value) {
+                                                $vi_score += $criterion['ViCriterium']['weight'];
+                                            }
+                                            break;
+                                    }
+                                }
                             }
                         }
                     }
