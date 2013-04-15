@@ -26,9 +26,9 @@
 		<?php echo $title_for_layout; ?>
 	</title>
 
+        <?php echo $this->Html->script('global'); ?>
         <?php echo $this->Html->script('jquery-1.9.0.min.js'); ?>
         <?php echo $this->Html->script('jquery-ui-1.10.0.custom.min.js'); ?>
-        <?php echo $this->Html->script('global'); ?>
         <?php echo $this->Html->script('NavActions.js'); ?>
 
         <?php
