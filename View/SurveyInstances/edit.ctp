@@ -14,9 +14,28 @@
     });
 </script>
 
+<script>
+    $(function() {
+        var fullDate = new Date();
+        var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
+
+        $('#ClientDob.datepicker').datepicker({
+            maxDate: fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear(),
+            beforeShowDay: disableSpecificWeekDays
+        });
+
+        function disableSpecificWeekDays(date) 
+        {
+            if(date.getDay()==0){
+                return [true];
+            }else{
+                return [false];
+            }
+        }
+    })
+</script>
 
 <?php include("surveyInstanceDiv.ctp"); ?>
-
 <div class="surveyInstances form">
     <h2>Edit Survey</h2>
     <table>

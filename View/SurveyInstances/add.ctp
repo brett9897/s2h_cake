@@ -13,6 +13,19 @@
         });
     });
     
+    $(function() {
+        $('#ClientDob.datepicker').datepicker('destroy');
+        $('#ClientDob.datepicker').removeClass('hasDatepicker');
+
+        $('#ClientDob.datepicker').datepicker({
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            yearRange: "-100:+0",
+            maxDate: '+0d'
+        });
+    })
+
     function checkIfClientExists() {
     
         //retrieving DOM data

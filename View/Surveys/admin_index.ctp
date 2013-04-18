@@ -22,8 +22,8 @@
 			<?php echo $this->Html->link($survey['Organization']['name'], array('controller' => 'organizations', 'action' => 'view', $survey['Organization']['id'])); ?>
 		</td>
 		<td><?php echo h($survey['Survey']['label']); ?>&nbsp;</td>
-		<td><?php echo h($survey['Survey']['created']); ?>&nbsp;</td>
-		<td><?php echo h($survey['Survey']['modified']); ?>&nbsp;</td>
+		<td><?php echo h(date('m/d/Y h:i:s', strtotime($survey['Survey']['created']))); ?>&nbsp;</td>
+		<td><?php echo h(date('m/d/Y h:i:s', strtotime($survey['Survey']['modified']))); ?>&nbsp;</td>
 		<?php if( $survey['Survey']['isActive'] == true ): ?>
 			<td>
 				<?php 

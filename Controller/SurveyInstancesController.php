@@ -148,13 +148,32 @@ class SurveyInstancesController extends AppController {
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
-                $validations = array($question['validation_1'], $question['validation_2'],
-                    $question['validation_3'], $question['validation_4']);
-
                 if ($question['is_required']) {
                     //              array_push($validations, 'notempty');
                 }
-                $this->Client->addValidator($question['internal_name'], $validations);
+                if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
+                    'rule' => $question['validation_1'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_1']
+                ));
+
+                if( $question['validation_2'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_2', array(
+                    'rule' => $question['validation_2'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_2']
+                ));
+
+                if( $question['validation_3'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_3', array(
+                    'rule' => $question['validation_3'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_3']
+                ));
+                
+                if( $question['validation_4'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_4', array(
+                    'rule' => $question['validation_4'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_4']
+                ));
             }
         }
 
@@ -430,24 +449,43 @@ class SurveyInstancesController extends AppController {
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
-                $validations = array($question['validation_1'], $question['validation_2'],
-                    $question['validation_3'], $question['validation_4']);
-
                 if ($question['is_required']) {
                     //              array_push($validations, 'notempty');
                 }
-                $this->Client->addValidator($question['internal_name'], $validations);
+                if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
+                    'rule' => $question['validation_1'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_1']
+                ));
+
+                if( $question['validation_2'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_2', array(
+                    'rule' => $question['validation_2'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_2']
+                ));
+
+                if( $question['validation_3'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_3', array(
+                    'rule' => $question['validation_3'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_3']
+                ));
+                
+                if( $question['validation_4'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_4', array(
+                    'rule' => $question['validation_4'],
+                    'allowEmpty' => true,
+                    'message' => $question['v_message_4']
+                ));
             }
         }
 
         /*         * **************************** POST ********************************* */
-        if ($this->request->is('post')) {
+        if ($this->request->is('post') || $this->request->is('put')) {
             //first, we need to save data into the client table
             $this->Client->id = $client['Client']['id'];
             $this->request->data['Client']['organization_id'] = $client['Client']['organization_id'];
             $this->request->data['Client']['id'] = $this->Client->id;
             $this->request->data['Client']['dob'] = date("Y-m-d", strtotime($this->request->data['dateDOB']));
-            debug($this->request->data);
+            //debug($this->request->data);
             if ($this->Client->save($this->request->data)) {
 
                 //used to calculate vi_score as we go along
@@ -655,6 +693,7 @@ class SurveyInstancesController extends AppController {
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash("The Client Could not Be Saved");
+                $this->request->data['Client']['dob'] = date("m/d/Y", strtotime($this->request->data['Client']['dob']));
             }
         } else {
 
