@@ -47,8 +47,6 @@
     </head>
     
     <body>
-         
-        <?php echo Configure::version(); ?>
         <div id="container">
 
             <div id="header">

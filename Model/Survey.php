@@ -82,6 +82,7 @@ class Survey extends AppModel {
                             $new_question['survey_id'] = $this->id;
                             $new_question['grouping_id'] = $this->Grouping->id;
                             $new_survey['Question'][] = $new_question;
+
                         }
                     }
             
@@ -95,23 +96,41 @@ class Survey extends AppModel {
                 $i++;
             }
 
+            $new_survey['ViCriterium'] = array();
+            $i = 0;
             //now save questions
             //can't do saveAll because it creates a nested transaction.
             foreach( $new_survey['Question'] as $question )
             {
                 $this->Question->create();
-                if( !$this->Question->save($question) )
+                if( $this->Question->save($question) )
+                {
+                    foreach( $old_survey['ViCriterium'] as $vi )
+                    {
+                        if( $vi['question_id'] == $old_survey['Question'][$i]['id'] )
+                        {
+                            $new_vi = $vi;
+                            unset($new_vi['id']);
+                            unset($new_vi['created']);
+                            unset($new_vi['modified']);
+                            $new_vi['survey_id'] = $this->id;
+                            $new_vi['question_id'] = $this->Question->id;
+                            $new_survey['ViCriterium'][] = $new_vi;
+                        }
+                    }
+                }
+                else
                 {
                     $dataSource->rollback();
                     return false;
                 }
+
+                $i++;
             }
 
             //now save vi criteria
-            foreach( $old_survey['ViCriterium'] as $vi )
+            foreach( $new_survey['ViCriterium'] as $vi )
             {
-                unset($vi['id']);
-                $vi['survey_id'] = $this->id;
                 $this->ViCriterium->create();
                 if( !$this->ViCriterium->save($vi) )
                 {
