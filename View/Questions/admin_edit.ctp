@@ -61,6 +61,7 @@
 	<form>
 		<fieldset>
 			<?php echo $this->Form->input('validation_id', array('type' => 'select', 'options' => $validation_options));?>
+			<?php echo $this->Form->input('validation_message', array('type' => 'text', 'required' => true));?>
 		</fieldset>
 	</form>
 </div>

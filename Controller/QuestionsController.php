@@ -180,6 +180,13 @@ class QuestionsController extends AppController {
 			throw new NotFoundException(__('Invalid question'));
 		}
 		if ($this->request->is('post') || $this->request->is('put')) {
+
+			//if validations aren't set the value needs to be set to null
+			$this->request->data['Question']['validation_1'] = (isset($this->request->data['Question']['validation_1'])) ? $this->request->data['Question']['validation_1'] : null;
+			$this->request->data['Question']['validation_2'] = (isset($this->request->data['Question']['validation_2'])) ? $this->request->data['Question']['validation_2'] : null;
+			$this->request->data['Question']['validation_3'] = (isset($this->request->data['Question']['validation_3'])) ? $this->request->data['Question']['validation_3'] : null;
+			$this->request->data['Question']['validation_4'] = (isset($this->request->data['Question']['validation_4'])) ? $this->request->data['Question']['validation_4'] : null;
+
 			if ($this->Question->save($this->request->data)) {
 
 				//remove options and re-save
@@ -200,14 +207,15 @@ class QuestionsController extends AppController {
 				}
 
 				$this->Session->setFlash(__('The question has been saved'));
-				$data = $this->Question->read(null, $this->request->data['Question']['id']);
+				$data = $this->Question->read(null, $id);
 				$this->redirect(array('controller' => 'surveys', 'action' => 'edit', $data['Question']['survey_id']));
 			} else {
 				$this->Session->setFlash(__('The question could not be saved. Please, try again.'));
+				$data = $this->Question->read(null, $id);
+				$this->request->data['Question']['survey_id'] = $data['Question']['survey_id'];
 			}
 		} else {
 			$this->request->data = $this->Question->read(null, $id);
-
 			$options = '';
 			foreach( $this->request->data['Option'] as $option )
 			{
@@ -221,7 +229,7 @@ class QuestionsController extends AppController {
 		$currentValidations = array();
 		for( $i=1; $i < 5; $i++ )
 		{
-			if( $this->request->data['Question']['validation_' . $i] != null )
+			if( isset($this->request->data['Question']['validation_' . $i]) )
 			{
 				$response = $this->InternalValidation->find('all', array( 
 					'fields' => array('regex', 'label'), 

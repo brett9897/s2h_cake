@@ -1,4 +1,4 @@
-<?php $this->Html->script('Questions/admin_add.min.js', false);?>
+<?php $this->Html->script('Questions/admin_add.js', false);?>
 <?php $this->Html->css('Questions/admin_add', null, array('inline' => false)); ?>
 <div class="actionsNoButton">
 	<?php echo $this->Html->link(__('List Surveys'), array('controller' => 'surveys', 'action' => 'index')); ?><br/>
@@ -50,6 +50,7 @@
 	<form>
 		<fieldset>
 			<?php echo $this->Form->input('validation_id', array('type' => 'select', 'options' => $validation_options));?>
+			<?php echo $this->Form->input('validation_message', array('type' => 'text', 'required' => true));?>
 		</fieldset>
 	</form>
 </div>

@@ -383,6 +383,9 @@ class SurveyInstancesController extends AppController {
                 $this->redirect(array('action' => 'index'));
             } else {
                 $this->Session->setFlash("The Survey Could not Be Saved");
+                
+                //need to update date to be in the correct format for displaying
+                $this->request->data['Client']['dob'] = $this->request->data['dateDOB'];
             }
         }
     }

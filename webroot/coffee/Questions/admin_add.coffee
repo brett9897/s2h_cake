@@ -1,6 +1,6 @@
 $ ->
 	$(document).ready ->
-		
+		count = $('.validation_entry').length + 1
 		$('#QuestionTypeId').change ->
 			performChange()
 
@@ -14,7 +14,6 @@ $ ->
 					$('#added_options').val ''
 			return
 
-		count = 1
 		$('#validations').on 'click', ->
 			if count < 5
 				$('#validations_form').dialog 'open'
