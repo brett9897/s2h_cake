@@ -16,22 +16,12 @@
 
 <script>
     $(function() {
-        var fullDate = new Date();
-        var twoDigitMonth = ((fullDate.getMonth().length+1) === 1)? (fullDate.getMonth()+1) : '0' + (fullDate.getMonth()+1);
+        $('#ClientDob.datepicker').datepicker('destroy');
+        $('#ClientDob.datepicker').removeClass('hasDatepicker');
 
         $('#ClientDob.datepicker').datepicker({
             maxDate: fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear(),
-            beforeShowDay: disableSpecificWeekDays
         });
-
-        function disableSpecificWeekDays(date) 
-        {
-            if(date.getDay()==0){
-                return [true];
-            }else{
-                return [false];
-            }
-        }
     })
 </script>
 
