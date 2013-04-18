@@ -48,6 +48,9 @@
 					<input type="hidden" id="validation_<?php echo $count;?>" 
 						name="data[Question][validation_<?php echo $count;?>]" 
 						value="<?php echo $validation['regex'];?>" />
+					<input type="hidden" id="v_message_<?php echo $count;?>"
+						name="data[Question][v_message_<?php echo $count;?>]"
+						value="<?php echo $validation['message'];?>" />
 					<p><span class="text"><?php echo $validation['label'];?></span><span class="remove_image"><?php echo $count;?></span></p>
 				</div>
 				<?php $count++; ?>
@@ -61,7 +64,7 @@
 	<form>
 		<fieldset>
 			<?php echo $this->Form->input('validation_id', array('type' => 'select', 'options' => $validation_options));?>
-			<?php echo $this->Form->input('validation_message', array('type' => 'text', 'required' => true));?>
+			<?php echo $this->Form->input('validation_message', array('type' => 'text'));?>
 		</fieldset>
 	</form>
 </div>

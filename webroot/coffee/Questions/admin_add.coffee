@@ -28,10 +28,13 @@ $ ->
 				"Add validation": ->
 					val = $('#validation_id').val()
 					text = $('#validation_id > option:selected').text()
+					message = if $('#validation_message').val().trim() isnt '' then $('#validation_message').val().trim() else 'Invalid input'
+					$('#validation_message').val('')
 					$('#validation_text').append(
 						"
 							<div class='validation_entry'>
 								<input type='hidden' id='validation_#{count}' name='data[Question][validation_#{count}]' value='#{val}' />
+								<input type='hidden' id='v_message_#{count}' name='data[Question][v_message_#{count}]' value='#{message}' />
 								<p><span class='text'>#{text}</span><span class='remove_image'>#{count}</span></p>
 							</div>
 						"
@@ -52,7 +55,7 @@ $ ->
 			if parseInt($(@).text()) isnt total
 				while current.length > 0
 					input = current.find 'input[type=hidden]'
-					remove_image = input.next().find '.remove_image'
+					remove_image = input.next().next().find '.remove_image'
 					num = parseInt(remove_image.text()) - 1
 
 					remove_image.text num

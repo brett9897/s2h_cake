@@ -239,7 +239,8 @@ class QuestionsController extends AppController {
 
 				$currentValidations[] = array( 
 					'label' => $response[0]['InternalValidation']['label'],
-					'regex' => $response[0]['InternalValidation']['regex']
+					'regex' => $response[0]['InternalValidation']['regex'],
+					'message' => $this->request->data['Question']['v_message_' . $i]
 				);
 			}
 		}
