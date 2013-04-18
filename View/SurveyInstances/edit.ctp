@@ -20,7 +20,11 @@
         $('#ClientDob.datepicker').removeClass('hasDatepicker');
 
         $('#ClientDob.datepicker').datepicker({
-            maxDate: fullDate.getDate() + "/" + twoDigitMonth + "/" + fullDate.getFullYear(),
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            yearRange: "-100:+0",
+            maxDate: '+0d'
         });
     })
 </script>

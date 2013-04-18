@@ -148,8 +148,8 @@ class SurveyInstancesController extends AppController {
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
-                if ($question['is_required']) {
-                    //              array_push($validations, 'notempty');
+                if ($question['is_required'] && $question['Type']['label'] === 'text') {
+                    $this->Client->validator()->add($question['internal_name'], 'required', array('rule' => 'notEmpty'));
                 }
                 if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
                     'rule' => $question['validation_1'],
@@ -449,8 +449,8 @@ class SurveyInstancesController extends AppController {
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
-                if ($question['is_required']) {
-                    //              array_push($validations, 'notempty');
+                if ($question['is_required'] && $question['Type']['label'] === 'text') {
+                    $this->Client->validator()->add($question['internal_name'], 'required', array('rule' => 'notEmpty'));
                 }
                 if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
                     'rule' => $question['validation_1'],
@@ -498,6 +498,7 @@ class SurveyInstancesController extends AppController {
                             continue;
 
                         $values = $this->request->data['Client'][$question['internal_name']];
+                        //debug($values);
 
                         if (gettype($values) != 'array') {
                             $valuesTemp = $values;
@@ -508,27 +509,48 @@ class SurveyInstancesController extends AppController {
                         //figure out if there is a vi_criterion for this question
                         $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
 
+                        //highly inefficient but I need the primary key so that it is updated instead of a new answer created.
+                        $resp = $this->Answer->find('all', array(
+                            'recursive' => -1, 
+                            'conditions' => array(
+                                'question_id' => $question['id'], 
+                                'client_id' => $this->Client->id,
+                                'survey_instance_id' => $this->SurveyInstance->id
+                            )
+                        ));
+
+                        
+                        for( $i = count($values); $i < count($resp); $i++ ) //mark extra values as deleted
+                        {
+                            $this->Answer->id = $resp[$i]['Answer']['id'];
+                            $this->Answer->saveField('isDeleted', 1);
+                        }
+                        $this->Answer->id = null;
+
+                        $i = 0;
                         //this is a much more coherent way of doing it. 
                         foreach ($values as $value) {
-                            //highly inefficient but I need the primary key so that it is updated instead of a new answer created.
-                            $resp = $this->Answer->find('first', array(
-                                'recursive' => -1, 
-                                'conditions' => array(
-                                    'question_id' => $question['id'], 
+                            
+                            //debug($resp);
+                            if( isset($resp[$i]) && isset($resp[$i]['Answer']['value']) )
+                            {
+                               $resp[$i]['Answer']['value'] = $value;
+                               $resp[$i]['Answer']['isDeleted'] = 0;
+                               $this->Answer->save($resp[$i]);
+                            }
+                            else //if it doesn't previously exist create a new entry
+                            {
+                                $answerToSave = array(
+                                    'question_id' => $question['id'],
                                     'client_id' => $this->Client->id,
-                                    'survey_instance_id' => $this->SurveyInstance->id
-                                )
-                            ));
-
-                            $resp['Answer']['value'] = $value;
-                            /*$answerToSave = array(
-                                'question_id' => $question['id'],
-                                'client_id' => $this->Client->id,
-                                'survey_instance_id' => $this->SurveyInstance->id,
-                                'value' => $value,
-                                'isDeleted' => 0,
-                            );*/
-                            $this->Answer->save($resp);
+                                    'survey_instance_id' => $this->SurveyInstance->id,
+                                    'value' => $value,
+                                    'isDeleted' => 0,
+                                );
+                                $this->Answer->create();
+                                $this->Answer->save($answerToSave);
+                            }
+                            $i++;
 
                             foreach ($criteria as $criterion) {
                                 
@@ -711,14 +733,24 @@ class SurveyInstancesController extends AppController {
 
             foreach ($groupings as $grouping) {
                 foreach ($grouping['Question'] as $question) {
-                    $answer = $this->Answer->find('first', array(
+                    $answer = $this->Answer->find('all', array(
                         'conditions' => array(
                             'question_id' => $question['id'],
-                            'Answer.client_id' => $client['Client']['id']
+                            'Answer.client_id' => $client['Client']['id'],
+                            'Answer.survey_instance_id' => $id,
+                            'Answer.isDeleted' => 0
                         )
                     ));
 
                     $autopopulateQ = $question['internal_name'];
+
+                    $final_answer = array();
+                    foreach( $answer as $ans )
+                    {
+                        $final_answer[] = $ans['Answer']['value'];
+                    }
+
+                    
 
                     //putting "other" value in the right place
                     if ($question['Type']['label'] == 'selectWithOther' || $question['Type']['label'] == "checkboxWithOther") {
@@ -730,7 +762,7 @@ class SurveyInstancesController extends AppController {
 
                         $sentinel = true;
                         foreach ($options as $option) {
-                            if ($option['Option']['label'] == $answer['Answer']['value']) {
+                            if ($option['Option']['label'] == $answer[0]['Answer']['value']) {
                                 $sentinel = false;
                                 break;
                             }
@@ -744,7 +776,7 @@ class SurveyInstancesController extends AppController {
                         }
                     }
 
-                    $this->request->data['Client'][$autopopulateQ] = $answer['Answer']['value'];
+                    $this->request->data['Client'][$autopopulateQ] = (count($final_answer) > 1) ? $final_answer : $final_answer[0];
                 }
             }
         }

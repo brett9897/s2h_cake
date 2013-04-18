@@ -166,7 +166,7 @@ class SurveyInstance extends AppModel {
                 $cId = $this->Question->find('first', array('recursive' => -1, 'fields' => 'Question.id', 'conditions' => array( 'Question.internal_name' => $col, 'Question.survey_id' => $survey_id)));
                 
                 $cParams = array('recursive' => -1);
-                $cConditions = array('Answer.question_id' => $cId['Question']['id']);
+                $cConditions = array('Answer.question_id' => $cId['Question']['id'], 'Answer.isDeleted' => 0);
                 $cParams['conditions'] = $cConditions;
                 $cParams['order'] = array('Answer.client_id ASC');
                 $customData = $this->Answer->find('all', $cParams);
