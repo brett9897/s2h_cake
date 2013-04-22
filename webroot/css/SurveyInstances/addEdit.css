@@ -66,3 +66,8 @@ td > div.input.error
     font-weight: normal;
     padding-top: 5px;
 }
+
+input.other.form-error
+{
+    margin-bottom: 10px;
+}

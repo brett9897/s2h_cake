@@ -148,32 +148,48 @@ class SurveyInstancesController extends AppController {
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
-                if ($question['is_required'] && $question['Type']['label'] === 'text') {
-                    $this->Client->validator()->add($question['internal_name'], 'required', array('rule' => 'notEmpty'));
+               if( $question['Type']['label'] === "checkboxWithOther" )
+                {
+                    if ($question['is_required']) {
+                        $this->Client->validator()->add($question['internal_name'], 'combo_required', array(
+                            'rule' => array(
+                                'combined_field_rule',
+                                $question['internal_name'] . ' - checkbox other',
+                                'notEmpty',
+                            ),
+                            'message' => 'A value must be entered!'
+                        ));
+                    }
                 }
-                if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
-                    'rule' => $question['validation_1'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_1']
-                ));
+                else
+                {
+                    if ($question['is_required']) {
+                        $this->Client->validator()->add($question['internal_name'], 'required', array('rule' => 'notEmpty', 'message' => 'A value must be entered!'));
+                    }
+                    if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
+                        'rule' => $question['validation_1'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_1']
+                    ));
 
-                if( $question['validation_2'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_2', array(
-                    'rule' => $question['validation_2'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_2']
-                ));
+                    if( $question['validation_2'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_2', array(
+                        'rule' => $question['validation_2'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_2']
+                    ));
 
-                if( $question['validation_3'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_3', array(
-                    'rule' => $question['validation_3'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_3']
-                ));
-                
-                if( $question['validation_4'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_4', array(
-                    'rule' => $question['validation_4'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_4']
-                ));
+                    if( $question['validation_3'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_3', array(
+                        'rule' => $question['validation_3'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_3']
+                    ));
+                    
+                    if( $question['validation_4'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_4', array(
+                        'rule' => $question['validation_4'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_4']
+                    ));
+                }
             }
         }
 
@@ -449,32 +465,49 @@ class SurveyInstancesController extends AppController {
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
             foreach ($grouping['Question'] as $question) {
-                if ($question['is_required'] && $question['Type']['label'] === 'text') {
-                    $this->Client->validator()->add($question['internal_name'], 'required', array('rule' => 'notEmpty'));
+
+                if( $question['Type']['label'] === "checkboxWithOther" )
+                {
+                    if ($question['is_required']) {
+                        $this->Client->validator()->add($question['internal_name'], 'combo_required', array(
+                            'rule' => array(
+                                'combined_field_rule',
+                                $question['internal_name'] . ' - checkbox other',
+                                'notEmpty',
+                            ),
+                            'message' => 'A value must be entered!'
+                        ));
+                    }
                 }
-                if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
-                    'rule' => $question['validation_1'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_1']
-                ));
+                else
+                {
+                    if ($question['is_required']) {
+                        $this->Client->validator()->add($question['internal_name'], 'required', array('rule' => 'notEmpty', 'message' => 'A value must be entered!'));
+                    }
+                    if( $question['validation_1'] != null ) $this->Client->validator()->add($question['internal_name'], 'custom_val_1', array(
+                        'rule' => $question['validation_1'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_1']
+                    ));
 
-                if( $question['validation_2'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_2', array(
-                    'rule' => $question['validation_2'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_2']
-                ));
+                    if( $question['validation_2'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_2', array(
+                        'rule' => $question['validation_2'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_2']
+                    ));
 
-                if( $question['validation_3'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_3', array(
-                    'rule' => $question['validation_3'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_3']
-                ));
-                
-                if( $question['validation_4'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_4', array(
-                    'rule' => $question['validation_4'],
-                    'allowEmpty' => true,
-                    'message' => $question['v_message_4']
-                ));
+                    if( $question['validation_3'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_3', array(
+                        'rule' => $question['validation_3'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_3']
+                    ));
+                    
+                    if( $question['validation_4'] != null )$this->Client->validator()->add($question['internal_name'], 'custom_val_4', array(
+                        'rule' => $question['validation_4'],
+                        'allowEmpty' => true,
+                        'message' => $question['v_message_4']
+                    ));
+                }
             }
         }
 
@@ -485,11 +518,15 @@ class SurveyInstancesController extends AppController {
             $this->request->data['Client']['organization_id'] = $client['Client']['organization_id'];
             $this->request->data['Client']['id'] = $this->Client->id;
             $this->request->data['Client']['dob'] = date("Y-m-d", strtotime($this->request->data['dateDOB']));
+
             //debug($this->request->data);
             if ($this->Client->save($this->request->data)) {
 
                 //used to calculate vi_score as we go along
                 $vi_score = 0;
+
+                //used to help with saving other.
+                $total_values = array();
 
                 //then we need to save all the answers
                 foreach ($groupings as $grouping) {
@@ -519,7 +556,12 @@ class SurveyInstancesController extends AppController {
                             )
                         ));
 
-                        
+                        //if it is a checkbox with other and there is another value append it to the values
+                        if( isset( $this->request->data['Client'][$question['internal_name'] . ' - checkbox other']) )
+                        {
+                            $values[] = $this->request->data['Client'][$question['internal_name'] . ' - checkbox other'];
+                        }
+
                         for( $i = count($values); $i < count($resp); $i++ ) //mark extra values as deleted
                         {
                             $this->Answer->id = $resp[$i]['Answer']['id'];
@@ -531,7 +573,7 @@ class SurveyInstancesController extends AppController {
                         //this is a much more coherent way of doing it. 
                         foreach ($values as $value) {
                             
-                            //debug($resp);
+                            //debug($value);
                             if( isset($resp[$i]) && isset($resp[$i]['Answer']['value']) )
                             {
                                $resp[$i]['Answer']['value'] = $value;
@@ -675,16 +717,17 @@ class SurveyInstancesController extends AppController {
                                 }
                                 break;
 
-                            //checkbox with other
-                            case("checkbox other"):
+                            //checkbox with other  ---- this logic has been moved.
+                            /*case("checkbox other"):
                                 if (!empty($value)) {
                                     $fixedKey = str_replace(' - checkbox other', '', $key);
                                     $assocQuestion = $this->Question->find('first', array(
                                         'conditions' => array(
                                             'internal_name' => $fixedKey
                                         )
-                                            ));
+                                    ));
 
+                                    debug("Here");
                                     $answerToSave = array(
                                         'question_id' => $assocQuestion['Question']['id'],
                                         'client_id' => $this->Client->id,
@@ -692,9 +735,10 @@ class SurveyInstancesController extends AppController {
                                         'value' => $value,
                                         'isDeleted' => 0,
                                     );
-                                    $this->Answer->save($answerToSave);
+                                    //$this->Answer->save($answerToSave);
                                 }
                                 break;
+                            */
                         }
                     }
                 }
@@ -716,6 +760,7 @@ class SurveyInstancesController extends AppController {
             } else {
                 $this->Session->setFlash("The Client Could not Be Saved");
                 $this->request->data['Client']['dob'] = date("m/d/Y", strtotime($this->request->data['Client']['dob']));
+
             }
         } else {
 
@@ -750,7 +795,7 @@ class SurveyInstancesController extends AppController {
                         $final_answer[] = $ans['Answer']['value'];
                     }
 
-                    
+                    if( count($final_answer) === 0 ) $final_answer[] = null;
 
                     //putting "other" value in the right place
                     if ($question['Type']['label'] == 'selectWithOther' || $question['Type']['label'] == "checkboxWithOther") {
@@ -760,19 +805,30 @@ class SurveyInstancesController extends AppController {
                             )
                         ));
 
-                        $sentinel = true;
-                        foreach ($options as $option) {
-                            if ($option['Option']['label'] == $answer[0]['Answer']['value']) {
-                                $sentinel = false;
-                                break;
+                        $i = 0;
+                        foreach( $answer as $ans )
+                        {
+                            $sentinel = true;
+                            foreach ($options as $option) {
+                                if ($option['Option']['label'] == $ans['Answer']['value']) {
+                                    $sentinel = false;
+                                    break;
+                                }
                             }
-                        }
 
-                        if ($sentinel) {
-                            if ($question['Type']['label'] == 'selectWithOther')
-                                $autopopulateQ = $autopopulateQ . " - OTHER";
-                            else
-                                $autopopulateQ = $autopopulateQ . " - checkbox other";
+                            if ($sentinel) {
+                                if ($question['Type']['label'] == 'selectWithOther')
+                                {
+                                    $autopopulateQ = $autopopulateQ . " - OTHER";
+                                }
+                                else
+                                {
+                                    $this->request->data['Client'][$autopopulateQ . ' - checkbox other'] = $ans['Answer']['value'];
+                                    unset($final_answer[$i]);
+                                }
+                            }
+
+                            $i++;
                         }
                     }
 
@@ -1146,4 +1202,3 @@ class SurveyInstancesController extends AppController {
     }
 
 }
-

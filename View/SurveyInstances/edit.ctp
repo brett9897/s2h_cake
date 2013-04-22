@@ -1,7 +1,7 @@
 <?php echo $this->Html->script('ajaxupload-min.js', FALSE); ?>
 <?php echo $this->Html->css('classicTheme/style'); ?>
 <?php echo $this->Html->script("SurveyInstances/add.js", FALSE); ?>
-<?php echo $this->Html->css("SurveyInstances/addEdit"); ?>
+<?php echo $this->Html->css("SurveyInstances/addEdit", null, array('inline' => false)); ?>
 
 <script>
     $(function() {

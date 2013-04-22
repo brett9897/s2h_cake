@@ -124,13 +124,15 @@ class QuestionHelper extends AppHelper {
                     'multiple' => 'checkbox',
                     'label' => '',
                     'type' => 'select',
-                    'options' => $options
-                        ));
-                $output .= "<br />";
+                    'options' => $options,
+                    'errorMessage' => false
+                ));
+
                 $output .= $this->Form->input($internalName . ' - checkbox other', array(
                     'type' => 'text',
-                    'label' => 'Other'
-                        ));
+                    'label' => 'Other',
+                    'class' => 'other'
+                ));
                 break;
 
 

@@ -1,6 +1,7 @@
 <?php
 
 App::uses('AppModel', 'Model');
+App::uses('Validation', 'Utility');
 
 /**
  * Client Model
@@ -140,6 +141,40 @@ class Client extends AppModel {
                     'message' => 'Invalid Input'
                     )));
         }
+    }
+
+    public function combined_field_rule($field = array(), $compare_field=null, $rule=null, $validation=array() )
+    {
+        $mainName = null;
+        foreach( $field as $internal_name => $values )
+        {
+            $mainName = $internal_name;
+            break;
+        }
+
+        $allGood = true;
+        if( is_array($field[$mainName]) )
+        {
+            foreach( $field[$mainName] as $val )
+            {
+                if( !Validation::$rule($val) )
+                {
+                    $allGood = false;
+                }
+            }
+        }
+        else
+        {
+            $allGood = Validation::$rule($field[$mainName]);
+        }
+
+        if( $allGood === true || Validation::$rule($this->data[$this->name][$compare_field]) )
+        {
+            return true;
+        }
+
+        $this->invalidate($compare_field, $validation['message']);
+        return false;
     }
 
 }
