@@ -23,20 +23,23 @@ class QuestionHelper extends AppHelper {
             //text fields with refused option
             case "textWithRefused":
             case "textAreaWithRefused":
-                $output .= "<div>";
+                //$output .= "<div>";
                 $output .= $this->Form->input($internalName, array(
-                    'type' => $type,
+                    'type' => substr($type, 0, strpos($type, 'WithRefused')),
                     'label' => '',
                     'style' => 'clear: none; float: left;',
-                    'div' => false
-                        ));
+                    //'div' => false,
+                    'required' => false,
+                    'errorMessage' => false
+                ));
                 $output .= $this->Form->input($internalName . ' - REFUSED', array(
                     'type' => 'checkbox',
                     'label' => 'Refused',
                     'style' => 'clear: none; float: left; margin-left: 20px',
-                    'div' => false
-                        ));
-                $output .= "</div>";
+                    //'div' => false,
+                    'class' => 'refused'
+                ));
+                //$output .= "</div>";
                 break;
 
             //multi-select checkboxes

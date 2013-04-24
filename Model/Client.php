@@ -187,4 +187,38 @@ class Client extends AppModel {
         return false;
     }
 
+     public function refused_rule($field, $compare_field, $rule, $validation)
+     {
+        $mainName = null;
+        foreach( $field as $internal_name => $values )
+        {
+            $mainName = $internal_name;
+            break;
+        }
+
+        $allGood = true;
+        if( is_array($field[$mainName]) )
+        {
+            foreach( $field[$mainName] as $val )
+            {
+                if( !Validation::$rule($val) )
+                {
+                    $allGood = false;
+                }
+            }
+        }
+        else
+        {
+            $allGood = Validation::$rule($field[$mainName]);
+        }
+
+        if( $allGood === true || intval($this->data[$this->name][$compare_field]) === 1)
+        {
+            return true;
+        }
+
+        $this->invalidate($compare_field, $validation['message']);
+        return false;
+     }
+
 }

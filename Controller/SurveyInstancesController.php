@@ -455,7 +455,6 @@ class SurveyInstancesController extends AppController {
                             continue;
 
                         $values = $this->request->data['Client'][$question['internal_name']];
-                        //debug($values);
 
                         if (gettype($values) != 'array') {
                             $valuesTemp = $values;
@@ -586,7 +585,7 @@ class SurveyInstancesController extends AppController {
 
                             //refused
                             case ("REFUSED"):
-                                if (value == 1) {
+                                if ($value == 1) {
                                     $fixedKey = str_replace(' - REFUSED', '', $key);
                                     $assocAnswer = $this->Answer->find('first', array(
                                         'conditions' => array(
@@ -1155,6 +1154,27 @@ class SurveyInstancesController extends AppController {
                 if( $validation != null )
                 {
                     $this->add_combined_field_validation($question['internal_name'], 'OTHER', $validation, $validation, $message, 'AND');
+                }
+            }
+        }
+        elseif( strpos($question['Type']['label'], 'WithRefused') !== false )
+        {
+            if ($question['is_required']) {
+                $this->Client->validator()->add($question['internal_name'], 'refused_required', array(
+                    'rule' => array(
+                        'refused_rule',
+                        $question['internal_name'] . ' - REFUSED',
+                        'notEmpty',
+                    ),
+                    'message' => 'A value must be entered or "Refused" should be checked!'
+                ));
+            }
+
+            foreach($validations as $validation => $message)
+            {
+                if( $validation != null )
+                {
+                    $this->add_combined_field_validation($question['internal_name'], 'REFUSED', $validation, $validation, $message, 'AND');
                 }
             }
         }
