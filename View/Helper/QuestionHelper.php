@@ -89,12 +89,13 @@ class QuestionHelper extends AppHelper {
                     }
                 }
 
+                //$options['other'] = 'Other';
                 $output .= $this->Form->input($internalName, array(
                     'type' => 'select',
                     'options' => $options,
-                    'label' => ''
-                        ));
-                $output .= "<br />";
+                    'label' => '',
+                    'errorMessage' => false
+                ));
                 $output .= $this->Form->input($internalName . " - OTHER", array(
                     'type' => 'text',
                     'label' => 'Other'

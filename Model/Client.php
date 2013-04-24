@@ -143,7 +143,7 @@ class Client extends AppModel {
         }
     }
 
-    public function combined_field_rule($field = array(), $compare_field=null, $rule=null, $validation=array() )
+    public function combined_field_rule($field = array(), $compare_field=null, $rule=null, $and_or, $validation=array() )
     {
         $mainName = null;
         foreach( $field as $internal_name => $values )
@@ -168,9 +168,19 @@ class Client extends AppModel {
             $allGood = Validation::$rule($field[$mainName]);
         }
 
-        if( $allGood === true || Validation::$rule($this->data[$this->name][$compare_field]) )
+        if( $and_or === 'OR' )
         {
-            return true;
+            if( $allGood === true || Validation::$rule($this->data[$this->name][$compare_field]) )
+            {
+                return true;
+            }
+        }
+        else
+        {
+            if( ($allGood === true || $field[$mainName] == null) && (Validation::$rule($this->data[$this->name][$compare_field]) || $this->data[$this->name][$compare_field] == null) )
+            {
+                return true;
+            }
         }
 
         $this->invalidate($compare_field, $validation['message']);
