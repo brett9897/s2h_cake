@@ -125,18 +125,27 @@ class SurveyInstancesController extends AppController {
     public function add() {
         /*         * *************************** RETRIEVING DATA *********************** */
         $current_user = $this->Auth->user();
-        $this->Survey->recursive = 3;
+        $this->Survey->recursive = -1;
         $activeSurvey = $this->Survey->find('first', array(
             'conditions' => array(
                 'isActive' => 1,
                 'Survey.organization_id' => $current_user['organization_id']
             )
-                ));
+        ));
         if (empty($activeSurvey)) {
             $this->Session->setFlash("No Active Surveys Exist For Your Organization");
             $this->redirect(array('action' => 'index'));
         }
-        $groupings = $activeSurvey['Grouping'];
+
+        debug($activeSurvey);
+        $this->Grouping->recursive = -1;
+        $groupings = $this->Grouping->find('all', array(
+            'conditions' => array(
+                'Grouping.survey_id' => $activeSurvey['Survey']['id']
+            )
+        ));
+
+        debug($groupings);
         $personalInformationGrouping = $groupings[0];
 
         //used to fill out the organization drop down box
@@ -147,6 +156,9 @@ class SurveyInstancesController extends AppController {
 
         /*         * ********************************** VALIDATIONS ******************************** */
         foreach ($groupings as $grouping) {
+
+            $grouping['Grouping']
+
             foreach ($grouping['Question'] as $question) {
                 $this->add_validations($question);
             }

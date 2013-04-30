@@ -169,10 +169,10 @@
                         <!-- iterating through all the groupings -->
                         <?php
                         foreach ($groupings as $grouping):
-                            if ($grouping['is_used']):
+                            if ($grouping['Grouping']['is_used']):
                                 //printing out grouping label
-                                if ($grouping['label'] != 'Personal Information'):
-                                    echo "<tr><td><h3>" . $grouping['label'] . "</h3></td></tr>";
+                                if ($grouping['Grouping']['label'] != 'Personal Information'):
+                                    echo "<tr><td><h3>" . $grouping['Grouping']['label'] . "</h3></td></tr>";
                                 endif;
                                 foreach ($grouping['Question'] as $question):
                                     if ($question['is_used']):
