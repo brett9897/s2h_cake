@@ -128,7 +128,8 @@ class SurveyInstancesController extends AppController {
                     'recursive' => -1,
                     'conditions' => array(
                         'Answer.survey_instance_id' => $id,
-                        'Answer.question_id' => $ques['Question']['id']
+                        'Answer.question_id' => $ques['Question']['id'],
+                        'Answer.isDeleted' => 0
                     )
                 ));
 
