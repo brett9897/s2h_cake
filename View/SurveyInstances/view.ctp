@@ -65,10 +65,8 @@
 
                 <?php foreach ($question['Answer'] as $answer): ?>
                     <dd>
-                        <?php if ($answer['SurveyInstance']['id'] == $id): ?>
-                            <?php echo h($answer['value']); ?>
-                            <br />
-                        <?php endif; ?>
+                        <?php echo h($answer['value']); ?>
+                        <br/>
                     </dd>
                 <?php endforeach; ?>
 

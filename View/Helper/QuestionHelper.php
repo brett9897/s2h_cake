@@ -5,7 +5,7 @@ class QuestionHelper extends AppHelper {
     public $helpers = array('Html', 'Form');
 
     public function giveMeInputString($question) {
-        $internalName = $question['internal_name'];
+        $internalName = $question['Question']['internal_name'];
         $type = $question['Type']['label'];
         $output = "";
 

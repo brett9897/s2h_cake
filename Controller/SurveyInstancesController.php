@@ -88,7 +88,7 @@ class SurveyInstancesController extends AppController {
 
         $surveyInstance = $this->SurveyInstance->read(null, $id);
 
-        $this->Grouping->recursive = 3;
+        $this->Grouping->recursive = -1;
         $groupings = $this->Grouping->find('all', array(
             'joins' => array(
                 array(
@@ -107,7 +107,44 @@ class SurveyInstancesController extends AppController {
                 'Grouping.ordering'
             ),
 
+        ));
+
+        foreach($groupings as &$grouping)
+        {
+            $grouping['Question'] = array();
+
+            $grouping_questions = $this->Question->find('all', array(
+                'recursive' => -1,
+                'conditions' => array(
+                    'Question.survey_id' => $grouping['Grouping']['survey_id'],
+                    'Question.grouping_id' => $grouping['Grouping']['id']
+                )
             ));
+
+            foreach($grouping_questions as &$ques)
+            {
+                //get answers
+                $answers = $this->Answer->find('all', array(
+                    'recursive' => -1,
+                    'conditions' => array(
+                        'Answer.survey_instance_id' => $id,
+                        'Answer.question_id' => $ques['Question']['id']
+                    )
+                ));
+
+                $ques['Question']['Answer'][0]['value'] = null;
+                foreach($answers as $answer)
+                {
+                    $ques['Question']['Answer'][0]['value'] .= $answer['Answer']['value'] . ', ';
+                }
+
+                $ques['Question']['Answer'][0]['value'] = substr($ques['Question']['Answer'][0]['value'], 0, -2);
+                $grouping['Question'][] = $ques['Question'];
+            }
+            unset($ques);
+        }
+
+        unset($grouping);
 
         //      var_dump($groupings);
         $this->set('groupings', $groupings);
@@ -118,7 +155,7 @@ class SurveyInstancesController extends AppController {
     }
 
     /**
-     * add method
+     * add method['Question']
      *
      * @return void
      */
@@ -132,37 +169,67 @@ class SurveyInstancesController extends AppController {
                 'Survey.organization_id' => $current_user['organization_id']
             )
         ));
+
         if (empty($activeSurvey)) {
             $this->Session->setFlash("No Active Surveys Exist For Your Organization");
             $this->redirect(array('action' => 'index'));
         }
 
-        debug($activeSurvey);
         $this->Grouping->recursive = -1;
         $groupings = $this->Grouping->find('all', array(
             'conditions' => array(
                 'Grouping.survey_id' => $activeSurvey['Survey']['id']
             )
         ));
-
-        debug($groupings);
-        $personalInformationGrouping = $groupings[0];
+        
 
         //used to fill out the organization drop down box
         $organization_id = $current_user['organization_id'];
-        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
+        $this->set(compact('activeSurvey'));
         $this->set('organization_id', $organization_id);
         $this->set('remotePath', preg_quote("'" . APP . 'webroot' . DS . 'img' . "'"));
 
         /*         * ********************************** VALIDATIONS ******************************** */
-        foreach ($groupings as $grouping) {
+        foreach ($groupings as &$grouping) {
 
-            $grouping['Grouping']
+            $grouping_questions = $this->Question->find('all', array(
+                'recursive' => 0,
+                'conditions' => array(
+                    'Question.survey_id' => $activeSurvey['Survey']['id'],
+                    'Question.grouping_id' => $grouping['Grouping']['id']
+                ) 
+            ));
+
+            $grouping['Question'] = array();
+            foreach( $grouping_questions as &$ques )
+            {
+                //Get options if they exist
+                $question_options = $this->Option->find('all', array(
+                    'recursive' => -1,
+                    'conditions' => array(
+                        'Option.question_id' => $ques['Question']['id']
+                    )
+                ));
+
+                foreach( $question_options as $option)
+                {
+                    $ques['Option'][] = $option['Option'];
+                }
+                $grouping['Question'][] = $ques;
+            }
+            unset($ques);
+
+            unset($grouping_questions); //free up some space
 
             foreach ($grouping['Question'] as $question) {
                 $this->add_validations($question);
             }
         }
+
+        unset($grouping);
+        //debug($groupings);
+        $personalInformationGrouping = $groupings[0];
+        $this->set(compact('groupings', 'personalInformationGrouping'));
 
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post')) {
@@ -201,10 +268,10 @@ class SurveyInstancesController extends AppController {
                 //then we need to save all the answers
                 foreach ($groupings as $grouping) {
                     foreach ($grouping['Question'] as $question) {
-                        if (!isset($this->request->data['Client'][$question['internal_name']]))
+                        if (!isset($this->request->data['Client'][$question['Question']['internal_name']]))
                             continue;
 
-                        $values = $this->request->data['Client'][$question['internal_name']];
+                        $values = $this->request->data['Client'][$question['Question']['internal_name']];
 
                         if (gettype($values) != 'array') {
                             $valuesTemp = $values;
@@ -212,16 +279,16 @@ class SurveyInstancesController extends AppController {
                             $values[0] = $valuesTemp;
                         }
 
-                        $values = $this->add_additional_values($values, $this->request->data['Client'], $question['internal_name']);
+                        $values = $this->add_additional_values($values, $this->request->data['Client'], $question['Question']['internal_name']);
 
                         //figure out if there is a vi_criterion for this question
-                        $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
+                        $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['Question']['id']))));
 
                         //this is a much more coherent way of doing it and it removed all known bugs that we have had.
                         foreach ($values as $value) {
                             $this->Answer->create();
                             $answerToSave = array(
-                                'question_id' => $question['id'],
+                                'question_id' => $question['Question']['id'],
                                 'client_id' => $this->Client->id,
                                 'survey_instance_id' => $this->SurveyInstance->id,
                                 'value' => $value,
@@ -414,34 +481,73 @@ class SurveyInstancesController extends AppController {
             )
         ));
         $current_user = $this->Auth->user();
-        $this->Survey->recursive = 3;
+        $this->Survey->recursive = -1;
         $activeSurvey = $this->Survey->find('first', array(
             'conditions' => array(
                 'isActive' => 1,
                 'Survey.organization_id' => $current_user['organization_id']
             )
         ));
-
+        
         if (empty($activeSurvey)) {
-            $this->request->data['Client'][$question['internal_name'] . ' - checkbox other'];
             $this->Session->setFlash("No Active Surveys Exist For Your Organization");
             $this->redirect(array('action' => 'index'));
         }
 
-        $groupings = $activeSurvey['Grouping'];
-        $personalInformationGrouping = $groupings[0];
+        $this->Grouping->recursive = -1;
+        $groupings = $this->Grouping->find('all', array(
+            'conditions' => array(
+                'Grouping.survey_id' => $activeSurvey['Survey']['id']
+            )
+        ));
+        
 
         //used to fill out the organization drop down box
         $organization_id = $current_user['organization_id'];
-        $this->set(compact('activeSurvey', 'groupings', 'personalInformationGrouping'));
+        $this->set(compact('activeSurvey'));
         $this->set('organization_id', $organization_id);
 
         /*         * ********************************** VALIDATIONS ******************************** */
-        foreach ($groupings as $grouping) {
+        foreach ($groupings as &$grouping) {
+
+            $grouping_questions = $this->Question->find('all', array(
+                'recursive' => 0,
+                'conditions' => array(
+                    'Question.survey_id' => $activeSurvey['Survey']['id'],
+                    'Question.grouping_id' => $grouping['Grouping']['id']
+                ) 
+            ));
+
+            $grouping['Question'] = array();
+            foreach( $grouping_questions as &$ques )
+            {
+                //Get options if they exist
+                $question_options = $this->Option->find('all', array(
+                    'recursive' => -1,
+                    'conditions' => array(
+                        'Option.question_id' => $ques['Question']['id']
+                    )
+                ));
+
+                foreach( $question_options as $option)
+                {
+                    $ques['Option'][] = $option['Option'];
+                }
+                $grouping['Question'][] = $ques;
+            }
+            unset($ques);
+
+            unset($grouping_questions); //free up some space
+
             foreach ($grouping['Question'] as $question) {
                 $this->add_validations($question);
             }
         }
+
+        unset($grouping);
+        //debug($groupings);
+        $personalInformationGrouping = $groupings[0];
+        $this->set(compact('groupings', 'personalInformationGrouping'));
 
         /*         * **************************** POST ********************************* */
         if ($this->request->is('post') || $this->request->is('put')) {
@@ -463,10 +569,10 @@ class SurveyInstancesController extends AppController {
                 //then we need to save all the answers
                 foreach ($groupings as $grouping) {
                     foreach ($grouping['Question'] as $question) {
-                        if (!isset($this->request->data['Client'][$question['internal_name']]))
+                        if (!isset($this->request->data['Client'][$question['Question']['internal_name']]))
                             continue;
 
-                        $values = $this->request->data['Client'][$question['internal_name']];
+                        $values = $this->request->data['Client'][$question['Question']['internal_name']];
 
                         if (gettype($values) != 'array') {
                             $valuesTemp = $values;
@@ -474,16 +580,16 @@ class SurveyInstancesController extends AppController {
                             $values[0] = $valuesTemp;
                         }
 
-                        $values = $this->add_additional_values($values, $this->request->data['Client'], $question['internal_name']);
+                        $values = $this->add_additional_values($values, $this->request->data['Client'], $question['Question']['internal_name']);
 
                         //figure out if there is a vi_criterion for this question
-                        $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['id']))));
+                        $criteria = $this->ViCriterium->find('all', array('conditions' => array('ViCriterium.question_id' => intval($question['Question']['id']))));
 
                         //highly inefficient but I need the primary key so that it is updated instead of a new answer created.
                         $resp = $this->Answer->find('all', array(
                             'recursive' => -1, 
                             'conditions' => array(
-                                'question_id' => $question['id'], 
+                                'question_id' => $question['Question']['id'], 
                                 'client_id' => $this->Client->id,
                                 'survey_instance_id' => $this->SurveyInstance->id
                             )
@@ -511,7 +617,7 @@ class SurveyInstancesController extends AppController {
                             else //if it doesn't previously exist create a new entry
                             {
                                 $answerToSave = array(
-                                    'question_id' => $question['id'],
+                                    'question_id' => $question['Question']['id'],
                                     'client_id' => $this->Client->id,
                                     'survey_instance_id' => $this->SurveyInstance->id,
                                     'value' => $value,
@@ -708,14 +814,14 @@ class SurveyInstancesController extends AppController {
                 foreach ($grouping['Question'] as $question) {
                     $answer = $this->Answer->find('all', array(
                         'conditions' => array(
-                            'question_id' => $question['id'],
+                            'question_id' => $question['Question']['id'],
                             'Answer.client_id' => $client['Client']['id'],
                             'Answer.survey_instance_id' => $id,
                             'Answer.isDeleted' => 0
                         )
                     ));
 
-                    $autopopulateQ = $question['internal_name'];
+                    $autopopulateQ = $question['Question']['internal_name'];
 
                     $final_answer = array();
                     foreach( $answer as $ans )
@@ -729,7 +835,7 @@ class SurveyInstancesController extends AppController {
                     if ($question['Type']['label'] == 'selectWithOther' || $question['Type']['label'] == "checkboxWithOther") {
                         $options = $this->Option->find('all', array(
                             'conditions' => array(
-                                'Option.question_id' => $question['id']
+                                'Option.question_id' => $question['Question']['id']
                             )
                         ));
 
@@ -1135,47 +1241,47 @@ class SurveyInstancesController extends AppController {
     private function add_validations($question)
     {
         $validations = array(
-            $question['validation_1'] => $question['v_message_1'], 
-            $question['validation_2'] => $question['v_message_2'], 
-            $question['validation_3'] => $question['v_message_3'],
-            $question['validation_4'] => $question['v_message_4']
+            $question['Question']['validation_1'] => $question['Question']['v_message_1'], 
+            $question['Question']['validation_2'] => $question['Question']['v_message_2'], 
+            $question['Question']['validation_3'] => $question['Question']['v_message_3'],
+            $question['Question']['validation_4'] => $question['Question']['v_message_4']
         );
 
         if( $question['Type']['label'] === "checkboxWithOther" )
         {
-            if ($question['is_required']) {
-                $this->add_combo_required_validation($question['internal_name'], 'checkbox other');
+            if ($question['Question']['is_required']) {
+                $this->add_combo_required_validation($question['Question']['internal_name'], 'checkbox other');
             }
 
             foreach($validations as $validation => $message)
             {
                 if( $validation != null )
                 {
-                    $this->add_combined_field_validation($question['internal_name'], 'checkbox other', $validation, $validation, $message, 'AND');
+                    $this->add_combined_field_validation($question['Question']['internal_name'], 'checkbox other', $validation, $validation, $message, 'AND');
                 }
             }
         }
         elseif( $question['Type']['label'] === "selectWithOther" )
         {
-            if ($question['is_required']) {
-                $this->add_combo_required_validation($question['internal_name'], 'OTHER');
+            if ($question['Question']['is_required']) {
+                $this->add_combo_required_validation($question['Question']['internal_name'], 'OTHER');
             }
 
             foreach($validations as $validation => $message)
             {
                 if( $validation != null )
                 {
-                    $this->add_combined_field_validation($question['internal_name'], 'OTHER', $validation, $validation, $message, 'AND');
+                    $this->add_combined_field_validation($question['Question']['internal_name'], 'OTHER', $validation, $validation, $message, 'AND');
                 }
             }
         }
         elseif( strpos($question['Type']['label'], 'WithRefused') !== false )
         {
-            if ($question['is_required']) {
-                $this->Client->validator()->add($question['internal_name'], 'refused_required', array(
+            if ($question['Question']['is_required']) {
+                $this->Client->validator()->add($question['Question']['internal_name'], 'refused_required', array(
                     'rule' => array(
                         'refused_rule',
-                        $question['internal_name'] . ' - REFUSED',
+                        $question['Question']['internal_name'] . ' - REFUSED',
                         'notEmpty',
                     ),
                     'message' => 'A value must be entered or "Refused" should be checked!'
@@ -1186,19 +1292,19 @@ class SurveyInstancesController extends AppController {
             {
                 if( $validation != null )
                 {
-                    $this->add_combined_field_validation($question['internal_name'], 'REFUSED', $validation, $validation, $message, 'AND');
+                    $this->add_combined_field_validation($question['Question']['internal_name'], 'REFUSED', $validation, $validation, $message, 'AND');
                 }
             }
         }
         else
         {
-            if ($question['is_required']) {
-                $this->Client->validator()->add($question['internal_name'], 'required', array('rule' => 'notEmpty', 'message' => 'A value must be entered!'));
+            if ($question['Question']['is_required']) {
+                $this->Client->validator()->add($question['Question']['internal_name'], 'required', array('rule' => 'notEmpty', 'message' => 'A value must be entered!'));
             }
 
             foreach( $validations as $validation => $message )
             {
-                if( $validation != null ) $this->Client->validator()->add($question['internal_name'], $validation, array(
+                if( $validation != null ) $this->Client->validator()->add($question['Question']['internal_name'], $validation, array(
                     'rule' => $validation,
                     'allowEmpty' => true,
                     'message' => $message

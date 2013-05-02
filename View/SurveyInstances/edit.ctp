@@ -131,21 +131,21 @@
         <!-- iterating through all the groupings -->
         <?php
         foreach ($groupings as $grouping):
-            if ($grouping['is_used']):
+            if ($grouping['Grouping']['is_used']):
                 //printing out grouping label
-                if ($grouping['label'] != 'Personal Information'):
-                    echo "<tr><td><h3>" . $grouping['label'] . "</h3></td></tr>";
+                if ($grouping['Grouping']['label'] != 'Personal Information'):
+                    echo "<tr><td><h3>" . $grouping['Grouping']['label'] . "</h3></td></tr>";
                 endif;
                 foreach ($grouping['Question'] as $question):
-                    if ($question['is_used']):
+                    if ($question['Question']['is_used']):
                         echo "<tr>";
 
                         //I've broken apart the label from the question in columns to make
                         //things look nicer, which means that I can just use straight up HTML here
-                        if ($question['is_required']):
-                            echo '<td><strong>' . $question['label'] . "<font color='red'>*</font></strong></td>";
+                        if ($question['Question']['is_required']):
+                            echo '<td><strong>' . $question['Question']['label'] . "<font color='red'>*</font></strong></td>";
                         else:
-                            echo "<td>" . $question['label'] . "</td>";
+                            echo "<td>" . $question['Question']['label'] . "</td>";
                         endif;
                         echo "<td>" . $this->Question->giveMeInputString($question) . "</td>";
                         echo "</tr>";
