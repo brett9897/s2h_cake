@@ -64,6 +64,36 @@ class ClientsController extends AppController {
     }
 
     /**
+     * add photo to client method
+     *
+     */  
+    public function add_photo($id = null) {
+        $this->Client->id = $id;
+        if (!$this->Client->exists()) {
+            throw new NotFoundException(__('Invalid client'));
+        }
+        
+        $this->set('remotePath', preg_quote("'" . APP . 'webroot' . DS . 'img' . "'"));
+        
+        if ($this->request->is('post') || $this->request->is('put')) {
+            $client = $this->Client->read(null, $id);
+            $client['Client']['photoName'] = $this->request->data['Client']['photoName'];
+
+            if ($this->Client->save($client)) {
+                $this->Session->setFlash(__('The client\'s photo has been saved'));
+                $this->redirect(array('action' => 'view', $client['Client']['id']));
+            } else {
+                $this->Session->setFlash(__('The client\'s photo could not be saved. Please, try again.'));
+            }
+        } else {
+            $this->request->data = $this->Client->read(null, $id);
+        }
+        $organizations = $this->Client->Organization->find('list');
+        $this->set(compact('organizations'));
+        $this->set('client_id', $id);
+    }
+
+    /**
      * edit method
      *
      * @throws NotFoundException

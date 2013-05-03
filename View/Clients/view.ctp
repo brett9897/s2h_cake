@@ -1,6 +1,8 @@
 <?php $this->Html->css('Clients/view', null, array('inline' => false)); ?>
 <div class="actionsNoButton">
+    <?php echo $this->Html->link(__('View'), array('action' => 'index'), array('class' => 'active_link')); ?> <br/>
     <a href="#">List Survey Instances</a><br/>
+    <?php echo $this->Html->link(__('Update Photo'), array('action' => 'add_photo', $client['Client']['id']));?><br/>
 </div>
 <div class="clients view">
     <h2><?php echo __('Client'); ?></h2>

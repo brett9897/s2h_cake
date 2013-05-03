@@ -12,3 +12,4 @@ nbproject/*
 *.orig
 *.yml
 *.lock
+webroot/img/*.jpg
