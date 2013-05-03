@@ -9,7 +9,7 @@
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
-            yearRange: "-100:+0" 
+            yearRange: "-100:+0"
         });
     });
     
@@ -22,7 +22,15 @@
             changeYear: true,
             showButtonPanel: true,
             yearRange: "-100:+0",
-            maxDate: '+0d'
+            maxDate: '+0d',
+            beforeShow: function(input)
+            {
+                $(input).unbind('blur');
+            },
+            onClose: function(dateText, inst)
+            {
+                checkIfClientExists();
+            }
         });
     })
 
@@ -31,15 +39,12 @@
         //retrieving DOM data
         var firstName = $('#ClientFirstName').val();
         var lastName = $('#ClientLastName').val();
-        var dobMonth = $('#ClientDobMonth').val();
-        var dobDay = $('#ClientDobDay').val();
-        var dobYear = $('#ClientDobYear').val();
+        var dob_in = $('#ClientDob').val();
         var ssn = $('#ClientSsn').val();
         
-        if (firstName != "" && lastName != "" && dobMonth != "" &&
-            dobDay != "" && dobYear != "") { 
-        
-            var dob = dobYear + "-" + dobMonth + "-" + dobDay;
+        if (firstName != "" && lastName != "" && dob_in != "") { 
+            var dob_split = dob_in.split('/');
+            var dob = dob_split[2] + "-" + dob_split[0] + "-" + dob_split[1];
 
             //setting up call
             var data = {
@@ -149,7 +154,6 @@
                                 'label' => '',
                                 'class' => 'datepicker',
                                 'name' => 'dateDOB',
-                                'onBlur' => 'checkIfClientExists()',
                                 'type' => 'text'
                             ));
                             ?>

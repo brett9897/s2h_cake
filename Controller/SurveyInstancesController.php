@@ -39,37 +39,60 @@ class SurveyInstancesController extends AppController {
      *
      * @return void
      */
-    public function index() {
+    public function index($client_id = null) {
         $this->SurveyInstance->recursive = 0;
         $user = $this->Auth->user();
         $user_id = $user['id'];
-        $conditions;
+        $conditions = array();
 
         if ($user['type'] == 'admin') {
             $activeSurvey = $this->Survey->find('first', array(
                 'conditions' => array(
                     'Survey.isActive' => 1,
                     'Survey.organization_id' => $user['organization_id']
-                    )));
-            $this->paginate = array(
-                'conditions' => array(
+            )));
+
+            if( $client_id === null )
+            {
+                $conditions = array(
+                    'Survey.id' => $activeSurvey['Survey']['id']
+                );
+            }
+            else
+            {
+                $conditions = array(
                     'Survey.id' => $activeSurvey['Survey']['id'],
-                )
-            );
+                    'SurveyInstance.client_id' => $client_id
+                );
+            }
+
         } else if ($user['type'] == 'volunteer' || $user['type'] == 'user') {
             $activeSurvey = $this->Survey->find('first', array(
                 'conditions' => array(
                     'Survey.isActive' => 1,
                     'Survey.organization_id' => $user['organization_id']
-                    )));
+            )));
 
-            $this->paginate = array(
-                'conditions' => array(
+            if( $client_id === null )
+            {
+                $conditions = array(
                     'survey_id' => $activeSurvey['Survey']['id'],
                     'SurveyInstance.user_id' => $user_id
-                )
-            );
+                );
+            }
+            else
+            {
+                $conditions = array(
+                    'survey_id' => $activeSurvey['Survey']['id'],
+                    'SurveyInstance.user_id' => $user_id,
+                    'SurveyInstance.client_id' => $client_id
+                );
+            }
         }
+
+        $this->paginate = array(
+            'conditions' => $conditions
+        );
         $this->set('surveyInstances', $this->paginate($this->SurveyInstance));
     }
 
@@ -1179,7 +1202,8 @@ class SurveyInstancesController extends AppController {
                 'ssn' => $ssn,
                 'organization_id' => $userOrganization
             )
-                ));
+        ));
+
         $response = 0;
         if (!empty($client))
             $response = $client['Client']['id'];

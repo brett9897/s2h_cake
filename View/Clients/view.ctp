@@ -1,7 +1,7 @@
 <?php $this->Html->css('Clients/view', null, array('inline' => false)); ?>
 <div class="actionsNoButton">
-    <?php echo $this->Html->link(__('View'), array('action' => 'index'), array('class' => 'active_link')); ?> <br/>
-    <a href="#">List Survey Instances</a><br/>
+    <?php echo $this->Html->link(__('View'), array('action' => 'view', $client['Client']['id']), array('class' => 'active_link')); ?> <br/>
+    <?php echo $this->Html->link(__('List Survey Instances'), array('action' => 'index', 'controller' => 'survey_instances', $client['Client']['id'])); ?><br/>
     <?php echo $this->Html->link(__('Update Photo'), array('action' => 'add_photo', $client['Client']['id']));?><br/>
 </div>
 <div class="clients view">

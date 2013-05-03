@@ -3,7 +3,7 @@
 <?php echo $this->Html->script("SurveyInstances/add.js", FALSE); ?>
 <?php $this->Html->css('Clients/view', null, array('inline' => false)); ?>
 <div class="actionsNoButton">
-    <?php echo $this->Html->link(__('View'), array('action' => 'index')); ?> <br/>
+    <?php echo $this->Html->link(__('View'), array('action' => 'view', $client_id)); ?> <br/>
     <a href="#">List Survey Instances</a><br/>
     <?php echo $this->Html->link(__('Update Photo'), array('action' => 'add_photo', $client_id), array('class' => 'active_link'));?><br/>
 </div>
