@@ -46,7 +46,7 @@ class Survey extends AppModel {
         $dataSource = $this->getDataSource();
         $old_survey = $this->find('first', array('conditions' => array('Survey.id' => $this->id)));
         $this->create();
-
+        
         $new_survey = array();
         $new_survey['Survey'] = $data['Survey'];
 
@@ -97,6 +97,7 @@ class Survey extends AppModel {
             }
 
             $new_survey['ViCriterium'] = array();
+            $new_survey['Option'] = array();
             $i = 0;
             //now save questions
             //can't do saveAll because it creates a nested transaction.
@@ -118,6 +119,22 @@ class Survey extends AppModel {
                             $new_survey['ViCriterium'][] = $new_vi;
                         }
                     }
+
+                    $options = $this->Question->Option->find('all', array(
+                        'conditions' => array(
+                            'Option.question_id' => $old_survey['Question'][$i]['id']
+                        )
+                    ));
+                    
+                    foreach( $options as $option )
+                    {
+                        $new_option = $option['Option'];
+                        unset($new_option['id']);
+                        unset($new_option['created']);
+                        unset($new_option['modified']);
+                        $new_option['question_id'] = $this->Question->id;
+                        $new_survey['Option'][] = $new_option;
+                    }
                 }
                 else
                 {
@@ -133,6 +150,17 @@ class Survey extends AppModel {
             {
                 $this->ViCriterium->create();
                 if( !$this->ViCriterium->save($vi) )
+                {
+                    $dataSource->rollback();
+                    return false;
+                }
+            }
+
+            //now save options
+            foreach( $new_survey['Option'] as $option )
+            {
+                $this->Question->Option->create();
+                if( !$this->Question->Option->save($option) )
                 {
                     $dataSource->rollback();
                     return false;
