@@ -1374,4 +1374,55 @@ class SurveyInstancesController extends AppController {
 
         return $values;
     }
+
+
+    public function custom_xls()
+    {
+        $aColumns = explode(',',$this->params['url']['aColumns']);
+        $survey_id = $this->params['url']['survey_id'];
+
+        $params = array('recursive' => 0, 'custom' => true);
+
+        //No paging, sorting, filtering for this so that everything is returned
+
+        if (isset($this->params['url']['user_id'])) {
+            $params['conditions']['SurveyInstance.user_id'] = $this->params['url']['user_id'];
+        }
+
+        $raw_data = $this->SurveyInstance->getMostRecentSurveyInstanceForEachUser($survey_id, 'all', $aColumns, $params);
+
+        $output = array();
+
+        foreach ($raw_data as $result) {
+            $row = array();
+            foreach ($aColumns as $column) {
+                if (($pos = strpos($column, '.')) !== false) {
+                    if (substr($column, $pos + 1) === 'dob') {
+                        $row[] = date('m/d/Y', strtotime(h($result[substr($column, 0, $pos)]['dob'])));
+                    } else {
+                        $row[] = $result[substr($column, 0, $pos)][substr($column, $pos + 1)];
+                    }
+                } else {
+                    $row[] = $result['Custom'][$column];
+                }
+            }
+            $output[] = $row;
+        }
+
+        $header = array();
+        foreach( $aColumns as $column )
+        {
+            $pos = strpos($column, '.');
+            if( $pos !== false ) 
+                $out = substr($column, $pos + 1);
+            else
+                $out = $column;
+            $out = str_replace('_', ' ', $out);
+            $header[] = $out;
+        }
+
+        $this->set('output', $output);
+        $this->set('header', $header);
+        $this->render('custom_xls', 'export_xls');
+    }
 }

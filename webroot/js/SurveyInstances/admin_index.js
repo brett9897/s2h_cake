@@ -1,5 +1,5 @@
 (function() {
-  var build_header, columnLabels, columnTableOptions, columns, create_custom_report, defaults, draw_table, oTable, use_default_report;
+  var build_header, columnLabels, columnTableOptions, columns, create_custom_report, defaults, draw_table, export_to_csv, oTable, use_default_report;
 
   defaults = [];
 
@@ -169,8 +169,17 @@
     return oTable = draw_table();
   };
 
+  export_to_csv = function() {
+    var survey_id;
+
+    survey_id = location.href.substring(location.href.lastIndexOf("/") + 1);
+    location.href = "" + global.base_url + "/survey_instances/custom_xls?survey_id=" + survey_id + "&aColumns=" + columns;
+  };
+
   window.create_custom_report = create_custom_report;
 
   window.use_default_report = use_default_report;
+
+  window.export_to_csv = export_to_csv;
 
 }).call(this);

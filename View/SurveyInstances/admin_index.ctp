@@ -5,6 +5,7 @@
 <div id="custom_report_button" class="clear">
 	<button onClick="create_custom_report()">Custom Report</button>
 	<button onClick="use_default_report()">Use Default Report</button>
+	<button onClick="export_to_csv()">Export To Excel</button>
 </div>
 
 <div id="custom-report-select" title="Select Columns For Custom Report">

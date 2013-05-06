@@ -114,5 +114,11 @@ use_default_report = ->
 	build_header()
 	oTable = draw_table()
 
+export_to_csv = ->
+	survey_id = location.href.substring(location.href.lastIndexOf("/") + 1)
+	location.href = "#{global.base_url}/survey_instances/custom_xls?survey_id=#{survey_id}&aColumns=#{columns}"
+	return
+
 window.create_custom_report = create_custom_report
 window.use_default_report = use_default_report
+window.export_to_csv = export_to_csv
